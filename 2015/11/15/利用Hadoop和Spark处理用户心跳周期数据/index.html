@@ -4,19 +4,19 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>刘兴的博客</title>
+    <title>利用Hadoop和Spark处理用户心跳周期数据 | 刘兴的博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="刘兴">
     
 
     
-    <meta name="description" content="title: 利用Hadoop和Spark处理用户心跳周期数据date: 2015-11-15 19:44:53categories:tags: [大数据,Hadoop,Spark]数据源:可穿戴设备的实时数据分析。1.txt记录的是某一个用户的心跳周期数据，每一个数值表示一次心跳的周期，单位是秒。例如，0.8表示用户当时的心跳间隙是0.8秒。心跳间期按照顺序存储">
+    <meta name="description" content="数据源:可穿戴设备的实时数据分析。1.txt记录的是某一个用户的心跳周期数据，每一个数值表示一次心跳的周期，单位是秒。例如，0.8表示用户当时的心跳间隙是0.8秒。心跳间期按照顺序存储">
 <meta property="og:type" content="article">
-<meta property="og:title" content="刘兴的博客">
-<meta property="og:url" content="http://pangjiuzala.github.io/2015/11/27/利用Hadoop和Spark处理用户心跳周期数据/index.html">
+<meta property="og:title" content="利用Hadoop和Spark处理用户心跳周期数据">
+<meta property="og:url" content="http://pangjiuzala.github.io/2015/11/15/利用Hadoop和Spark处理用户心跳周期数据/index.html">
 <meta property="og:site_name" content="刘兴的博客">
-<meta property="og:description" content="title: 利用Hadoop和Spark处理用户心跳周期数据date: 2015-11-15 19:44:53categories:tags: [大数据,Hadoop,Spark]数据源:可穿戴设备的实时数据分析。1.txt记录的是某一个用户的心跳周期数据，每一个数值表示一次心跳的周期，单位是秒。例如，0.8表示用户当时的心跳间隙是0.8秒。心跳间期按照顺序存储">
+<meta property="og:description" content="数据源:可穿戴设备的实时数据分析。1.txt记录的是某一个用户的心跳周期数据，每一个数值表示一次心跳的周期，单位是秒。例如，0.8表示用户当时的心跳间隙是0.8秒。心跳间期按照顺序存储">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0377.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0378.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0379.png">
@@ -30,10 +30,10 @@
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0387.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0388.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0389.png">
-<meta property="og:updated_time" content="2015-11-27T01:52:40.857Z">
+<meta property="og:updated_time" content="2015-11-27T02:03:47.365Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="刘兴的博客">
-<meta name="twitter:description" content="title: 利用Hadoop和Spark处理用户心跳周期数据date: 2015-11-15 19:44:53categories:tags: [大数据,Hadoop,Spark]数据源:可穿戴设备的实时数据分析。1.txt记录的是某一个用户的心跳周期数据，每一个数值表示一次心跳的周期，单位是秒。例如，0.8表示用户当时的心跳间隙是0.8秒。心跳间期按照顺序存储">
+<meta name="twitter:title" content="利用Hadoop和Spark处理用户心跳周期数据">
+<meta name="twitter:description" content="数据源:可穿戴设备的实时数据分析。1.txt记录的是某一个用户的心跳周期数据，每一个数值表示一次心跳的周期，单位是秒。例如，0.8表示用户当时的心跳间隙是0.8秒。心跳间期按照顺序存储">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="刘兴的博客" type="application/atom+xml">
@@ -90,14 +90,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/27/利用Hadoop和Spark处理用户心跳周期数据/" title="" itemprop="url"></a>
+      <a href="/2015/11/15/利用Hadoop和Spark处理用户心跳周期数据/" title="利用Hadoop和Spark处理用户心跳周期数据" itemprop="url">利用Hadoop和Spark处理用户心跳周期数据</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="刘兴" target="_blank" itemprop="author">刘兴</a>
 		
   <p class="article-time">
-    <time datetime="2015-11-27T01:52:40.857Z" itemprop="datePublished"> 发表于 2015-11-27</time>
+    <time datetime="2015-11-15T11:44:53.000Z" itemprop="datePublished"> 发表于 2015-11-15</time>
     
   </p>
 </header>
@@ -110,7 +110,7 @@
 		
 		</div>
 		
-		<p>title: 利用Hadoop和Spark处理用户心跳周期数据<br>date: 2015-11-15 19:44:53<br>categories:<br>tags: [大数据,Hadoop,Spark]<br>数据源:可穿戴设备的实时数据分析。1.txt记录的是某一个用户的心跳周期数据，每一个数值表示一次心跳的周期，单位是秒。例如，0.8表示用户当时的心跳间隙是0.8秒。心跳间期按照顺序存储<br><a id="more"></a></p>
+		<p>数据源:可穿戴设备的实时数据分析。1.txt记录的是某一个用户的心跳周期数据，每一个数值表示一次心跳的周期，单位是秒。例如，0.8表示用户当时的心跳间隙是0.8秒。心跳间期按照顺序存储<br><a id="more"></a></p>
 <h1 id="MapReduce框架编写程序">MapReduce框架编写程序</h1><p><strong>计算出总测量时间和平均心跳间期，即求和与求平均。请写出程序，并在实验报告中简单描述你的思路。</strong></p>
 <h2 id="具体源码如下：">具体源码如下：</h2><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> Heartbeat</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//Map统计总测量时间</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> CountMapper <span class="keyword">extends</span></span><br><span class="line">        Mapper&lt;Object, Text, Text, DoublePair&gt;</span><br><span class="line">    &#123;</span><br><span class="line">      </span><br><span class="line">        <span class="keyword">private</span> Text word = <span class="keyword">new</span> Text();</span><br><span class="line">        <span class="keyword">private</span> DoublePair pair = <span class="keyword">new</span> DoublePair();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> map(Object key, Text value, Context context)</span><br><span class="line">        <span class="keyword">throws</span> IOException, InterruptedException</span><br><span class="line">        &#123;</span><br><span class="line">            StringTokenizer itr = <span class="keyword">new</span> StringTokenizer(value.toString());</span><br><span class="line">            <span class="keyword">while</span> (itr.hasMoreTokens())</span><br><span class="line">            &#123;</span><br><span class="line">                word.set(itr.nextToken());</span><br><span class="line">                pair.setValue(<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">                context.<span class="keyword">write</span>(word, pair);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Reduce求平均心跳</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> CalulateReducer <span class="keyword">extends</span></span><br><span class="line">        Reducer&lt;Text, DoublePair, Text, DoublePair&gt;</span><br><span class="line">    &#123;</span><br><span class="line">               DoublePair pair = <span class="keyword">new</span> DoublePair();</span><br><span class="line">        Text text = <span class="keyword">new</span> Text();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> reduce(Text key, Iterable&lt;DoublePair&gt; values,</span><br><span class="line">                           Context context) <span class="keyword">throws</span> IOException, InterruptedException</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">double</span> <span class="keyword">count</span> = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            System.out.<span class="keyword">print</span>(<span class="string">"key :"</span> + key.toString());</span><br><span class="line">            <span class="keyword">if</span>(key.toString().equals(<span class="string">"value"</span>))</span><br><span class="line">            &#123;</span><br><span class="line">                text.set(<span class="string">"result"</span>);</span><br><span class="line">                <span class="keyword">for</span> (DoublePair val : values)</span><br><span class="line">                &#123;</span><br><span class="line">                    sum += val.getvalue1();</span><br><span class="line">                    <span class="keyword">count</span> += val.getvalue2();</span><br><span class="line">                &#125;</span><br><span class="line">                pair.setValue(sum, sum <span class="regexp">/ count);/</span><span class="regexp">/sum/</span><span class="keyword">count</span>,即平均心跳</span><br><span class="line">                context.<span class="keyword">write</span>(text, pair);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span> (DoublePair val : values)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">count</span> += val.getvalue2();</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                sum = <span class="keyword">Double</span>.valueOf(key.toString()) * <span class="keyword">count</span>;</span><br><span class="line">                text.set(<span class="string">"value"</span>);</span><br><span class="line">                pair.setValue(sum, <span class="keyword">count</span>);</span><br><span class="line">                context.<span class="keyword">write</span>(text, pair);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.<span class="keyword">println</span>(<span class="string">"\tcount: "</span> + <span class="keyword">count</span> + <span class="string">"\tsum: "</span> + sum);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) <span class="keyword">throws</span> Exception</span><br><span class="line">    &#123;</span><br><span class="line">        Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">        String[] otherArgs = <span class="keyword">new</span> GenericOptionsParser(conf, args)</span><br><span class="line">        .getRemainingArgs();</span><br><span class="line">        <span class="keyword">if</span> (otherArgs.length &lt; <span class="number">2</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            System.err.<span class="keyword">println</span>(<span class="string">"Usage: wordcount &lt;in&gt; [&lt;in&gt;...] &lt;out&gt;"</span>);</span><br><span class="line">            System.exit(<span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        Job job = <span class="keyword">new</span> Job(conf, <span class="string">"word count"</span>);<span class="comment">//执行job</span></span><br><span class="line"></span><br><span class="line">        job.setJarByClass(Heartbeat.<span class="keyword">class</span>);</span><br><span class="line">        job.setMapperClass(CountMapper.<span class="keyword">class</span>);</span><br><span class="line">        job.setCombinerClass(CalulateReducer.<span class="keyword">class</span>);</span><br><span class="line">        job.setReducerClass(CalulateReducer.<span class="keyword">class</span>);</span><br><span class="line"></span><br><span class="line">        job.setMapOutputKeyClass(Text.<span class="keyword">class</span>);</span><br><span class="line">        job.setMapOutputValueClass(DoublePair.<span class="keyword">class</span>);</span><br><span class="line"></span><br><span class="line">        job.setOutputKeyClass(Text.<span class="keyword">class</span>);</span><br><span class="line">        job.setOutputValueClass(DoubleWritable.<span class="keyword">class</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; otherArgs.length - <span class="number">1</span>; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            FileInputFormat.addInputPath(job, <span class="keyword">new</span> Path(otherArgs[i]));<span class="comment">//输出</span></span><br><span class="line">        &#125;</span><br><span class="line">        FileOutputFormat.setOutputPath(job, <span class="keyword">new</span> Path(</span><br><span class="line">                                           otherArgs[otherArgs.length - <span class="number">1</span>]));</span><br><span class="line">        job.waitForCompletion(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**@author XingLiu</span><br><span class="line">     * 自定义Writable类，这个类用来存放sum和count数对</span><br><span class="line">     * */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> DoublePair <span class="keyword">implements</span> Writable</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">double</span> value1;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">double</span> value2;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> DoublePair()</span><br><span class="line">        &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> setValue(<span class="keyword">double</span> value1, <span class="keyword">double</span> value2)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">this</span>.value1 = value1;</span><br><span class="line">            <span class="keyword">this</span>.value2 = value2;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">double</span> getvalue1()</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> value1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">double</span> getvalue2()</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> value2;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> readFields(DataInput in) <span class="keyword">throws</span> IOException</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">            value1 = in.readDouble() + <span class="keyword">Double</span>.MIN_VALUE;</span><br><span class="line">            value2 = in.readDouble() + <span class="keyword">Double</span>.MIN_VALUE;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="keyword">write</span>(DataOutput out) <span class="keyword">throws</span> IOException</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">            out.writeDouble(value1 - <span class="keyword">Double</span>.MIN_VALUE);</span><br><span class="line">            out.writeDouble(value2 - <span class="keyword">Double</span>.MIN_VALUE);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">int</span> hashCode()</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> (<span class="keyword">int</span>) (value1 * <span class="number">157</span> + value2);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">boolean</span> equals(Object right)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (right <span class="keyword">instanceof</span> DoublePair)</span><br><span class="line">            &#123;</span><br><span class="line">                DoublePair r = (DoublePair) right;</span><br><span class="line">                <span class="keyword">return</span> r.value1 == value1 &amp;&amp; r.value2 == value2;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> String toString()</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> value1 + <span class="string">" "</span> + value2;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="设计思路">设计思路</h2><p>本题是要求计算出总测量时间和平均心跳间期，即对源数据进行求和和求平均。Hadoop的MapReduce过程分为两个过程，分别是map（映射）过程和reduce（化简）过程。MapReduce在执行时先指定一个Map（映射）函数，把输入键值对映射成一组新的键值对，经过一定处理后交给reduce,Reduce对相同key下的所有value进行处理后再输出键值对作为最终的结果。由于该题的要求略为简单，并且数据格式较为简单。故简化map过程，即在map过程中不对数据进行处理，存放至相同的一个key中，key命名为total.Reduce过程，是对数据的总和的计算过程，遍历数据集。</p>
@@ -133,6 +133,11 @@
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Spark/">Spark</a><a href="/tags/大数据/">大数据</a>
+  </div>
 
 </div>
 
@@ -188,7 +193,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/11/27/利用Hadoop和Spark处理用户心跳周期数据/" data-title="" data-url="http://pangjiuzala.github.io/2015/11/27/利用Hadoop和Spark处理用户心跳周期数据/"></div>
+	<div class="ds-thread" data-thread-key="2015/11/15/利用Hadoop和Spark处理用户心跳周期数据/" data-title="利用Hadoop和Spark处理用户心跳周期数据" data-url="http://pangjiuzala.github.io/2015/11/15/利用Hadoop和Spark处理用户心跳周期数据/"></div>
 </section>
 
 
@@ -222,7 +227,7 @@
 			
 		
 			
-				<li><a href="/tags/大数据/" title="大数据">大数据<sup>17</sup></a></li>
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>18</sup></a></li>
 			
 		
 			
@@ -246,7 +251,7 @@
 			
 		
 			
-				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>4</sup></a></li>
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>5</sup></a></li>
 			
 		
 			
@@ -278,6 +283,10 @@
 			
 		
 			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>1</sup></a></li>
 			
 		
@@ -291,10 +300,6 @@
 		
 			
 				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/OpenStack/" title="OpenStack">OpenStack<sup>1</sup></a></li>
 			
 		
 		</ul>
