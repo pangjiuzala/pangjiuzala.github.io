@@ -17,7 +17,7 @@
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/09/05/Java性能优化-10-谨慎改写clone/index.html">
 <meta property="og:site_name" content="刘兴的博客">
 <meta property="og:description" content="Cloneable接口的目的是作为对象的一个mixin接口，表明这样的对象允许克隆。不幸的是，它并没有成功达到这个目的。其主要的缺陷在于它缺少一个clone方法，Object的clone方法是被保护的，如果不借助于反射机制，则不能仅仅因为一个对象实现了Cloneable，就可以调用clone方法。即使在反射调用也可能会失败，因为并不保证该对象一定具有可访问性的clone方法。尽管存在这样那样的不足">
-<meta property="og:updated_time" content="2015-09-06T02:24:08.155Z">
+<meta property="og:updated_time" content="2015-09-06T02:24:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java性能优化(10):谨慎改写clone">
 <meta name="twitter:description" content="Cloneable接口的目的是作为对象的一个mixin接口，表明这样的对象允许克隆。不幸的是，它并没有成功达到这个目的。其主要的缺陷在于它缺少一个clone方法，Object的clone方法是被保护的，如果不借助于反射机制，则不能仅仅因为一个对象实现了Cloneable，就可以调用clone方法。即使在反射调用也可能会失败，因为并不保证该对象一定具有可访问性的clone方法。尽管存在这样那样的不足">
@@ -258,7 +258,7 @@
 			
 		
 			
-				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>10</sup></a></li>
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>11</sup></a></li>
 			
 		
 			
@@ -328,7 +328,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
   </div>
 
 
@@ -339,6 +339,12 @@
           <li>
             
             	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="刘兴的CSDN博客">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
             
           </li>
         
