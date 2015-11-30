@@ -78,6 +78,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/09/04/Java性能优化-9-改写toString/" title="Java性能优化(9):改写toString" itemprop="url">Java性能优化(9):改写toString</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="刘兴" target="_blank" itemprop="author">刘兴</a>
+		
+  <p class="article-time">
+    <time datetime="2015-09-04T02:11:35.000Z" itemprop="datePublished"> 发表于 2015-09-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>虽然java.lang.Object提供了toString方法的一个实现，但是，它返回的字符串通常并不是类的用户所期望看到的，它包含类的名字，以及一个“@”符号，接着是散列码的无符号十六进制表示，例如“phoneNumber@163b91”。toString的通用约定指出，被返回的字符串应该是一个”简洁的，且信息丰富，并且易于阅读的表达形式”。尽管“phoneNumber@163b91”算得上是简洁的和易于阅读的，但是与”(408)867-5309”比较起来，它不是信息丰富的。toString的约定进一步指出，“建议所有的子类都改写这个方法”<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/09/04/Java性能优化-9-改写toString/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Java/">Java</a><a href="/tags/性能优化/">性能优化</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/09/04/Java性能优化-9-改写toString/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/04/Java性能优化-9-改写toString/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/09/03/Java性能优化-8-改写equals时总是要改写hashCode/" title="Java性能优化(8):改写equals时总是要改写hashCode" itemprop="url">Java性能优化(8):改写equals时总是要改写hashCode</a>
   </h1>
   <p class="article-author">By
@@ -605,65 +664,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/08/25/Mongodb 请求处理流程/" title="Mongodb 请求处理流程" itemprop="url">Mongodb 请求处理流程</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="刘兴" target="_blank" itemprop="author">刘兴</a>
-		
-  <p class="article-time">
-    <time datetime="2015-08-25T00:00:23.000Z" itemprop="datePublished"> 发表于 2015-08-25</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>Mongodb多存储引擎支持机制介绍了Mongodb存储层创建数据库、创建集合、插入文档等数据库操作接口，本文将介绍mongodb处理客户端请求的模型。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/08/25/Mongodb 请求处理流程/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/数据库/">数据库</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/08/25/Mongodb 请求处理流程/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/08/25/Mongodb 请求处理流程/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/2/"><span></span>上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/4/">下一页<span></span></a>
@@ -692,7 +692,7 @@
 			
 		
 			
-				<li><a href="/tags/大数据/" title="大数据">大数据<sup>18</sup></a></li>
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>19</sup></a></li>
 			
 		
 			
@@ -712,11 +712,11 @@
 			
 		
 			
-				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>5</sup></a></li>
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
 			
 		
 			
@@ -774,7 +774,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
   </div>
 
 
