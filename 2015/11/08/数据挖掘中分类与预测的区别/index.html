@@ -11,16 +11,33 @@
     
 
     
-    <meta name="description">
+    <meta name="description" content="分类是指把数据样本映射到一个事先定义的类中的学习过程，即给定一组输入的属性向量及其对应的类，用基于归纳的学习算法得出分类。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据挖掘中分类与预测的区别">
-<meta property="og:url" content="http://pangjiuzala.github.io/2015/11/30/数据挖掘中分类与预测的区别/index.html">
+<meta property="og:url" content="http://pangjiuzala.github.io/2015/11/08/数据挖掘中分类与预测的区别/index.html">
 <meta property="og:site_name" content="刘兴的博客">
-<meta property="og:description">
-<meta property="og:updated_time" content="2015-11-30T08:57:33.000Z">
+<meta property="og:description" content="分类是指把数据样本映射到一个事先定义的类中的学习过程，即给定一组输入的属性向量及其对应的类，用基于归纳的学习算法得出分类。">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0568.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0569.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0553.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0554.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0555.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0556.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0557.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0558.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0559.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0560.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0561.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0562.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0563.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0564.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0565.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0566.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0567.png">
+<meta property="og:updated_time" content="2015-11-30T09:01:19.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据挖掘中分类与预测的区别">
-<meta name="twitter:description">
+<meta name="twitter:description" content="分类是指把数据样本映射到一个事先定义的类中的学习过程，即给定一组输入的属性向量及其对应的类，用基于归纳的学习算法得出分类。">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="刘兴的博客" type="application/atom+xml">
@@ -77,14 +94,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/30/数据挖掘中分类与预测的区别/" title="数据挖掘中分类与预测的区别" itemprop="url">数据挖掘中分类与预测的区别</a>
+      <a href="/2015/11/08/数据挖掘中分类与预测的区别/" title="数据挖掘中分类与预测的区别" itemprop="url">数据挖掘中分类与预测的区别</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="刘兴" target="_blank" itemprop="author">刘兴</a>
 		
   <p class="article-time">
-    <time datetime="2015-11-30T08:56:14.000Z" itemprop="datePublished"> 发表于 2015-11-30</time>
+    <time datetime="2015-11-08T08:56:14.000Z" itemprop="datePublished"> 发表于 2015-11-08</time>
     
   </p>
 </header>
@@ -97,7 +114,17 @@
 		
 		</div>
 		
-		  
+		<p>分类是指把数据样本映射到一个事先定义的类中的学习过程，即给定一组输入的属性向量及其对应的类，用基于归纳的学习算法得出分类。<br><a id="more"></a><br>第一步：建立训练集的分类器</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0568.png" alt=""><br></center>
+
+<p>第二步：首先评估分类器的预测准确率，再对新数据预测其类标号</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0569.png" alt=""><br></center>
+
+<p>b)预测可以涉及数据值预测和类标记预测，但预测通常指值预测。</p>
+<p>c)两者的区别是，<strong>分类是用来预测数据对象的类标记，而预测则是估计某些空缺或未知值。</strong><br>例如：银行业务中，根据贷款申请者信息判断贷款者是属于“安全”类还是“风险”类的，这是数据挖掘中的分类任务。<br>而分析给贷款人贷款量的多少对于银行是“安全”的就是数据挖掘中的预测任务。</p>
+<p><strong>具体区别如下</strong></p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0553.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0554.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0555.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0556.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0557.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0558.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0559.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0560.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0561.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0562.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0563.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0564.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0565.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0566.png" alt=""><br></center><br><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0567.png" alt=""><br></center>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -149,11 +176,19 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2015/11/15/利用Hadoop和Spark处理用户心跳周期数据/" title="利用Hadoop和Spark处理用户心跳周期数据">
+  <strong>上一篇：</strong><br/>
+  <span>
+  利用Hadoop和Spark处理用户心跳周期数据</span>
+</a>
+</div>
+
 
 <div class="next">
-<a href="/2015/11/30/大数据基本概念及Hadoop技术基础/"  title="大数据基本概念及Hadoop技术基础">
+<a href="/2015/11/01/Java线程池源码解析及高质量代码案例/"  title="Java线程池源码解析及高质量代码案例">
  <strong>下一篇：</strong><br/> 
- <span>大数据基本概念及Hadoop技术基础
+ <span>Java线程池源码解析及高质量代码案例
 </span>
 </a>
 </div>
@@ -162,7 +197,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/11/30/数据挖掘中分类与预测的区别/" data-title="数据挖掘中分类与预测的区别" data-url="http://pangjiuzala.github.io/2015/11/30/数据挖掘中分类与预测的区别/"></div>
+	<div class="ds-thread" data-thread-key="2015/11/08/数据挖掘中分类与预测的区别/" data-title="数据挖掘中分类与预测的区别" data-url="http://pangjiuzala.github.io/2015/11/08/数据挖掘中分类与预测的区别/"></div>
 </section>
 
 
@@ -204,11 +239,11 @@
 			
 		
 			
-				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>12</sup></a></li>
 			
 		
 			
@@ -278,7 +313,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
   </div>
 
 
