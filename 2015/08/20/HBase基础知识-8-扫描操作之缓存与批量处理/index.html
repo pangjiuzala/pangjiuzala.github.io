@@ -18,7 +18,7 @@
 <meta property="og:site_name" content="刘兴的博客">
 <meta property="og:description" content="每一个next()调用都会为每行数据生成一个单独RPC请求，即使使用next(int nbRows)方法，也是如此，因为该方法仅仅是在客户端循环地调用next()方法。很显然，当单元格数据较小时，这样做的性能不会很好。因此，如果一次RPC请求可以获取多行数据，这样更会有意义。这样的方法可以由扫描器缓存实现，默认情况下，这个缓存是关闭的。">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0190.png">
-<meta property="og:updated_time" content="2015-12-01T07:02:53.000Z">
+<meta property="og:updated_time" content="2015-12-01T07:08:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HBase基础知识(8):扫描操作之缓存与批量处理">
 <meta name="twitter:description" content="每一个next()调用都会为每行数据生成一个单独RPC请求，即使使用next(int nbRows)方法，也是如此，因为该方法仅仅是在客户端循环地调用next()方法。很显然，当单元格数据较小时，这样做的性能不会很好。因此，如果一次RPC请求可以获取多行数据，这样更会有意义。这样的方法可以由扫描器缓存实现，默认情况下，这个缓存是关闭的。">
@@ -116,7 +116,63 @@
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">import org.apache.hadoop.conf.Configuration;</span><br><span class="line">import org.apache.hadoop.hbase.HBaseConfiguration;</span><br><span class="line">import org.apache.hadoop.hbase.client.HTable;</span><br><span class="line">import org.apache.hadoop.hbase.client.Result;</span><br><span class="line">import org.apache.hadoop.hbase.client.ResultScanner;</span><br><span class="line">import org.apache.hadoop.hbase.client.Scan;</span><br><span class="line">import org.apache.log4j.Appender;</span><br><span class="line">import org.apache.log4j.AppenderSkeleton;</span><br><span class="line">import org.apache.log4j.Level;</span><br><span class="line">import org.apache.log4j.Logger;</span><br><span class="line">import org.apache.log4j.spi.LoggingEvent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> HBaseResultScanner &#123;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">scan</span><span class="params">(<span class="keyword">int</span> caching, <span class="keyword">int</span> batch)</span> throws IOException </span>&#123;</span><br><span class="line">		Configuration conf = HBaseConfiguration.create();</span><br><span class="line">		HTable table = <span class="keyword">new</span> HTable(conf, <span class="string">"testtable"</span>);</span><br><span class="line">		Logger <span class="built_in">log</span> = Logger.getLogger(<span class="string">"org.apache.hadoop"</span>);</span><br><span class="line">		final <span class="keyword">int</span>[] counters = &#123; <span class="number">0</span>, <span class="number">0</span> &#125;;</span><br><span class="line">		Appender appender = <span class="keyword">new</span> AppenderSkeleton() &#123;</span><br><span class="line">			@<span class="function">Override</span><br><span class="line">			<span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">append</span><span class="params">(LoggingEvent event)</span> </span>&#123;</span><br><span class="line">				String msg = event.getMessage().toString();</span><br><span class="line">				<span class="keyword">if</span> (msg != null &amp;&amp; msg.contains(<span class="string">"Call: next"</span>)) &#123;</span><br><span class="line">					counters[<span class="number">0</span>]++;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			@<span class="function">Override</span><br><span class="line">			<span class="keyword">public</span> boolean <span class="title">requiresLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			@<span class="function">Override</span><br><span class="line">			<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		&#125;;</span><br><span class="line">		<span class="built_in">log</span>.removeAllAppenders();</span><br><span class="line">		<span class="built_in">log</span>.setAdditivity(<span class="literal">false</span>);</span><br><span class="line">		<span class="built_in">log</span>.addAppender(appender);</span><br><span class="line">		<span class="built_in">log</span>.setLevel(Level.DEBUG);</span><br><span class="line">		Scan scan = <span class="keyword">new</span> Scan();</span><br><span class="line">		scan.setCaching(caching);</span><br><span class="line">		scan.setBatch(batch);</span><br><span class="line">		ResultScanner scanner = table.getScanner(scan);</span><br><span class="line">		<span class="keyword">for</span> (Result result : scanner) &#123;</span><br><span class="line">			counters[<span class="number">1</span>]++;</span><br><span class="line">		&#125;</span><br><span class="line">		scanner.close();</span><br><span class="line">		System.out.println(<span class="string">"Caching: "</span> + caching + <span class="string">",Batch:"</span> + batch</span><br><span class="line">				+ <span class="string">",Results:"</span> + counters[<span class="number">1</span>] + <span class="string">",RPCs:"</span> + counters[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> throws IOException </span>&#123;</span><br><span class="line">		scan(<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">		scan(<span class="number">200</span>, <span class="number">1</span>);</span><br><span class="line">		scan(<span class="number">2000</span>, <span class="number">100</span>);</span><br><span class="line">		scan(<span class="number">2</span>, <span class="number">100</span>);</span><br><span class="line">		scan(<span class="number">2</span>, <span class="number">10</span>);</span><br><span class="line">		scan(<span class="number">5</span>, <span class="number">100</span>);</span><br><span class="line">		scan(<span class="number">5</span>, <span class="number">20</span>);</span><br><span class="line">		scan(<span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 <p>运行结果如下：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">Caching:<span class="number">1</span>,Batch:<span class="number">1</span>,Results:<span class="number">200</span>,RPCs:<span class="number">201</span></span><br><span class="line">Caching:<span class="number">200</span>,Batch:<span class="number">1</span>,Results:<span class="number">200</span>,RPCs:<span class="number">2</span></span><br><span class="line">Caching:<span class="number">2000</span>,Batch:<span class="number">100</span>,Results:<span class="number">10</span>,RPCs:<span class="number">1</span></span><br><span class="line">Caching:<span class="number">2</span>,Batch:<span class="number">100</span>,Results:<span class="number">10</span>,RPCs:<span class="number">6</span></span><br><span class="line">Caching:<span class="number">2</span>,Batch:<span class="number">10</span>,Results:<span class="number">20</span>,RPCs:<span class="number">11</span></span><br><span class="line">Caching:<span class="number">5</span>,Batch:<span class="number">100</span>,Results:<span class="number">10</span>,RPCs:<span class="number">3</span></span><br><span class="line">Caching:<span class="number">5</span>,Batch:<span class="number">20</span>,Results:<span class="number">10</span>,RPCs:<span class="number">3</span></span><br><span class="line">Caching:<span class="number">10</span>,Batch:<span class="number">10</span>,Results:<span class="number">20</span>,RPCs:<span class="number">3</span></span><br></pre></td></tr></table></figure>
-<p>用户可以修改调整这两个参数来看它们对输出结果的影响。如下表所示<br>| 缓存| 批量处理 | Result个数 | RPC次数 | 说明 |<br>|:————-:|:————-:|:————-:|:————-:|:————-:|<br>|1|1|200|201|每个列都作为一个Result实例返回。最后还多一个RPC确认扫描完成|<br>|200|1|200|2|每个Result实例都只包含一列的值，不过它们都被一次RPC请求取回|<br>|2|10|20|11|批量参数是一行所包含的列数的一半，所以200列除以10，需要20个result实例。同时需要10次RPC请求取回。|<br>|5|100|10|3|对一行来讲，这个批量参数实在是太大了，所以一行的20列都被放入到了一个Result实例中。同时缓存为5，所以10个Result实例被两次RPC请求取回。|<br>|5|20|10|3|同上，不过这次的批量值与一行列数正好相同，所以输出与上面一种情况相同|<br>|10|10|20|3|这次把表分成了较小的result实例，但使用了较大的缓存值，所以也是只用了两次RPC请求就返回了数据|<br>要计算一次扫描操作的RPC请求的次数，用户需要先计算出行数和每行列数的乘积。然后用这个值除以批量大小和每行列数中较小的那个值。最后再用除得的结果除以扫描器缓存值。 用数学公式表示如下:</p>
+<p>用户可以修改调整这两个参数来看它们对输出结果的影响。如下表所示</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">缓存</th>
+<th style="text-align:center">批量处理</th>
+<th style="text-align:center">Result个数</th>
+<th style="text-align:center">RPC次数</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">200</td>
+<td style="text-align:center">201</td>
+<td style="text-align:center">每个列都作为一个Result实例返回。最后还多一个RPC确认扫描完成</td>
+</tr>
+<tr>
+<td style="text-align:center">200</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">200</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">每个Result实例都只包含一列的值，不过它们都被一次RPC请求取回</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">20</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">批量参数是一行所包含的列数的一半，所以200列除以10，需要20个result实例。同时需要10次RPC请求取回。</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">100</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">对一行来讲，这个批量参数实在是太大了，所以一行的20列都被放入到了一个Result实例中。同时缓存为5，所以10个Result实例被两次RPC请求取回。</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">20</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">同上，不过这次的批量值与一行列数正好相同，所以输出与上面一种情况相同</td>
+</tr>
+<tr>
+<td style="text-align:center">10</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">20</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">这次把表分成了较小的result实例，但使用了较大的缓存值，所以也是只用了两次RPC请求就返回了数据</td>
+</tr>
+</tbody>
+</table>
+<p>要计算一次扫描操作的RPC请求的次数，用户需要先计算出行数和每行列数的乘积。然后用这个值除以批量大小和每行列数中较小的那个值。最后再用除得的结果除以扫描器缓存值。 用数学公式表示如下:</p>
 <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">RPC请求的次数=(行数x每行的列数)/</span><br><span class="line"> <span class="function"><span class="title">Min</span><span class="params">(每行的列数，批量大小)</span></span>/扫描器缓存</span><br></pre></td></tr></table></figure>
 <p>此外，还需要一些请求来打开和关闭扫描器。用户或许需要把这两次请求也考虑在内。<br>下图展示了缓存和批量两个参数如何联动。</p>
 <p><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0190.png" alt="扫描器缓存和批量两个参数控制RPC的次数"><br></center><br>小的批量值使服务器端把3个列装入一个Result实例，同时扫描器缓存为6，使每个RPC请求传输6行，即6个被批量封装的Result实例。如果没有指定批量大小，而是指定了扫描器缓存，那么一个调用结果就能包含所有的行，因为每一行都包含在一个Result实例中。只有当用户使用批量模式后，行内(intra-row)扫描功能才会启用。</p>
