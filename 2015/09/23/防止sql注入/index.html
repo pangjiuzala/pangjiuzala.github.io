@@ -17,7 +17,8 @@
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/09/23/防止sql注入/index.html">
 <meta property="og:site_name" content="刘兴的博客">
 <meta property="og:description" content="关于sql注入的危害在这里就不多做介绍了，相信大家也知道其中的厉害关系。">
-<meta property="og:updated_time" content="2015-12-01T06:38:05.000Z">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0582.png">
+<meta property="og:updated_time" content="2015-12-01T06:45:12.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="防止sql注入">
 <meta name="twitter:description" content="关于sql注入的危害在这里就不多做介绍了，相信大家也知道其中的厉害关系。">
@@ -121,7 +122,10 @@
 <p>实现多层验证。对无目的的恶意用户采取的预防措施对坚定的攻击者可能无效。更好的做法是在用户界面和所有跨信任边界的后续点上验证输入。<br>例如，在客户端应用程序中验证数据可以防止简单的脚本注入。但是，如果下一层认为其输入已通过验证，则任何可以绕过客户端的恶意用户就可以不受限制地访问系统。</p>
 <p>绝不串联未验证的用户输入。字符串串联是脚本注入的主要输入点。</p>
 <p>在可能据以构造文件名的字段中，不接受下列字符串：<code>AUX、CLOCK$、COM1 到 COM8、CON、CONFIG$、LPT1 到 LPT8、NUL 以及 PRN。</code></p>
-<p>如果可能，拒绝包含以下字符的输入。<br>|输入字符|在 Transact-SQL 中的含义|<br>| :————-: | :————-: |<br>|;|查询分隔符。|<br>|’|字符数据字符串分隔符。|<br>|–|注释分隔符。|<br>|/<em> … </em>/|注释分隔符。服务器不对 /<em> 和 </em>/ 之间的注释进行处理。|<br>|xp_|用于目录扩展存储过程的名称的开头，如 xp_cmdshell。</p>
+<p>如果可能，拒绝包含以下字符的输入。</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0582.png" alt=""><br></center>
+
+
 <h1 id="使用类型安全的_SQL_参数">使用类型安全的 SQL 参数</h1><p>SQL Server 中的 Parameters 集合提供了类型检查和长度验证。如果使用 Parameters 集合，则输入将被视为文字值而不是可执行代码。使用 Parameters 集合的另一个好处是可以强制执行类型和长度检查。范围以外的值将触发异常。以下代码段显示了如何使用 Parameters 集合：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">SqlDataAdapter myCommand = <span class="keyword">new</span> SqlDataAdapter(<span class="string">"AuthorLogin"</span>, conn);</span><br><span class="line">myCommand.SelectCommand.CommandType = CommandType.StoredProcedure;</span><br><span class="line">SqlParameter parm = myCommand.SelectCommand.Parameters.Add(<span class="string">"@au_id"</span>, SqlDbType.VarChar, <span class="number">11</span>);</span><br><span class="line">parm.Value = Login.Text;</span><br></pre></td></tr></table></figure>
 <p>在此示例中，@au_id 参数被视为文字值而不是可执行代码。将对此值进行类型和长度检查。如果 @au_id 值不符合指定的类型和长度约束，则将引发异常。</p>
