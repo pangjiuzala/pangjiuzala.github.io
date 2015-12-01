@@ -17,7 +17,7 @@
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/08/18/HBase基础知识-6-扫描操作介绍/index.html">
 <meta property="og:site_name" content="刘兴的博客">
 <meta property="og:description" content="扫描操作的使用跟get()方法非常相似。同样，和其他函数类似，这里也提供了Scan类。但是由于扫描的工作方式类似于迭代器，所以用户无需调用scan()方法创建实例，只需调用HTable的getScanner()方法，此方法在返回真正的扫描器(scanner)实例的同时，用户也可以使用它迭代获取数据。可用方法如下:">
-<meta property="og:updated_time" content="2015-09-06T07:38:01.000Z">
+<meta property="og:updated_time" content="2015-12-01T07:03:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HBase基础知识(6):扫描操作介绍">
 <meta name="twitter:description" content="扫描操作的使用跟get()方法非常相似。同样，和其他函数类似，这里也提供了Scan类。但是由于扫描的工作方式类似于迭代器，所以用户无需调用scan()方法创建实例，只需调用HTable的getScanner()方法，此方法在返回真正的扫描器(scanner)实例的同时，用户也可以使用它迭代获取数据。可用方法如下:">
@@ -110,7 +110,50 @@
 <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">Scan <span class="function"><span class="title">setTimeRange</span><span class="params">(long minStamp,long maxStamp)</span></span> throws IOExcepiton</span><br><span class="line">Scan <span class="function"><span class="title">setTimeStamp</span><span class="params">(long timestamp)</span></span></span><br><span class="line">Scan <span class="function"><span class="title">setMaxVersions</span><span class="params">()</span></span></span><br><span class="line">Scan <span class="function"><span class="title">setMaxVersions</span><span class="params">(int maxVersions)</span></span></span><br></pre></td></tr></table></figure>
 <p>用户可以通过setTimestamp()设置详细的时间戳，或者通过setTimeRange()设置时间范围，进一步对结果进行限制。还可以使用setMaxVersions()方法，让扫描只返回每一列的一些特定版本，或者全部的版本</p>
 <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">Scan <span class="function"><span class="title">setStartRow</span><span class="params">(byte[] startRow)</span></span></span><br><span class="line">Scan <span class="function"><span class="title">setStopRow</span><span class="params">(byte[] stopRow)</span></span></span><br><span class="line">Scan <span class="function"><span class="title">setFilter</span><span class="params">(Filter filter)</span></span></span><br><span class="line">boolean <span class="function"><span class="title">hasFilter</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
-<p>还可以使用setStartRow()、setStopRow()以及setFilter(),进一步限定返回的数据。这3个方法中的参数可以与构造器中的一样。Scan类的其他方法如下<br>| 方法| 描述 |<br>|:————-:|:————-:|<br>| getStartRow()/getStopRow() | 查询当前设定的值|<br>| getTimeRange() | 检索Get实例指定的时间范围或相关时间戳，注意，当需要指定单个时间戳时，API会在内部通过setTimeStamp()将TimeRange实例的起止时间戳设为传入值，所以Get类中此时已经没有getTimeStamp()方法了|<br>| getMaxVersions() | 返回当前配置下应该从表中获取的每列的版本数 |<br>| getFilter() | 可以使用特定的过滤器实例，通过多种规则来筛选列和单元格。使用这个方法，用户可以设定或查看Scan实例的过滤器成员。 |<br>| setCacheBlocks()/getCacheBlocks() | 每个HBase的region服务器都有一个块缓存，可以有效地保存最近访问过的数据，并以此来加速之后相邻信息的读取。不过在某些情况下，例如通过全表扫描，最好能避免这种机制带来的扰动。这个方法能够控制版本次读取的块缓存机制是否起效 |<br>| numFamilies() | 快捷地获取FamilyMap大小的方法，包括用addFamily()和addColumn()方法添加的列族和列 |<br>| hasFamilies() | 检查是否添加过列族和列 |<br>| getFamilies/setFamilyMap()/getFamilyMap() | 这些方法能够让用户直接访问addFamily()和addColumn()添加的列族和列。FamilyMap中键是列族的名称，键对应的值是特定列族下列限定符的列表。getFamilies()方法返回一个只包含列族名的数组|<br>一旦设置好了Scan实例，就可以调用Htable的getScanner()方法，获得用于检索数据的ResultScanner实例。</p>
+<p>还可以使用setStartRow()、setStopRow()以及setFilter(),进一步限定返回的数据。这3个方法中的参数可以与构造器中的一样。Scan类的其他方法如下</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">getStartRow()/getStopRow()</td>
+<td style="text-align:center">查询当前设定的值</td>
+</tr>
+<tr>
+<td style="text-align:center">getTimeRange()</td>
+<td style="text-align:center">检索Get实例指定的时间范围或相关时间戳，注意，当需要指定单个时间戳时，API会在内部通过setTimeStamp()将TimeRange实例的起止时间戳设为传入值，所以Get类中此时已经没有getTimeStamp()方法了</td>
+</tr>
+<tr>
+<td style="text-align:center">getMaxVersions()</td>
+<td style="text-align:center">返回当前配置下应该从表中获取的每列的版本数</td>
+</tr>
+<tr>
+<td style="text-align:center">getFilter()</td>
+<td style="text-align:center">可以使用特定的过滤器实例，通过多种规则来筛选列和单元格。使用这个方法，用户可以设定或查看Scan实例的过滤器成员。</td>
+</tr>
+<tr>
+<td style="text-align:center">setCacheBlocks()/getCacheBlocks()</td>
+<td style="text-align:center">每个HBase的region服务器都有一个块缓存，可以有效地保存最近访问过的数据，并以此来加速之后相邻信息的读取。不过在某些情况下，例如通过全表扫描，最好能避免这种机制带来的扰动。这个方法能够控制版本次读取的块缓存机制是否起效</td>
+</tr>
+<tr>
+<td style="text-align:center">numFamilies()</td>
+<td style="text-align:center">快捷地获取FamilyMap大小的方法，包括用addFamily()和addColumn()方法添加的列族和列</td>
+</tr>
+<tr>
+<td style="text-align:center">hasFamilies()</td>
+<td style="text-align:center">检查是否添加过列族和列</td>
+</tr>
+<tr>
+<td style="text-align:center">getFamilies/setFamilyMap()/getFamilyMap()</td>
+<td style="text-align:center">这些方法能够让用户直接访问addFamily()和addColumn()添加的列族和列。FamilyMap中键是列族的名称，键对应的值是特定列族下列限定符的列表。getFamilies()方法返回一个只包含列族名的数组</td>
+</tr>
+</tbody>
+</table>
+<p>一旦设置好了Scan实例，就可以调用Htable的getScanner()方法，获得用于检索数据的ResultScanner实例。</p>
   
 	</div>
 		<footer class="article-footer clearfix">

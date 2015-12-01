@@ -17,7 +17,7 @@
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/08/21/HBase基础知识-9-HBase其他特性/index.html">
 <meta property="og:site_name" content="刘兴的博客">
 <meta property="og:description" content="客户端API是由HTable的实例提供的，用户可以用它来操作HBase表。除了之前提到的一些主要特性外，还有以下一些值得注意的方法。">
-<meta property="og:updated_time" content="2015-09-06T07:37:44.000Z">
+<meta property="og:updated_time" content="2015-12-01T07:01:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HBase基础知识(9):HBase其他特性">
 <meta name="twitter:description" content="客户端API是由HTable的实例提供的，用户可以用它来操作HBase表。除了之前提到的一些主要特性外，还有以下一些值得注意的方法。">
@@ -128,7 +128,37 @@
 <figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">long</span> toLong(<span class="keyword">byte</span>[] bytes)</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">long</span> toLong(<span class="keyword">byte</span>[] bytes,<span class="keyword">int</span> offset)</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">long</span> toLong(<span class="keyword">byte</span>[] bytes,<span class="keyword">int</span> offset,<span class="keyword">int</span> length)</span><br></pre></td></tr></table></figure>
 <p>用户可以输入一个字节数组，或者一个字节数组在加一个偏移值，或者一个字节数组、一个偏移值和一个长度值。具体使用哪种方法取决于最初这个字节数组是怎么生成的。如果这个字节数组之前是由toBytes()方法生成的，用户就可以安全地使用第一种形式的方法将其转化回来，只需送入这个字节数组而不需要其他额外信息整个数组都是转换过来的值。<br>然而，API和HBase内部都把数据存储为一个较大的数组，例如使用下面的方法:</p>
 <figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> putLong(<span class="keyword">byte</span>[] bytes,<span class="keyword">int</span> offset,<span class="keyword">long</span> val)</span><br></pre></td></tr></table></figure>
-<p>这个方法允许用户把一个long值写入一个字节数组的特定偏移位置。用户可以使用后面的两种toLong()方法存取这种较大的字节数组的数据。<br>Byte类支持以下原生Java类型到字节数组的互转:String、boolean、short、int、long、double和float。如下表<br>|方法 | 描述 |<br>|:————-:|:————-:|<br>| toStringBinary()| 与toString()方法非常相似，这个方法可以安全地把不能打印的信息转换为人工可读的十六进制数。如果用户不清楚字节数组中的内容，就可以使用这个方法把内容打印出来，比如打印到控制台或日志文件中 |<br>|compareTo()/equals()|这个方法让用户可以对两个byte[]进行比较。前者返回一个比较结果，后者返回一个布尔值，表示两个数组是否相等|<br>| add()/head()/tail()|用这些方法可以把两个字节数组连接在一起形成一个新的数组，或者可以取到字节数组头或尾的一部分|<br>|binarySearch()|在用户给定的字节数组中二分查找一个目标值，该方法可以在字节数组上对用户要查找的值和键进行操作|<br>|incrementBytes()|一个long类型数据转化成的字节数组与long的数据相加并返回字节数组，用户可以使用负数参数进行减法 |</p>
+<p>这个方法允许用户把一个long值写入一个字节数组的特定偏移位置。用户可以使用后面的两种toLong()方法存取这种较大的字节数组的数据。<br>Byte类支持以下原生Java类型到字节数组的互转:String、boolean、short、int、long、double和float。如下表</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">toStringBinary()</td>
+<td style="text-align:center">与toString()方法非常相似，这个方法可以安全地把不能打印的信息转换为人工可读的十六进制数。如果用户不清楚字节数组中的内容，就可以使用这个方法把内容打印出来，比如打印到控制台或日志文件中</td>
+</tr>
+<tr>
+<td style="text-align:center">compareTo()/equals()</td>
+<td style="text-align:center">这个方法让用户可以对两个byte[]进行比较。前者返回一个比较结果，后者返回一个布尔值，表示两个数组是否相等</td>
+</tr>
+<tr>
+<td style="text-align:center">add()/head()/tail()</td>
+<td style="text-align:center">用这些方法可以把两个字节数组连接在一起形成一个新的数组，或者可以取到字节数组头或尾的一部分</td>
+</tr>
+<tr>
+<td style="text-align:center">binarySearch()</td>
+<td style="text-align:center">在用户给定的字节数组中二分查找一个目标值，该方法可以在字节数组上对用户要查找的值和键进行操作</td>
+</tr>
+<tr>
+<td style="text-align:center">incrementBytes()</td>
+<td style="text-align:center">一个long类型数据转化成的字节数组与long的数据相加并返回字节数组，用户可以使用负数参数进行减法</td>
+</tr>
+</tbody>
+</table>
 <p>Bytes类与Java提供的ByteBuffer类的功能有所重叠。不同的是，前者所有的操作都不需要创建一个新的实例。这是考虑到某些情况下的性能优化，因为HBase内部使用了其中许多方法并多次调用，不创建实例也就避免了许多不必要的垃圾回收</p>
   
 	</div>
