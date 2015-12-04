@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Java性能优化(5):消除过期的对象引用 | 刘兴的博客</title>
+    <title>Java性能优化(5):消除过期的对象引用 | XingLiu &#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
-    <meta name="author" content="刘兴">
+    <meta name="author" content="XingLiu">
     
 
     
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java性能优化(5):消除过期的对象引用">
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/08/31/Java性能优化-5-消除过期的对象引用/index.html">
-<meta property="og:site_name" content="刘兴的博客">
+<meta property="og:site_name" content="XingLiu 's  Blog">
 <meta property="og:description" content="当你从一种手工管理内存的语言（比如C/C++)转换到一种具有垃圾回收功能的语言的时候，作为一个苦逼的程序猿，工作这时候变得更加容易。因为当你用完了对象后，它们会自动被回收（现实中的对象可不能这样啊(ฅ&amp;gt;ω&amp;lt;*ฅ)）。当你第一次经历对象回收功能的时候，你回觉得这样有点不可思议。这很容易会让你留下这样的印象，认为自己再需要考虑内存管理的事情。然而，其实你想多了。不信来看下面简单的栈实现例子">
 <meta property="og:updated_time" content="2015-09-06T07:34:37.000Z">
 <meta name="twitter:card" content="summary">
@@ -23,7 +23,7 @@
 <meta name="twitter:description" content="当你从一种手工管理内存的语言（比如C/C++)转换到一种具有垃圾回收功能的语言的时候，作为一个苦逼的程序猿，工作这时候变得更加容易。因为当你用完了对象后，它们会自动被回收（现实中的对象可不能这样啊(ฅ&amp;gt;ω&amp;lt;*ฅ)）。当你第一次经历对象回收功能的时候，你回觉得这样有点不可思议。这很容易会让你留下这样的印象，认为自己再需要考虑内存管理的事情。然而，其实你想多了。不信来看下面简单的栈实现例子">
 
     
-    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="刘兴的博客" type="application/atom+xml">
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu &#39;s  Blog" type="application/atom+xml">
     
     
     <link rel="icon" href="/img/favicon.ico">
@@ -41,11 +41,11 @@
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="刘兴的博客" title="刘兴的博客"/></a>
+				<a href="/"><img src="/img/logo.png" alt="XingLiu &#39;s  Blog" title="XingLiu &#39;s  Blog"/></a>
 			</div>
 			
 			<div id="textlogo">
-				<h1 class="site-name"><a href="/" title="刘兴的博客">刘兴的博客</a></h1>
+				<h1 class="site-name"><a href="/" title="XingLiu &#39;s  Blog">XingLiu &#39;s  Blog</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
 			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
@@ -81,7 +81,7 @@
   </h1>
   <p class="article-author">By
        
-		<a href="/about" title="刘兴" target="_blank" itemprop="author">刘兴</a>
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
 		
   <p class="article-time">
     <time datetime="2015-08-31T01:14:48.000Z" itemprop="datePublished"> 发表于 2015-08-31</time>
@@ -305,7 +305,7 @@
         
           <li>
             
-            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="刘兴的CSDN博客">CSDN</a>
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
             
           </li>
         
