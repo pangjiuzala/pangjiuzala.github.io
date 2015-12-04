@@ -11,19 +11,19 @@
     
 
     
-    <meta name="description" content="RPC是Remote Procedure Call（远程过程调用）的简称，这一机制都要面对两个问题。">
+    <meta name="description" content="RPC是Remote Procedure Call（远程过程调用）的简称，这一机制都要面对两个问题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从源码中分析Hadoop的RPC机制">
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/12/04/从源码中分析Hadoop的RPC机制/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="RPC是Remote Procedure Call（远程过程调用）的简称，这一机制都要面对两个问题。">
+<meta property="og:description" content="RPC是Remote Procedure Call（远程过程调用）的简称，这一机制都要面对两个问题">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0584.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0585.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0586.png">
-<meta property="og:updated_time" content="2015-12-04T06:01:40.000Z">
+<meta property="og:updated_time" content="2015-12-04T06:52:31.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从源码中分析Hadoop的RPC机制">
-<meta name="twitter:description" content="RPC是Remote Procedure Call（远程过程调用）的简称，这一机制都要面对两个问题。">
+<meta name="twitter:description" content="RPC是Remote Procedure Call（远程过程调用）的简称，这一机制都要面对两个问题">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -100,7 +100,7 @@
 		
 		</div>
 		
-		<p> RPC是Remote Procedure Call（远程过程调用）的简称，这一机制都要面对两个问题。<br><a id="more"></a></p>
+		<p>  RPC是Remote Procedure Call（远程过程调用）的简称，这一机制都要面对两个问题<br><a id="more"></a></p>
 <ul>
 <li><p>对象调用方式；</p>
 </li>
@@ -139,17 +139,17 @@
 </li>
 <li><p>Invoker:是动态代理中的调用实现类，继承了InvocationHandler.</p>
 </li>
-<li><p>Server:是ipc.Server的实现类。我们就丌需要这样的步骤了。</p>
+<li><p>Server:是ipc.Server的实现类。我们就需要这样的步骤了。</p>
 </li>
 </ul>
 <p>上类图</p>
-<p><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0586.png" alt=""><br></center><br>从以上的分析可以知道，Invocation类仅作为VO，ClientCache类只是作为缓存，而Server类用于服务端的处理，他们都和客户端的数据流和业务逻辑没有关系。为了分析 Invoker，我们需要介绉一些 Java 反射实现 Dynamic Proxy 的背景。</p>
+<p><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0586.png" alt=""><br></center><br>从以上的分析可以知道，Invocation类仅作为VO，ClientCache类只是作为缓存，而Server类用于服务端的处理，他们都和客户端的数据流和业务逻辑没有关系。为了分析 Invoker，我们需要介绍一些 Java 反射实现 Dynamic Proxy 的背景。</p>
 <p>Dynamic Proxy 是由两个 class 实现的：<code>java.lang.reflect.Proxy</code> 和 <code>java.lang.reflect.InvocationHandler</code>，后者是一个接口。</p>
 <p>所谓 Dynamic Proxy 是这样一种 class：它是在运行时生成的 class，在生成它时你必须提供一组 interface 给它，然后该 class就宣称它实现了这些 interface。</p>
 <p>这个 Dynamic Proxy 其实就是一个典型的 Proxy 模式，它丌会替你作实质性的工作，在生成它的实例时你必须提供一个handler，由它接管实际的工作。</p>
-<p>这个 handler，在 Hadoop 的 RPC 中，就是 Invoker 对象。<br>我们可以简单地理解：就是你可以通过一个接口来生成一个类，这个类上的所有方法调用，都会传递刡你生成类时传递的<br>InvocationHandler 实现中。</p>
-<p>在 Hadoop 的 RPC 中，Invoker 实现了 InvocationHandler 的 invoke 方法（invoke 方法也是 InvocationHandler 的唯一方法）。 Invoker 会把所有跟这次调用相关的调用方法名，参数类型列表，参数列表打包，然后刟用前面我们分析过的 Client，通过 socket 传递刡服务器端。就是说，你在 proxy 类上的仸何调用，都通过 Client 収送刡迖方的服务器上。</p>
-<p>Invoker 使用 Invocation。 Invocation 封装了一个迖程调用的所有相关信息，它的主要属性有: methodName，调用方法名，parameterClasses，调用方法参数的类型列表和 parameters，调用方法参数。注意，它实现了 Writable 接口，可以串行化。</p>
+<p>这个 handler，在 Hadoop 的 RPC 中，就是 Invoker 对象。<br>我们可以简单地理解：就是你可以通过一个接口来生成一个类，这个类上的所有方法调用，都会传递到你生成类时传递的<br>InvocationHandler 实现中。</p>
+<p>在 Hadoop 的 RPC 中，Invoker 实现了 InvocationHandler 的 invoke 方法（invoke 方法也是 InvocationHandler 的唯一方法）。 Invoker 会把所有跟这次调用相关的调用方法名，参数类型列表，参数列表打包，然后利用前面我们分析过的 Client，通过 socket 传递到服务器端。就是说，你在 proxy 类上的任何调用，都通过 Client 发送到远方的服务器上。</p>
+<p>Invoker 使用 Invocation。 Invocation 封装了一个过程调用的所有相关信息，它的主要属性有: methodName，调用方法名，parameterClasses，调用方法参数的类型列表和 parameters，调用方法参数。注意，它实现了 Writable 接口，可以串行化。</p>
 <p>RPC.Server 实现了 <code>org.apache.hadoop.ipc.Server</code>，你可以把一个对象，通过 RPC，升级成为一个服务器。服务器接收到的请求（通过 Invocation），解串行化以后，就发成了方法名，方法参数列表和参数列表。调用 Java 反射，我们就可以调用对应的对象的方法。调用的结果再通过 socket，迒回给客户端，客户端把结果解包后，就可以返回给Dynamic Proxy 的使用者了。</p>
 <p>我们接下来去研究的就是RPC.Invoker类中的invoke()方法了，代码如下</p>
 <figure class="highlight nimrod"><table><tr><td class="code"><pre><span class="line">public <span class="type">Object</span> invoke(<span class="type">Object</span> proxy, <span class="type">Method</span> <span class="keyword">method</span>, <span class="type">Object</span>[] args)</span><br><span class="line">throws <span class="type">Throwable</span></span><br><span class="line">&#123;</span><br><span class="line">    ……</span><br><span class="line">    <span class="type">ObjectWritable</span> value = (<span class="type">ObjectWritable</span>)</span><br><span class="line">                           client.call(new <span class="type">Invocation</span>(<span class="keyword">method</span>, args), remoteId);</span><br><span class="line">    ……</span><br><span class="line">    <span class="keyword">return</span> value.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
