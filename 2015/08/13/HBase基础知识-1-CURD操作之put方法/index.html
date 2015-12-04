@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>HBase基础知识(1):CURD操作之put方法 | XingLiu &#39;s  Blog</title>
+    <title>HBase基础知识(1):CURD操作之put方法 | XingLiu&#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="XingLiu">
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="HBase基础知识(1):CURD操作之put方法">
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/08/13/HBase基础知识-1-CURD操作之put方法/index.html">
-<meta property="og:site_name" content="XingLiu 's  Blog">
+<meta property="og:site_name" content="XingLiu's  Blog">
 <meta property="og:description" content="数据库的初始基本操作被称CURD(Create,Read,Update,Delete),具体指增、查、改、删。HBase中有与之对应的一组操作。下面介绍的这些组操作可以被分为两类：一类操作用于单行，另一类操作用于多行。鉴于后面有一些内容比较复杂，我们将分开介绍着两类操作。同时，我们还会介绍一些衍生的客户端的API特性。">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0185.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0186.png">
@@ -28,7 +28,7 @@
 <meta name="twitter:description" content="数据库的初始基本操作被称CURD(Create,Read,Update,Delete),具体指增、查、改、删。HBase中有与之对应的一组操作。下面介绍的这些组操作可以被分为两类：一类操作用于单行，另一类操作用于多行。鉴于后面有一些内容比较复杂，我们将分开介绍着两类操作。同时，我们还会介绍一些衍生的客户端的API特性。">
 
     
-    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu &#39;s  Blog" type="application/atom+xml">
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
     
     
     <link rel="icon" href="/img/favicon.ico">
@@ -46,11 +46,11 @@
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="XingLiu &#39;s  Blog" title="XingLiu &#39;s  Blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
 			</div>
 			
 			<div id="textlogo">
-				<h1 class="site-name"><a href="/" title="XingLiu &#39;s  Blog">XingLiu &#39;s  Blog</a></h1>
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
 			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">

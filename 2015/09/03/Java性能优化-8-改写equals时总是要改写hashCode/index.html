@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Java性能优化(8):改写equals时总是要改写hashCode | XingLiu &#39;s  Blog</title>
+    <title>Java性能优化(8):改写equals时总是要改写hashCode | XingLiu&#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="XingLiu">
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java性能优化(8):改写equals时总是要改写hashCode">
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/09/03/Java性能优化-8-改写equals时总是要改写hashCode/index.html">
-<meta property="og:site_name" content="XingLiu 's  Blog">
+<meta property="og:site_name" content="XingLiu's  Blog">
 <meta property="og:description" content="一个很常见的错误源于没有改写hashCode方法。在每个改写了equals方法的类中，你必须也要改写hashCode方法。如果不这样做到话，就会违反Object.hashCode的通用约定，从而导致该类无法与所有基于散列值(hash)的集合类结合在一起正常运作，这样的集合类包括hashMap、HashSet和Hashtable。">
 <meta property="og:updated_time" content="2015-09-03T07:53:26.000Z">
 <meta name="twitter:card" content="summary">
@@ -23,7 +23,7 @@
 <meta name="twitter:description" content="一个很常见的错误源于没有改写hashCode方法。在每个改写了equals方法的类中，你必须也要改写hashCode方法。如果不这样做到话，就会违反Object.hashCode的通用约定，从而导致该类无法与所有基于散列值(hash)的集合类结合在一起正常运作，这样的集合类包括hashMap、HashSet和Hashtable。">
 
     
-    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu &#39;s  Blog" type="application/atom+xml">
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
     
     
     <link rel="icon" href="/img/favicon.ico">
@@ -41,11 +41,11 @@
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="XingLiu &#39;s  Blog" title="XingLiu &#39;s  Blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
 			</div>
 			
 			<div id="textlogo">
-				<h1 class="site-name"><a href="/" title="XingLiu &#39;s  Blog">XingLiu &#39;s  Blog</a></h1>
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
 			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">

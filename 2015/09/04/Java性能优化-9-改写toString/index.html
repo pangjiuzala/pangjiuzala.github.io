@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Java性能优化(9):改写toString | XingLiu &#39;s  Blog</title>
+    <title>Java性能优化(9):改写toString | XingLiu&#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="XingLiu">
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java性能优化(9):改写toString">
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/09/04/Java性能优化-9-改写toString/index.html">
-<meta property="og:site_name" content="XingLiu 's  Blog">
+<meta property="og:site_name" content="XingLiu's  Blog">
 <meta property="og:description" content="虽然java.lang.Object提供了toString方法的一个实现，但是，它返回的字符串通常并不是类的用户所期望看到的，它包含类的名字，以及一个“@”符号，接着是散列码的无符号十六进制表示，例如“phoneNumber@163b91”。toString的通用约定指出，被返回的字符串应该是一个”简洁的，且信息丰富，并且易于阅读的表达形式”。尽管“phoneNumber@163b91”算得上是简">
 <meta property="og:updated_time" content="2015-09-04T02:12:22.000Z">
 <meta name="twitter:card" content="summary">
@@ -23,7 +23,7 @@
 <meta name="twitter:description" content="虽然java.lang.Object提供了toString方法的一个实现，但是，它返回的字符串通常并不是类的用户所期望看到的，它包含类的名字，以及一个“@”符号，接着是散列码的无符号十六进制表示，例如“phoneNumber@163b91”。toString的通用约定指出，被返回的字符串应该是一个”简洁的，且信息丰富，并且易于阅读的表达形式”。尽管“phoneNumber@163b91”算得上是简">
 
     
-    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu &#39;s  Blog" type="application/atom+xml">
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
     
     
     <link rel="icon" href="/img/favicon.ico">
@@ -41,11 +41,11 @@
 <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="XingLiu &#39;s  Blog" title="XingLiu &#39;s  Blog"/></a>
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
 			</div>
 			
 			<div id="textlogo">
-				<h1 class="site-name"><a href="/" title="XingLiu &#39;s  Blog">XingLiu &#39;s  Blog</a></h1>
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
 			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
