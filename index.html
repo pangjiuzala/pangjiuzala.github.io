@@ -78,6 +78,108 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/06/Hadoop的HA机制/" title="Hadoop的HA机制" itemprop="url">Hadoop的HA机制</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-06T00:56:56.000Z" itemprop="datePublished"> 发表于 2015-12-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点<br>影响HDFS集群不可用主要包括以下两种情况</p>
+<ul>
+<li><p>类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用</p>
+</li>
+<li><p>计划内的软件或硬件升级，将导致集群在短时间范围内不可用。</p>
+</li>
+</ul>
+<p>HDFS的高可用性(HA)就可以解决上述问题，通过提供选择运行在同一集群中的一个热备的“主/备”两个冗余NameNode，允许在机器宕机或系统维护的时候，快速转移到另一个NameNode。</p>
+<h1 id="HA集群">HA集群</h1><p>一个典型的HA集群，两个单独的机器配置为NameNode，在任何时候NmaeNode处于活动状态，另一个出于待机状态，活动的NameNode负责处理集群客户端的操作，待机时仅仅作为一个Slave,保持足够的状态，如果有必要提供一个快速的故障转移。</p>
+<p>为了保持备用节点与活动节点状态的同步，需要两个节点同时访问一个共享存储设备（例如从NAS、NFS挂载）到一个目录。将有可能在未来版本中放款此限制。</p>
+<p>当活动节点对名字空间进行任何修改，它将把修改记录写到共享目录下的一个日志文件，备用节点会监听这个目录。当发现更改时，它会把修改内容同步到自己的名字空间。备用节点在故障转移时，它将保证已经读取了所有共享目录内的更改记录，保证在发生故障前的状态与活动节点保持完全一致。</p>
+<p>为了提供快速的故障转移，必须保证备用节点有最新的集群中块的位置信息，为了达到这一点，DataNode节点需要配置两个NameNode的位置，同时发送块的位置和心跳信息到两个NameNode。</p>
+<p>任何时候只有一个NameNode处于活动状态，对于HA集群的操作是至关重要的，否则两个节点之间的状态就会产生冲突、数据丢失或其他不正确的结果。为了达到这个目的，管理员必须为共享存储配置至少一个fencing方法。在宕机期间，如果不能确定之间的活动节点已经放弃活动状态，fencing进程负责中断以前的活动节点编辑存储的共享访问。这可以防止任何进一步的修改名字空间，允许新的活动节点安全地进行故障转移。</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0587.png" alt="HA架构原理图"><br></center>
+
+<p>架构解释如下</p>
+<ul>
+<li><p>只有一个NameNode是Active的，并且只有这个ActiveNameNode能提供服务，改变NameSpace。以后可以考虑让StandbyNameNode提供读服务。</p>
+</li>
+<li><p>提供手动Failover，在升级过程中，Failvoer在NameNode-DataNode之间写不变的情况下才能生效。</p>
+</li>
+<li><p>在之前的NameNode重新恢复之后，不能提供failback。</p>
+</li>
+<li><p>数据一致性比Failover更重要</p>
+</li>
+<li><p>尽量少用特殊的硬件</p>
+</li>
+<li><p>HA的设置和Failover都应该保证在两者操作错误或者配置错误的时候，不得导致数据损坏</p>
+</li>
+<li><p>NameNode的短期垃圾回收不应该触发Failover</p>
+</li>
+<li><p>DataNode会同时向NameNode Active和NameNode Standly汇报块的信息。NameNode Active和NameNode Standby通过NFS备份MetaData信息到一个磁盘上面。</p>
+</li>
+</ul>
+<h1 id="HA机制">HA机制</h1><h2 id="单点故障">单点故障</h2><ul>
+<li><p>Secondary NameNode：它不是HA，只是阶段性的合并Edits和FsImage，以缩短集群启动时间。当NameNode失效的时候，Secondray NN 无法立刻提供服务，Secondary NN甚至无法保证数据完整性。如果NN数据丢失，在上一次合并后的文件系统的改动会丢失。</p>
+</li>
+<li><p>Backup NameNode:它在内存中复制了NN的当前状态，算是Warm Standby，可仅限于此，并没有Failover等。它同样是阶段性地做CheckPoint，也无法保证数据完整性。</p>
+</li>
+<li><p>手动把name.dir指向NFS：这是安全的Cold Standby，可以保证元数据不丢失，但集群的恢复则完全靠手动</p>
+</li>
+<li><p>FaceBook AvatarNode:FaceBook有强大的运维做后盾，所以AvatarNode只是Hot Standby，并没有自动切换，当主NN失效的时候，需要管理员确认，然后手动把对外提供服务的虚拟机IP映射到Standby NN，这样做的好处是确保不会发生脑裂的场景。其某些设计思想和Hadoop 2.0里的HA非常相似，从时间上来看，Hadoop 2.0应该是借鉴了FaceBook的做法</p>
+</li>
+</ul>
+<h1 id="集群容量和集群性能">集群容量和集群性能</h1><p>单NameNode的架构使得HDFS在集群扩展性和性能上都有潜在的问题，当集群大到一定程度时后，NameNode进程使用的内存可能会达到上百GB，常用的估算公式为1GB对应1百万个块，按默认块大小计算，大概是64TB。同时，所有的元数据信息的读取和操作都需要与NNT通信，在集群规模变大后，NameNode成为性能的瓶颈。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/大数据/">大数据</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/06/Hadoop的HA机制/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/06/Hadoop的HA机制/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/04/从源码中分析Hadoop的RPC机制/" title="从源码中分析Hadoop的RPC机制" itemprop="url">从源码中分析Hadoop的RPC机制</a>
   </h1>
   <p class="article-author">By
@@ -604,65 +706,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/10/03/基于贝叶斯算法的文本分析算法/" title="基于贝叶斯算法的文本分析算法" itemprop="url">基于贝叶斯算法的文本分析算法</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-10-03T11:11:52.000Z" itemprop="datePublished"> 发表于 2015-10-03</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h1 id="基本定义">基本定义</h1><p>分类是把一个事物分到某个类别中。一个事物具有很多属性，把它的众多属性看作一个向量，即x=(x1,x2,x3,…,xn)，用x这个向量来代表这个事物，x的集合记为X，称为属性集。类别也有很多种，用集合C={c1,c2,…cm}表示。一般X和C的关系是不确定的，可以将X和C看作是随机变量，P(C|X)称为C的后验概率，与之相对的，P(C)称为C的先验概率。<br>根据贝叶斯公式，后验概率P(C|X)=P(X|C)P(C)/P(X)，但在比较不同C值的后验概率时，分母P(X)总是常数，忽略掉，后验概率P(C|X)=P(X|C)P(C)，先验概率P(C)可以通过计算训练集中属于每一个类的训练样本所占的比例，容易估计，对类条件概率P(X|C)的估计，这里我只说朴素贝叶斯分类器方法，因为朴素贝叶斯假设事物属性之间相互条件独立，P(X|C)=∏P(xi|ci)。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/10/03/基于贝叶斯算法的文本分析算法/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/算法/">算法</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/10/03/基于贝叶斯算法的文本分析算法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/10/03/基于贝叶斯算法的文本分析算法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/">下一页<span></span></a>
@@ -691,7 +734,7 @@
 			
 		
 			
-				<li><a href="/tags/大数据/" title="大数据">大数据<sup>21</sup></a></li>
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>22</sup></a></li>
 			
 		
 			
@@ -711,7 +754,7 @@
 			
 		
 			
-				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>8</sup></a></li>
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>9</sup></a></li>
 			
 		
 			
@@ -773,7 +816,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
   </div>
 
 

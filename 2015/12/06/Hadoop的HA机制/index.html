@@ -4,23 +4,45 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>基于贝叶斯算法的文本分析算法 | XingLiu&#39;s  Blog</title>
+    <title>Hadoop的HA机制 | XingLiu&#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="XingLiu">
     
 
     
-    <meta name="description" content="基本定义分类是把一个事物分到某个类别中。一个事物具有很多属性，把它的众多属性看作一个向量，即x=(x1,x2,x3,…,xn)，用x这个向量来代表这个事物，x的集合记为X，称为属性集。类别也有很多种，用集合C={c1,c2,…cm}表示。一般X和C的关系是不确定的，可以将X和C看作是随机变量，P(C|X)称为C的后验概率，与之相对的，P(C)称为C的先验概率。根据贝叶斯公式，后验概率P(C|X)=">
+    <meta name="description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况
+
+类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用
+
+计划内的软件或硬件升级，将导致集群在短时间范围内不可用。
+
+
+HDFS的高可用性(HA)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基于贝叶斯算法的文本分析算法">
-<meta property="og:url" content="http://pangjiuzala.github.io/2015/10/03/基于贝叶斯算法的文本分析算法/index.html">
+<meta property="og:title" content="Hadoop的HA机制">
+<meta property="og:url" content="http://pangjiuzala.github.io/2015/12/06/Hadoop的HA机制/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="基本定义分类是把一个事物分到某个类别中。一个事物具有很多属性，把它的众多属性看作一个向量，即x=(x1,x2,x3,…,xn)，用x这个向量来代表这个事物，x的集合记为X，称为属性集。类别也有很多种，用集合C={c1,c2,…cm}表示。一般X和C的关系是不确定的，可以将X和C看作是随机变量，P(C|X)称为C的后验概率，与之相对的，P(C)称为C的先验概率。根据贝叶斯公式，后验概率P(C|X)=">
-<meta property="og:updated_time" content="2015-10-10T02:02:21.000Z">
+<meta property="og:description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况
+
+类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用
+
+计划内的软件或硬件升级，将导致集群在短时间范围内不可用。
+
+
+HDFS的高可用性(HA)">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0587.png">
+<meta property="og:updated_time" content="2015-12-06T00:58:01.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="基于贝叶斯算法的文本分析算法">
-<meta name="twitter:description" content="基本定义分类是把一个事物分到某个类别中。一个事物具有很多属性，把它的众多属性看作一个向量，即x=(x1,x2,x3,…,xn)，用x这个向量来代表这个事物，x的集合记为X，称为属性集。类别也有很多种，用集合C={c1,c2,…cm}表示。一般X和C的关系是不确定的，可以将X和C看作是随机变量，P(C|X)称为C的后验概率，与之相对的，P(C)称为C的先验概率。根据贝叶斯公式，后验概率P(C|X)=">
+<meta name="twitter:title" content="Hadoop的HA机制">
+<meta name="twitter:description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况
+
+类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用
+
+计划内的软件或硬件升级，将导致集群在短时间范围内不可用。
+
+
+HDFS的高可用性(HA)">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -77,14 +99,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/10/03/基于贝叶斯算法的文本分析算法/" title="基于贝叶斯算法的文本分析算法" itemprop="url">基于贝叶斯算法的文本分析算法</a>
+      <a href="/2015/12/06/Hadoop的HA机制/" title="Hadoop的HA机制" itemprop="url">Hadoop的HA机制</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
 		
   <p class="article-time">
-    <time datetime="2015-10-03T11:11:52.000Z" itemprop="datePublished"> 发表于 2015-10-03</time>
+    <time datetime="2015-12-06T00:56:56.000Z" itemprop="datePublished"> 发表于 2015-12-06</time>
     
   </p>
 </header>
@@ -93,16 +115,55 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基本定义"><span class="toc-number">1.</span> <span class="toc-text">基本定义</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#文本分类过程"><span class="toc-number">2.</span> <span class="toc-text">文本分类过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多项式模型"><span class="toc-number">2.1.</span> <span class="toc-text">多项式模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#伯努利模型"><span class="toc-number">2.2.</span> <span class="toc-text">伯努利模型</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HA集群"><span class="toc-number">1.</span> <span class="toc-text">HA集群</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HA机制"><span class="toc-number">2.</span> <span class="toc-text">HA机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#单点故障"><span class="toc-number">2.1.</span> <span class="toc-text">单点故障</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#集群容量和集群性能"><span class="toc-number">3.</span> <span class="toc-text">集群容量和集群性能</span></a></li></ol>
 		
 		</div>
 		
-		<h1 id="基本定义">基本定义</h1><p>分类是把一个事物分到某个类别中。一个事物具有很多属性，把它的众多属性看作一个向量，即x=(x1,x2,x3,…,xn)，用x这个向量来代表这个事物，x的集合记为X，称为属性集。类别也有很多种，用集合C={c1,c2,…cm}表示。一般X和C的关系是不确定的，可以将X和C看作是随机变量，P(C|X)称为C的后验概率，与之相对的，P(C)称为C的先验概率。<br>根据贝叶斯公式，后验概率P(C|X)=P(X|C)P(C)/P(X)，但在比较不同C值的后验概率时，分母P(X)总是常数，忽略掉，后验概率P(C|X)=P(X|C)P(C)，先验概率P(C)可以通过计算训练集中属于每一个类的训练样本所占的比例，容易估计，对类条件概率P(X|C)的估计，这里我只说朴素贝叶斯分类器方法，因为朴素贝叶斯假设事物属性之间相互条件独立，P(X|C)=∏P(xi|ci)。<br><a id="more"></a></p>
-<h1 id="文本分类过程">文本分类过程</h1><p>例如文档：Good good study Day day up可以用一个文本特征向量来表示，x=(Good, good, study, Day, day , up)。<br>在文本分类中，假设我们有一个文档d∈X，类别c又称为标签。我们把一堆打了标签的文档集合作为训练样本，∈X×C。例如：={Beijing joins the World Trade Organization, China}对于这个只有一句话的文档，我们把它归类到 China，即打上china标签。<br>朴素贝叶斯分类器是一种有监督学习，常见有两种模型，多项式模型(Multinomial Model)即为词频型和伯努利模型(Bernoulli Model)即文档型。二者的计算粒度不一样，多项式模型以单词为粒度，伯努利模型以文件为粒度，因此二者的先验概率和类条件概率的计算方法都不同。<br>计算后验概率时，对于一个文档d，多项式模型中，只有在d中出现过的单词，才会参与后验概率计算，伯努利模型中，没有在d中出现，但是在全局单词表中出现的单词，也会参与计算，不过是作为“反方”参与的。这里暂不考虑特征抽取、为避免消除测试文档时类条件概率中有为0现象而做的取对数等问题。</p>
-<h2 id="多项式模型">多项式模型</h2><p>1）基本原理<br>在多项式模型中， 设某文档d=(t1,t2,…,tk)，tk是该文档中出现过的单词，允许重复，则<br>先验概率P(c)= 类c下单词总数/整个训练样本的单词总数<br>类条件概率P(tk|c)=(类c下单词tk在各个文档中出现过的次数之和+1)/(类c下单词总数+|V|)<br>V是训练样本的单词表（即抽取单词，单词出现多次，只算一个），|V|则表示训练样本包含多少种单词。 P(tk|c)可以看作是单词tk在证明d属于类c上提供了多大的证据，而P(c)则可以认为是类别c在整体上占多大比例(有多大可能性)。<br>2）举例<br>给定一组分好类的文本训练数据，如下：<br>docId<br>doc</p>
-<p>类别<br>| docId |doc| 类别In c=China?|<br>|:————:|:————-:|<br>|1|Chinese Beijing Chinese|yes|<br>|2|Chinese Chinese Shanghai|yes|<br>|3|Chinese Macao|yes|<br>|4|Tokyo Japan Chinese|no|<br>给定一个新样本Chinese Chinese Chinese Tokyo Japan，对其进行分类。该文本用属性向量表示为d=(Chinese, Chinese, Chinese, Tokyo, Japan)，类别集合为Y={yes, no}。<br>类yes下总共有8个单词，类no下总共有3个单词，训练样本单词总数为11，因此P(yes)=8/11, P(no)=3/11。类条件概率计算如下：<br>P(Chinese | yes)=(5+1)/(8+6)=6/14=3/7<br>P(Japan | yes)=P(Tokyo | yes)= (0+1)/(8+6)=1/14<br>P(Chinese|no)=(1+1)/(3+6)=2/9<br>P(Japan|no)=P(Tokyo| no) =(1+1)/(3+6)=2/9<br>分母中的8，是指yes类别下textc的长度，也即训练样本的单词总数，6是指训练样本有Chinese,Beijing,Shanghai, Macao, Tokyo, Japan 共6个单词，3是指no类下共有3个单词。<br>有了以上类条件概率，开始计算后验概率：<br>P(yes | d)=(3/7)3×1/14×1/14×8/11=108/184877≈0.00058417<br>P(no | d)= (2/9)3×2/9×2/9×3/11=32/216513≈0.00014780<br>比较大小，即可知道这个文档属于类别china。</p>
-<h2 id="伯努利模型">伯努利模型</h2><p>1）基本原理<br>P(c)= 类c下文件总数/整个训练样本的文件总数<br>P(tk|c)=(类c下包含单词tk的文件数+1)/(类c下单词总数+2)<br>2）举例<br>使用前面例子中的数据，模型换成伯努利模型。<br>类yes下总共有3个文件，类no下有1个文件，训练样本文件总数为11，因此P(yes)=3/4, P(Chinese | yes)=(3+1)/(3+2)=4/5，条件概率如下：<br>P(Japan | yes)=P(Tokyo | yes)=(0+1)/(3+2)=1/5<br>P(Beijing | yes)= P(Macao|yes)= P(Shanghai |yes)=(1+1)/(3+2)=2/5<br>P(Chinese|no)=(1+1)/(1+2)=2/3<br>P(Japan|no)=P(Tokyo| no) =(1+1)/(1+2)=2/3<br>P(Beijing| no)= P(Macao| no)= P(Shanghai | no)=(0+1)/(1+2)=1/3<br>有了以上类条件概率，开始计算后验概率，<br>P(yes|d)=P(yes)×P(Chinese|yes)×P(Japan|yes)×P(Tokyo|yes)×(1-P(Beijing|yes))×(1-P(Shanghai|yes))×(1-P(Macao|yes))=3/4×4/5×1/5×1/5×(1-2/5) ×(1-2/5)×(1-2/5)=81/15625≈0.005<br>P(no|d)= 1/4×2/3×2/3×2/3×(1-1/3)×(1-1/3)×(1-1/3)=16/729≈0.022<br>因此，这个文档不属于类别china。</p>
-<p>后记：文本分类是作为离散型数据的，以前糊涂是把连续型与离散型弄混一块了，朴素贝叶斯用于很多方面，数据就会有连续和离散的，连续型时可用正态分布，还可用区间，将数据的各属性分成几个区间段进行概率计算，测试时看其属性的值在哪个区间就用哪个条件概率。再有TF、TDIDF，这些只是描述事物属性时的不同计算方法，例如文本分类时，可以用单词在本文档中出现的次数描述一个文档，可以用出现还是没出现即0和1来描述，还可以用单词在本类文档中出现的次数与这个单词在剩余类出现的次数（降低此属性对某类的重要性）相结合来表述。</p>
+		<p>NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点<br>影响HDFS集群不可用主要包括以下两种情况</p>
+<ul>
+<li><p>类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用</p>
+</li>
+<li><p>计划内的软件或硬件升级，将导致集群在短时间范围内不可用。</p>
+</li>
+</ul>
+<p>HDFS的高可用性(HA)就可以解决上述问题，通过提供选择运行在同一集群中的一个热备的“主/备”两个冗余NameNode，允许在机器宕机或系统维护的时候，快速转移到另一个NameNode。</p>
+<h1 id="HA集群">HA集群</h1><p>一个典型的HA集群，两个单独的机器配置为NameNode，在任何时候NmaeNode处于活动状态，另一个出于待机状态，活动的NameNode负责处理集群客户端的操作，待机时仅仅作为一个Slave,保持足够的状态，如果有必要提供一个快速的故障转移。</p>
+<p>为了保持备用节点与活动节点状态的同步，需要两个节点同时访问一个共享存储设备（例如从NAS、NFS挂载）到一个目录。将有可能在未来版本中放款此限制。</p>
+<p>当活动节点对名字空间进行任何修改，它将把修改记录写到共享目录下的一个日志文件，备用节点会监听这个目录。当发现更改时，它会把修改内容同步到自己的名字空间。备用节点在故障转移时，它将保证已经读取了所有共享目录内的更改记录，保证在发生故障前的状态与活动节点保持完全一致。</p>
+<p>为了提供快速的故障转移，必须保证备用节点有最新的集群中块的位置信息，为了达到这一点，DataNode节点需要配置两个NameNode的位置，同时发送块的位置和心跳信息到两个NameNode。</p>
+<p>任何时候只有一个NameNode处于活动状态，对于HA集群的操作是至关重要的，否则两个节点之间的状态就会产生冲突、数据丢失或其他不正确的结果。为了达到这个目的，管理员必须为共享存储配置至少一个fencing方法。在宕机期间，如果不能确定之间的活动节点已经放弃活动状态，fencing进程负责中断以前的活动节点编辑存储的共享访问。这可以防止任何进一步的修改名字空间，允许新的活动节点安全地进行故障转移。</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0587.png" alt="HA架构原理图"><br></center>
+
+<p>架构解释如下</p>
+<ul>
+<li><p>只有一个NameNode是Active的，并且只有这个ActiveNameNode能提供服务，改变NameSpace。以后可以考虑让StandbyNameNode提供读服务。</p>
+</li>
+<li><p>提供手动Failover，在升级过程中，Failvoer在NameNode-DataNode之间写不变的情况下才能生效。</p>
+</li>
+<li><p>在之前的NameNode重新恢复之后，不能提供failback。</p>
+</li>
+<li><p>数据一致性比Failover更重要</p>
+</li>
+<li><p>尽量少用特殊的硬件</p>
+</li>
+<li><p>HA的设置和Failover都应该保证在两者操作错误或者配置错误的时候，不得导致数据损坏</p>
+</li>
+<li><p>NameNode的短期垃圾回收不应该触发Failover</p>
+</li>
+<li><p>DataNode会同时向NameNode Active和NameNode Standly汇报块的信息。NameNode Active和NameNode Standby通过NFS备份MetaData信息到一个磁盘上面。</p>
+</li>
+</ul>
+<h1 id="HA机制">HA机制</h1><h2 id="单点故障">单点故障</h2><ul>
+<li><p>Secondary NameNode：它不是HA，只是阶段性的合并Edits和FsImage，以缩短集群启动时间。当NameNode失效的时候，Secondray NN 无法立刻提供服务，Secondary NN甚至无法保证数据完整性。如果NN数据丢失，在上一次合并后的文件系统的改动会丢失。</p>
+</li>
+<li><p>Backup NameNode:它在内存中复制了NN的当前状态，算是Warm Standby，可仅限于此，并没有Failover等。它同样是阶段性地做CheckPoint，也无法保证数据完整性。</p>
+</li>
+<li><p>手动把name.dir指向NFS：这是安全的Cold Standby，可以保证元数据不丢失，但集群的恢复则完全靠手动</p>
+</li>
+<li><p>FaceBook AvatarNode:FaceBook有强大的运维做后盾，所以AvatarNode只是Hot Standby，并没有自动切换，当主NN失效的时候，需要管理员确认，然后手动把对外提供服务的虚拟机IP映射到Standby NN，这样做的好处是确保不会发生脑裂的场景。其某些设计思想和Hadoop 2.0里的HA非常相似，从时间上来看，Hadoop 2.0应该是借鉴了FaceBook的做法</p>
+</li>
+</ul>
+<h1 id="集群容量和集群性能">集群容量和集群性能</h1><p>单NameNode的架构使得HDFS在集群扩展性和性能上都有潜在的问题，当集群大到一定程度时后，NameNode进程使用的内存可能会达到上百GB，常用的估算公式为1GB对应1百万个块，按默认块大小计算，大概是64TB。同时，所有的元数据信息的读取和操作都需要与NNT通信，在集群规模变大后，NameNode成为性能的瓶颈。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -111,7 +172,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/算法/">算法</a>
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/大数据/">大数据</a>
   </div>
 
 </div>
@@ -155,19 +216,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/10/18/数据挖掘导论总结之分类技术/" title="数据挖掘导论总结之分类技术">
-  <strong>上一篇：</strong><br/>
-  <span>
-  数据挖掘导论总结之分类技术</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/09/29/初学机器学习的四种方式/"  title="初学机器学习的四种方式">
+<a href="/2015/12/04/从源码中分析Hadoop的RPC机制/"  title="从源码中分析Hadoop的RPC机制">
  <strong>下一篇：</strong><br/> 
- <span>初学机器学习的四种方式
+ <span>从源码中分析Hadoop的RPC机制
 </span>
 </a>
 </div>
@@ -176,7 +229,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/10/03/基于贝叶斯算法的文本分析算法/" data-title="基于贝叶斯算法的文本分析算法" data-url="http://pangjiuzala.github.io/2015/10/03/基于贝叶斯算法的文本分析算法/"></div>
+	<div class="ds-thread" data-thread-key="2015/12/06/Hadoop的HA机制/" data-title="Hadoop的HA机制" data-url="http://pangjiuzala.github.io/2015/12/06/Hadoop的HA机制/"></div>
 </section>
 
 
@@ -186,7 +239,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基本定义"><span class="toc-number">1.</span> <span class="toc-text">基本定义</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#文本分类过程"><span class="toc-number">2.</span> <span class="toc-text">文本分类过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多项式模型"><span class="toc-number">2.1.</span> <span class="toc-text">多项式模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#伯努利模型"><span class="toc-number">2.2.</span> <span class="toc-text">伯努利模型</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HA集群"><span class="toc-number">1.</span> <span class="toc-text">HA集群</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HA机制"><span class="toc-number">2.</span> <span class="toc-text">HA机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#单点故障"><span class="toc-number">2.1.</span> <span class="toc-text">单点故障</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#集群容量和集群性能"><span class="toc-number">3.</span> <span class="toc-text">集群容量和集群性能</span></a></li></ol>
  
   </div>
 
