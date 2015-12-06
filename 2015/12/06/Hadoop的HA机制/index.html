@@ -11,38 +11,17 @@
     
 
     
-    <meta name="description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况
-
-类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用
-
-计划内的软件或硬件升级，将导致集群在短时间范围内不可用。
-
-
-HDFS的高可用性(HA)">
+    <meta name="description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hadoop的HA机制">
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/12/06/Hadoop的HA机制/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况
-
-类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用
-
-计划内的软件或硬件升级，将导致集群在短时间范围内不可用。
-
-
-HDFS的高可用性(HA)">
+<meta property="og:description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0587.png">
-<meta property="og:updated_time" content="2015-12-06T00:58:01.000Z">
+<meta property="og:updated_time" content="2015-12-06T01:34:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop的HA机制">
-<meta name="twitter:description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况
-
-类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用
-
-计划内的软件或硬件升级，将导致集群在短时间范围内不可用。
-
-
-HDFS的高可用性(HA)">
+<meta name="twitter:description" content="NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点影响HDFS集群不可用主要包括以下两种情况">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -119,7 +98,7 @@ HDFS的高可用性(HA)">
 		
 		</div>
 		
-		<p>NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点<br>影响HDFS集群不可用主要包括以下两种情况</p>
+		<p>NameNode是HDFS集群的单点故障，每一个集群只有一个NameNode，如果这个机器或进程不可用，整个集群就无法使用，直到重启NameNode或者新启动一个NameNode节点<br>影响HDFS集群不可用主要包括以下两种情况<br><a id="more"></a></p>
 <ul>
 <li><p>类似机器宕机这样的意外情况将导致集群不可用，只有重启NameNode之后才可使用</p>
 </li>
