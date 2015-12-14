@@ -78,29 +78,46 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/12/14/手动编写一个tomcat服务器/" title="手动编写一个tomcat服务器" itemprop="url">手动编写一个tomcat服务器</a>
+      <a href="/2015/12/14/Hadoop环境共享/" title="Hadoop环境共享" itemprop="url">Hadoop环境共享</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
 		
   <p class="article-time">
-    <time datetime="2015-12-14T01:37:18.000Z" itemprop="datePublished"> 发表于 2015-12-14</time>
+    <time datetime="2015-12-14T01:50:14.000Z" itemprop="datePublished"> 发表于 2015-12-14</time>
     
   </p>
 </header>
     <div class="article-content">
         
-        <p>这篇博文来自于《how tomcat works》一书的第一章</p>
-<p>我们的服务器程序由下列三个类组成：</p>
-<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">HttpServer<span class="class">.java</span></span><br><span class="line"></span><br><span class="line">Request<span class="class">.java</span></span><br><span class="line"></span><br><span class="line">Response.java</span><br></pre></td></tr></table></figure>
-<p>HttpServer.java是程序的入口。它的main方法创建了一个HttpServer的实例，然后调用它的await方法，此方法等待客户端的</p>
-<p>HTTP请求，处理请求，把响应传回客户端。此服务器程序只能处理静态的资源，如HTML文件和图片文件。<br>
+        <p><a href="http://pan.baidu.com/s/1kUkhY9T" target="_blank" rel="external"><strong>虚拟机镜像链接</strong></a></p>
+<p>1.下载解压后直接用VMVare打开（有点大，7个多G)</p>
+<p>2.虚拟机登录密码为liu</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0606.png" alt="登录示意"><br></center>
+
+
+<p>3.打开终端，输入:su 然后输入密码：liu，hadoop有关软件均在 /opt目录下,都可以运行</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0607.png" alt="登录示意"><br></center>
+
+<p>4.vim /etc/hosts，配置内容如下图</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0611.png" alt=""><br></center>
+
+<p>5.vim /etc/profile，配置内容如下图，可以配置版本为hadoop 2.6.0</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0610.png" alt=""><br></center>
+
+<p>6.<a href="http://blog.csdn.net/pangjiuzala/article/details/50128899" target="_blank" rel="external"><strong>使用步骤</strong></a></p>
+<p>7.数据挖掘框架mahout启动，具体使用网上都有教程</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0608.png" alt=""><br></center>
+
+
+
+
+
+
         
         
         <p class="article-more-link">
-          
-            <a href="/2015/12/14/手动编写一个tomcat服务器/#more">阅读更多</a>
           
        </p>
     </div>
@@ -110,7 +127,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/java/">java</a><a href="/tags/tomcat/">tomcat</a>
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/大数据/">大数据</a>
   </div>
 
 </div>
@@ -121,7 +138,7 @@
 <div class="comments-count">
 	
 	  	<span></span>
-		<a href="/2015/12/14/手动编写一个tomcat服务器/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/14/手动编写一个tomcat服务器/" data-count-type="comments">&nbsp;</a>
+		<a href="/2015/12/14/Hadoop环境共享/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/14/Hadoop环境共享/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
@@ -694,7 +711,7 @@
 			
 		
 			
-				<li><a href="/tags/大数据/" title="大数据">大数据<sup>23</sup></a></li>
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>24</sup></a></li>
 			
 		
 			
@@ -710,11 +727,11 @@
 			
 		
 			
-				<li><a href="/tags/算法/" title="算法">算法<sup>10</sup></a></li>
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>9</sup></a></li>
+				<li><a href="/tags/算法/" title="算法">算法<sup>10</sup></a></li>
 			
 		
 			
@@ -776,7 +793,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
   </div>
 
 

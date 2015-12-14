@@ -4,52 +4,76 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>openHAB简介 | XingLiu&#39;s  Blog</title>
+    <title>Hadoop环境共享 | XingLiu&#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="XingLiu">
     
 
     
-    <meta name="description" content="智能家居是当下流行趋势,相信在不久的未来,它将融入到我们生活的方方面面.openHAB全称为open Home Automation Bus，即开放式家庭自动化总线，该项目旨在为家庭自动化构建提供一个通用的集成平台。openHAB是一个纯Java打造的开源项目，完全基于OSGi（Open Service Gateway Initiative），并使用Jetty作为web服务器。Jetty和Equi">
+    <meta name="description" content="虚拟机镜像链接
+1.下载解压后直接用VMVare打开（有点大，7个多G)
+2.虚拟机登录密码为liu
+
+
+
+3.打开终端，输入:su 然后输入密码：liu，hadoop有关软件均在 /opt目录下,都可以运行
+
+
+4.vim /etc/hosts，配置内容如下图
+
+
+5.vim /etc/profile，配置内容如下图，可以配置版本为hadoop 2.6.0
+
+
+6.使用步骤
+7.数据挖掘框架ma">
 <meta property="og:type" content="article">
-<meta property="og:title" content="openHAB简介">
-<meta property="og:url" content="http://pangjiuzala.github.io/2015/07/18/openHAB简介/index.html">
+<meta property="og:title" content="Hadoop环境共享">
+<meta property="og:url" content="http://pangjiuzala.github.io/2015/12/14/Hadoop环境共享/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="智能家居是当下流行趋势,相信在不久的未来,它将融入到我们生活的方方面面.openHAB全称为open Home Automation Bus，即开放式家庭自动化总线，该项目旨在为家庭自动化构建提供一个通用的集成平台。openHAB是一个纯Java打造的开源项目，完全基于OSGi（Open Service Gateway Initiative），并使用Jetty作为web服务器。Jetty和Equi">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0001.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0002.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0003.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0004.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0005.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0006.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0007.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0008.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0009.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0010.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0011.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0012.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0013.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0014.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0015.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0016.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0017.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0018.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0019.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0020.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0021.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0022.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0023.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0024.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0025.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0026.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0027.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0028.png">
-<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0029.png">
-<meta property="og:updated_time" content="2015-08-01T07:00:30.000Z">
+<meta property="og:description" content="虚拟机镜像链接
+1.下载解压后直接用VMVare打开（有点大，7个多G)
+2.虚拟机登录密码为liu
+
+
+
+3.打开终端，输入:su 然后输入密码：liu，hadoop有关软件均在 /opt目录下,都可以运行
+
+
+4.vim /etc/hosts，配置内容如下图
+
+
+5.vim /etc/profile，配置内容如下图，可以配置版本为hadoop 2.6.0
+
+
+6.使用步骤
+7.数据挖掘框架ma">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0606.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0607.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0611.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0610.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0608.png">
+<meta property="og:updated_time" content="2015-12-14T01:51:18.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="openHAB简介">
-<meta name="twitter:description" content="智能家居是当下流行趋势,相信在不久的未来,它将融入到我们生活的方方面面.openHAB全称为open Home Automation Bus，即开放式家庭自动化总线，该项目旨在为家庭自动化构建提供一个通用的集成平台。openHAB是一个纯Java打造的开源项目，完全基于OSGi（Open Service Gateway Initiative），并使用Jetty作为web服务器。Jetty和Equi">
+<meta name="twitter:title" content="Hadoop环境共享">
+<meta name="twitter:description" content="虚拟机镜像链接
+1.下载解压后直接用VMVare打开（有点大，7个多G)
+2.虚拟机登录密码为liu
+
+
+
+3.打开终端，输入:su 然后输入密码：liu，hadoop有关软件均在 /opt目录下,都可以运行
+
+
+4.vim /etc/hosts，配置内容如下图
+
+
+5.vim /etc/profile，配置内容如下图，可以配置版本为hadoop 2.6.0
+
+
+6.使用步骤
+7.数据挖掘框架ma">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -106,14 +130,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/07/18/openHAB简介/" title="openHAB简介" itemprop="url">openHAB简介</a>
+      <a href="/2015/12/14/Hadoop环境共享/" title="Hadoop环境共享" itemprop="url">Hadoop环境共享</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
 		
   <p class="article-time">
-    <time datetime="2015-07-18T02:19:22.000Z" itemprop="datePublished"> 发表于 2015-07-18</time>
+    <time datetime="2015-12-14T01:50:14.000Z" itemprop="datePublished"> 发表于 2015-12-14</time>
     
   </p>
 </header>
@@ -126,8 +150,29 @@
 		
 		</div>
 		
-		<p>智能家居是当下流行趋势,相信在不久的未来,它将融入到我们生活的方方面面.openHAB全称为open Home Automation Bus，即开放式家庭自动化总线，该项目旨在为家庭自动化构建提供一个通用的集成平台。<br>openHAB是一个纯Java打造的开源项目，完全基于OSGi（Open Service Gateway Initiative），并使用Jetty作为web服务器。Jetty和Equinox OSGi运行时一起构成了openHAB的核心基础。<br><a id="more"></a><br>我做了一份简介PPT,并截图上传,希望对openHAB学者能有帮助.</p>
-<center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0001.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0002.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0003.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0004.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0005.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0006.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0007.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0008.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0009.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0010.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0011.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0012.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0013.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0014.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0015.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0016.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0017.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0018.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0019.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0020.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0021.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0022.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0023.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0024.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0025.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0026.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0027.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0028.png" alt=""></center><br><center><img src="http://7xiur2.com1.z0.glb.clouddn.com/0029.png" alt=""></center>
+		<p><a href="http://pan.baidu.com/s/1kUkhY9T" target="_blank" rel="external"><strong>虚拟机镜像链接</strong></a></p>
+<p>1.下载解压后直接用VMVare打开（有点大，7个多G)</p>
+<p>2.虚拟机登录密码为liu</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0606.png" alt="登录示意"><br></center>
+
+
+<p>3.打开终端，输入:su 然后输入密码：liu，hadoop有关软件均在 /opt目录下,都可以运行</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0607.png" alt="登录示意"><br></center>
+
+<p>4.vim /etc/hosts，配置内容如下图</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0611.png" alt=""><br></center>
+
+<p>5.vim /etc/profile，配置内容如下图，可以配置版本为hadoop 2.6.0</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0610.png" alt=""><br></center>
+
+<p>6.<a href="http://blog.csdn.net/pangjiuzala/article/details/50128899" target="_blank" rel="external"><strong>使用步骤</strong></a></p>
+<p>7.数据挖掘框架mahout启动，具体使用网上都有教程</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0608.png" alt=""><br></center>
+
+
+
+
+
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -136,7 +181,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/物联网/">物联网</a>
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/大数据/">大数据</a>
   </div>
 
 </div>
@@ -180,19 +225,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/07/19/孤立点挖掘算法/" title="孤立点挖掘算法">
-  <strong>上一篇：</strong><br/>
-  <span>
-  孤立点挖掘算法</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/07/17/怎样编写高质量的Java代码/"  title="怎样编写高质量的Java代码">
+<a href="/2015/12/09/TFS-Taobao-File-System-安装办法/"  title="TFS(Taobao File System)安装办法">
  <strong>下一篇：</strong><br/> 
- <span>怎样编写高质量的Java代码
+ <span>TFS(Taobao File System)安装办法
 </span>
 </a>
 </div>
@@ -201,7 +238,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/07/18/openHAB简介/" data-title="openHAB简介" data-url="http://pangjiuzala.github.io/2015/07/18/openHAB简介/"></div>
+	<div class="ds-thread" data-thread-key="2015/12/14/Hadoop环境共享/" data-title="Hadoop环境共享" data-url="http://pangjiuzala.github.io/2015/12/14/Hadoop环境共享/"></div>
 </section>
 
 
