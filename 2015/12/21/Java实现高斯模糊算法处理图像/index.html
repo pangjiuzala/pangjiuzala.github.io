@@ -11,14 +11,12 @@
     
 
     
-    <meta name="description" content="高斯模糊（英语：Gaussian Blur），也叫高斯平滑，是在Adobe Photoshop、GIMP以及Paint.NET等图像处理软件中广泛使用的处理效果，通常用它来减少图像噪声以及降低细节层次。
-注：本文参照自百度百科">
+    <meta name="description" content="高斯模糊（英语：Gaussian Blur），也叫高斯平滑，是在Adobe Photoshop、GIMP以及Paint.NET等图像处理软件中广泛使用的处理效果，通常用它来减少图像噪声以及降低细节层次。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java实现高斯模糊算法处理图像">
 <meta property="og:url" content="http://pangjiuzala.github.io/2015/12/21/Java实现高斯模糊算法处理图像/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="高斯模糊（英语：Gaussian Blur），也叫高斯平滑，是在Adobe Photoshop、GIMP以及Paint.NET等图像处理软件中广泛使用的处理效果，通常用它来减少图像噪声以及降低细节层次。
-注：本文参照自百度百科">
+<meta property="og:description" content="高斯模糊（英语：Gaussian Blur），也叫高斯平滑，是在Adobe Photoshop、GIMP以及Paint.NET等图像处理软件中广泛使用的处理效果，通常用它来减少图像噪声以及降低细节层次。">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0612.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0613.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0614.jpg">
@@ -36,11 +34,10 @@
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0625.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/a.jpg">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/test.jpg">
-<meta property="og:updated_time" content="2015-12-21T14:10:15.000Z">
+<meta property="og:updated_time" content="2015-12-21T14:13:28.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java实现高斯模糊算法处理图像">
-<meta name="twitter:description" content="高斯模糊（英语：Gaussian Blur），也叫高斯平滑，是在Adobe Photoshop、GIMP以及Paint.NET等图像处理软件中广泛使用的处理效果，通常用它来减少图像噪声以及降低细节层次。
-注：本文参照自百度百科">
+<meta name="twitter:description" content="高斯模糊（英语：Gaussian Blur），也叫高斯平滑，是在Adobe Photoshop、GIMP以及Paint.NET等图像处理软件中广泛使用的处理效果，通常用它来减少图像噪声以及降低细节层次。">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -118,7 +115,6 @@
 		</div>
 		
 		<p>高斯模糊（英语：Gaussian Blur），也叫高斯平滑，是在Adobe Photoshop、GIMP以及Paint.NET等图像处理软件中广泛使用的处理效果，通常用它来减少图像噪声以及降低细节层次。</p>
-<p>注：本文参照自百度百科</p>
 <a id="more"></a>
 <h1 id="简介">简介</h1><p>高斯模糊（Gaussian Blur）是美国Adobe图像软件公司开发的一个图像处理软件:Adobe Photoshop(系列)中的一个滤镜，具体的位置在：滤镜—模糊——高斯模糊！高斯模糊的原理中，它是根据高斯曲线调节像素色值，它是有选择地模糊图像。说得直白一点，就是高斯模糊能够把某一点周围的像素色值按高斯曲线统计起来，采用数学上加权平均的计算方法得到这条曲线的色值，最后能够留下人物的轮廓，即曲线．是指当 Adobe Photoshop 将加权平均应用于像素时生成的钟形曲线。<br>在PS中间，你应该知道所有的颜色不过都是数字，各种模糊不过都是算法。把要模糊的像素色值统计，用数学上加权平均的计算方法（高斯函数）得到色值，对范围、半径等进行模糊，大致就是高斯模糊。</p>
 <h1 id="原理">原理</h1><h2 id="周边像素的平均值">周边像素的平均值</h2><p>所谓”模糊”，可以理解成每一个像素都取周边像素的平均值。</p>
