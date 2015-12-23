@@ -4,23 +4,27 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Java性能优化(9):改写toString | XingLiu&#39;s  Blog</title>
+    <title>eclipse运行spark程序 | XingLiu&#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="XingLiu">
     
 
     
-    <meta name="description" content="虽然java.lang.Object提供了toString方法的一个实现，但是，它返回的字符串通常并不是类的用户所期望看到的，它包含类的名字，以及一个“@”符号，接着是散列码的无符号十六进制表示，例如“phoneNumber@163b91”。toString的通用约定指出，被返回的字符串应该是一个”简洁的，且信息丰富，并且易于阅读的表达形式”。尽管“phoneNumber@163b91”算得上是简">
+    <meta name="description" content="最近在学spark，尝试在Windows+Eclipse运行程序，现在分享给大家">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java性能优化(9):改写toString">
-<meta property="og:url" content="http://pangjiuzala.github.io/2015/09/04/Java性能优化-9-改写toString/index.html">
+<meta property="og:title" content="eclipse运行spark程序">
+<meta property="og:url" content="http://pangjiuzala.github.io/2015/12/23/eclipse运行spark程序/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="虽然java.lang.Object提供了toString方法的一个实现，但是，它返回的字符串通常并不是类的用户所期望看到的，它包含类的名字，以及一个“@”符号，接着是散列码的无符号十六进制表示，例如“phoneNumber@163b91”。toString的通用约定指出，被返回的字符串应该是一个”简洁的，且信息丰富，并且易于阅读的表达形式”。尽管“phoneNumber@163b91”算得上是简">
-<meta property="og:updated_time" content="2015-09-04T02:12:22.000Z">
+<meta property="og:description" content="最近在学spark，尝试在Windows+Eclipse运行程序，现在分享给大家">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0627.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0628.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0629.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0630.png">
+<meta property="og:updated_time" content="2015-12-23T13:42:42.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java性能优化(9):改写toString">
-<meta name="twitter:description" content="虽然java.lang.Object提供了toString方法的一个实现，但是，它返回的字符串通常并不是类的用户所期望看到的，它包含类的名字，以及一个“@”符号，接着是散列码的无符号十六进制表示，例如“phoneNumber@163b91”。toString的通用约定指出，被返回的字符串应该是一个”简洁的，且信息丰富，并且易于阅读的表达形式”。尽管“phoneNumber@163b91”算得上是简">
+<meta name="twitter:title" content="eclipse运行spark程序">
+<meta name="twitter:description" content="最近在学spark，尝试在Windows+Eclipse运行程序，现在分享给大家">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -77,14 +81,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/09/04/Java性能优化-9-改写toString/" title="Java性能优化(9):改写toString" itemprop="url">Java性能优化(9):改写toString</a>
+      <a href="/2015/12/23/eclipse运行spark程序/" title="eclipse运行spark程序" itemprop="url">eclipse运行spark程序</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
 		
   <p class="article-time">
-    <time datetime="2015-09-04T02:11:35.000Z" itemprop="datePublished"> 发表于 2015-09-04</time>
+    <time datetime="2015-12-23T13:40:10.000Z" itemprop="datePublished"> 发表于 2015-12-23</time>
     
   </p>
 </header>
@@ -93,20 +97,34 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目结构图"><span class="toc-number">1.</span> <span class="toc-text">项目结构图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源代码"><span class="toc-number">2.</span> <span class="toc-text">源代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#错误解决办法"><span class="toc-number">3.</span> <span class="toc-text">错误解决办法</span></a></li></ol>
 		
 		</div>
 		
-		<p>虽然java.lang.Object提供了toString方法的一个实现，但是，它返回的字符串通常并不是类的用户所期望看到的，它包含类的名字，以及一个“@”符号，接着是散列码的无符号十六进制表示，例如“phoneNumber@163b91”。toString的通用约定指出，被返回的字符串应该是一个”简洁的，且信息丰富，并且易于阅读的表达形式”。尽管“phoneNumber@163b91”算得上是简洁的和易于阅读的，但是与”(408)867-5309”比较起来，它不是信息丰富的。toString的约定进一步指出，“建议所有的子类都改写这个方法”<br><a id="more"></a></p>
-<p>虽然遵守toString的约定并不像遵守equals和hashCode的约定那么重要，但是<strong>，提供一个好的toString实现，可以使一个类用起来更加愉快。</strong>当一个对象被传递给println、字符串连接操作符(+)以及Java中的assert的时候，toString方法会被自动调用。如果你提供了一个好的toString方法，那么，要产生一个有用的诊断消息会非常容易,如下:</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">System</span><span class="class">.out</span><span class="class">.println</span>("<span class="tag">Failed</span> <span class="tag">to</span> <span class="tag">connect</span><span class="pseudo">:"+phoneNumber)</span>;</span><br></pre></td></tr></table></figure>
-<p>不管是否改写了toString方法，程序员都将会按这种方式来产生诊断消息，但是如果你没有改写toString方法的话，产生的消息也将难以理解。提供一个好的toString方法，不仅有益于这个类的实例，同样也有益于那些”包含了指向这些实例的引用”的对象，特别是集合对象。</p>
-<p>在实际应用中，toString方法应该返回对象中包含的所有令人感兴趣的信息，譬如上面的电话号码例子那样，如果对象太大，或者对象中包含的状态信息难以用字符串来表达，这样做就有点不切实际。在这样的情况下，toString应该返回一个摘要信息，比如”Manhattan white pages(1487536 listings)”或者”Thread[main,5,main]”。理想情况下，字符串应该是自描述的。</p>
-<p>在实现toString的时候，你必须要做出一个很重要的决定是，是否在文档中指定返回值的格式。对于值类，比如电话号码类、矩阵类。推荐这样做。指定格式的好处是，它可以被用做一种标准的、无二义性的、适合人阅读的对象表达形式。这种表达形式可以用输入和输出以及用在永久性的适合于人阅读的数据对象中，如XML文档。如果你指定了格式，一个好的做法同时也提供了一个相匹配的String构造函数，这样，程序员可以很容易地在对象和它的字符串表示之间来回转换。Java平台库中的许多值类都采用了这种做法，包括BigInteger、BigDecimal和绝大多数的原语类型包装类。</p>
-<p>指定toString返回值的格式也有不足之处，如果这个类已经被广泛使用了，则一旦你指定了格式，则必须始终如一的坚持这种格式。程序猿将会编写出相应的代码来解析这种字符串表示、产生字符串表示，以及把字符串表示嵌入到永久数据中。</p>
-<p>不管你是否决定指定格式，都应该在文档中明确表明你的意图。如果你要指定格式，则应该严格的这样去做，代码如下:</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"("</span> + toPaddedString(areaCode, <span class="number">3</span>) + <span class="string">")"</span></span><br><span class="line">				+ toPaddedString(exchange, <span class="number">3</span>) + <span class="string">"-"</span></span><br><span class="line">				+ toPaddedString(extension, <span class="number">4</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">toPaddedString</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">		String s = Integer.toString(i);</span><br><span class="line">		<span class="keyword">return</span> ZEROS[length - s.length()] + s;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> String[] ZEROS = &#123; <span class="string">""</span>, <span class="string">"0"</span>, <span class="string">"00"</span>, <span class="string">"000"</span>, <span class="string">"0000"</span>, <span class="string">"00000"</span>,</span><br><span class="line">			<span class="string">"000000"</span>, <span class="string">"0000000"</span>, <span class="string">"00000000"</span> &#125;;</span><br></pre></td></tr></table></figure>
-<p>无论是否指定格式，为toString返回值中包含的所有信息，提供一种编程访问途径，这总是一个好的做法。例如PhoneNumber类应该包含针对areaCode、exchange和extension的访问方法。如果不这样做的话，就迫使那些需要这些信息的程序员不得不自己去解析这些字符串。降低了程序的性能，这个过程也很容易出错，会导致系统不稳定，如果格式发生了变化，还会导致系统崩溃。如果没有提供访问这些方法，即使你已经指明了字符串的格式是可以发生变化的，字符串格式也成了事实上的API。</p>
+		<p>最近在学spark，尝试在Windows+Eclipse运行程序，现在分享给大家<br><a id="more"></a></p>
+<p>首先，你得把你要处理的文件上传带HDFS,怎么上传文件网上都有教程，此处不再赘述。</p>
+<h1 id="项目结构图">项目结构图</h1><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0627.png" alt=""><br></center>
+
+
+
+<h1 id="源代码">源代码</h1><figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.SparkContext</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.SparkContext._</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.SparkConf</span><br><span class="line"></span><br><span class="line"><span class="keyword">object</span> SimpleApp &#123;</span><br><span class="line">  def main(args: Array[String]) &#123;</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> logFile</span> = <span class="string">"hdfs://master:9000/user/root/input/file1.txt"</span> <span class="comment">// s读取hdfs上的文件</span></span><br><span class="line">    <span class="variable"><span class="keyword">val</span> conf</span> = new SparkConf().setAppName(<span class="string">"Simple Application"</span>)</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> sc</span> = new SparkContext(conf)</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> logData</span> = sc.textFile(logFile, <span class="number">2</span>).cache()</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> numAs</span> = logData.filter(line =&gt; line.contains(<span class="string">"a"</span>)).count()</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> numBs</span> = logData.filter(line =&gt; line.contains(<span class="string">"b"</span>)).count()</span><br><span class="line">    println(<span class="string">"Lines with a: %s, Lines with b: %s"</span>.format(numAs, numBs))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="错误解决办法">错误解决办法</h1><p>可能大家在运行的时候会报如下错误</p>
+<p><strong>A master URL must be set in your configuration</strong></p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0628.png" alt=""><br></center>
+
+
+<p>这是因为从提示中可以看出找不到程序运行的master，此时需要配置环境变量。</p>
+<p>传递给spark的master url可以有如下几种：</p>
+<figure class="highlight stata"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> 本地单线程</span><br><span class="line"><span class="keyword">local</span>[K] 本地多线程（指定K个内核）</span><br><span class="line"><span class="keyword">local</span>[*] 本地多线程（指定所有可用内核）</span><br><span class="line">spark:<span class="comment">//HOST:PORT 连接到指定的 Spark standalone cluster master，需要指定端口。</span></span><br><span class="line">mesos:<span class="comment">//HOST:PORT 连接到指定的 Mesos 集群，需要指定端口。</span></span><br><span class="line">yarn-client客户端模式 连接到 YARN 集群。需要配置 HADOOP_CONF_DIR。</span><br><span class="line"></span><br><span class="line">yarn-<span class="keyword">cluster</span>集群模式 连接到 YARN 集群。需要配置 HADOOP_CONF_DIR。</span><br></pre></td></tr></table></figure>
+<p>不要慌，右键单击项目 Run Configuration进行如下配置<br>输入“-Dspark.master=local”即可<br>如下图</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0629.png" alt=""><br></center>
+
+<p>点击run，运行结果如下图</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0630.png" alt=""><br></center>
+
+<p><strong>附</strong>：</p>
+<p><a href="http://pan.baidu.com/s/1dEhDgE9" target="_blank" rel="external"><strong>Scala for Eclipse</strong></a></p>
+<p><a href="https://github.com/pangjiuzala/spark.git" target="_blank" rel="external"><strong>项目源码</strong></a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -115,7 +133,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Java/">Java</a><a href="/tags/性能优化/">性能优化</a>
+  <span></span> <a href="/tags/Spark/">Spark</a><a href="/tags/大数据/">大数据</a>
   </div>
 
 </div>
@@ -159,19 +177,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/09/05/Java性能优化-10-谨慎改写clone/" title="Java性能优化(10):谨慎改写clone">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Java性能优化(10):谨慎改写clone</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/09/03/Java性能优化-8-改写equals时总是要改写hashCode/"  title="Java性能优化(8):改写equals时总是要改写hashCode">
+<a href="/2015/12/21/Java实现高斯模糊算法处理图像/"  title="Java实现高斯模糊算法处理图像">
  <strong>下一篇：</strong><br/> 
- <span>Java性能优化(8):改写equals时总是要改写hashCode
+ <span>Java实现高斯模糊算法处理图像
 </span>
 </a>
 </div>
@@ -180,7 +190,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/09/04/Java性能优化-9-改写toString/" data-title="Java性能优化(9):改写toString" data-url="http://pangjiuzala.github.io/2015/09/04/Java性能优化-9-改写toString/"></div>
+	<div class="ds-thread" data-thread-key="2015/12/23/eclipse运行spark程序/" data-title="eclipse运行spark程序" data-url="http://pangjiuzala.github.io/2015/12/23/eclipse运行spark程序/"></div>
 </section>
 
 
@@ -190,7 +200,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目结构图"><span class="toc-number">1.</span> <span class="toc-text">项目结构图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源代码"><span class="toc-number">2.</span> <span class="toc-text">源代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#错误解决办法"><span class="toc-number">3.</span> <span class="toc-text">错误解决办法</span></a></li></ol>
  
   </div>
 
