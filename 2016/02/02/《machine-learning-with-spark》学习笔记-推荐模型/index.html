@@ -4,23 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Java性能优化(3):通过私有构造函数强化不可实例化的能力 | XingLiu&#39;s  Blog</title>
+    <title>《machine learning with spark》学习笔记--推荐模型 | XingLiu&#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="XingLiu">
     
 
     
-    <meta name="description" content="有时候你可能会编写出只包含静态方法和静态域的类，这样的类有一些很不好的名声，因为有些人在面向对象的语言中滥用这样的类来编写过程化的程序。尽管如此，它们也确实有它们特有的用处，我们可以利用这种类，把操作在原语类型的值或者数组类型上的相关方法组织起来，例如java.lang.Mala或者java.util.Arrays;我们也可以把操作在实现特定接口的对象上的方法组织起来，例如java.util.Co">
+    <meta name="description" content="In this article, we will use explicit rating data, without additional user or item metadata or other information related to the user-item interactions. Hence, the features that we need as inputs are s">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java性能优化(3):通过私有构造函数强化不可实例化的能力">
-<meta property="og:url" content="http://pangjiuzala.github.io/2015/08/29/Java性能优化-3-通过私有构造函数强化不可实例化的能力/index.html">
+<meta property="og:title" content="《machine learning with spark》学习笔记--推荐模型">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/02/02/《machine-learning-with-spark》学习笔记-推荐模型/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="有时候你可能会编写出只包含静态方法和静态域的类，这样的类有一些很不好的名声，因为有些人在面向对象的语言中滥用这样的类来编写过程化的程序。尽管如此，它们也确实有它们特有的用处，我们可以利用这种类，把操作在原语类型的值或者数组类型上的相关方法组织起来，例如java.lang.Mala或者java.util.Arrays;我们也可以把操作在实现特定接口的对象上的方法组织起来，例如java.util.Co">
-<meta property="og:updated_time" content="2015-09-06T07:34:49.000Z">
+<meta property="og:description" content="In this article, we will use explicit rating data, without additional user or item metadata or other information related to the user-item interactions. Hence, the features that we need as inputs are s">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0656.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0657.png">
+<meta property="og:updated_time" content="2016-02-02T13:48:22.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java性能优化(3):通过私有构造函数强化不可实例化的能力">
-<meta name="twitter:description" content="有时候你可能会编写出只包含静态方法和静态域的类，这样的类有一些很不好的名声，因为有些人在面向对象的语言中滥用这样的类来编写过程化的程序。尽管如此，它们也确实有它们特有的用处，我们可以利用这种类，把操作在原语类型的值或者数组类型上的相关方法组织起来，例如java.lang.Mala或者java.util.Arrays;我们也可以把操作在实现特定接口的对象上的方法组织起来，例如java.util.Co">
+<meta name="twitter:title" content="《machine learning with spark》学习笔记--推荐模型">
+<meta name="twitter:description" content="In this article, we will use explicit rating data, without additional user or item metadata or other information related to the user-item interactions. Hence, the features that we need as inputs are s">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -77,14 +79,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/08/29/Java性能优化-3-通过私有构造函数强化不可实例化的能力/" title="Java性能优化(3):通过私有构造函数强化不可实例化的能力" itemprop="url">Java性能优化(3):通过私有构造函数强化不可实例化的能力</a>
+      <a href="/2016/02/02/《machine-learning-with-spark》学习笔记-推荐模型/" title="《machine learning with spark》学习笔记--推荐模型" itemprop="url">《machine learning with spark》学习笔记--推荐模型</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
 		
   <p class="article-time">
-    <time datetime="2015-08-29T12:14:48.000Z" itemprop="datePublished"> 发表于 2015-08-29</time>
+    <time datetime="2016-02-02T13:47:24.000Z" itemprop="datePublished"> 发表于 2016-02-02</time>
     
   </p>
 </header>
@@ -93,13 +95,32 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Prepare_data"><span class="toc-number">1.</span> <span class="toc-text">Prepare data</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Upload_data_to_HDFS"><span class="toc-number">2.</span> <span class="toc-text">Upload data to HDFS</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Dataset"><span class="toc-number">3.</span> <span class="toc-text">Dataset</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Training_the_recommendation_model"><span class="toc-number">4.</span> <span class="toc-text">Training the recommendation model</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Results"><span class="toc-number">5.</span> <span class="toc-text">Results</span></a></li></ol>
 		
 		</div>
 		
-		<p>有时候你可能会编写出只包含静态方法和静态域的类，这样的类有一些很不好的名声，因为有些人在面向对象的语言中滥用这样的类来编写过程化的程序。尽管如此，它们也确实有它们特有的用处，我们可以利用这种类，把操作在原语类型的值或者数组类型上的相关方法组织起来，例如java.lang.Mala或者java.util.Arrays;我们也可以把操作在实现特定接口的对象上的方法组织起来，例如java.util.Collections。我们还可以利用这种类把操作子final类上的方法组织起来，以取代扩展该类的做法。<br><a id="more"></a><br>这样的工具类不希望被实例化，对它进行实例化没有任何意义。然而，在缺少显示构造函数的情况下，编译器会自动提供一个公有的、无参数的默认构造函数。对于用户而言，这个构造函数与其他的构造函数没有任何区别，在已发行的API中常常可以看到一些被无意识地实例化的类，这样的情形并不少见。<br>企图通过将一个类做成抽象类来强制该类不可被实例化，这是行不通的。该类可以被子类化，并且该子类也可以被实例化。更进一步，这样做会误导用户，以为这种类是专门为了继承而设计的。然而，有一些简单的习惯用法可以确保一个类不可被实例化。由于只有当一个类不包含显式的构造函数的时候，编译器才会生成默认构造函数。所以，我们只要让这个类包含单个显式的私有构造函数，则它就不可被实例化了：</p>
-<figure class="highlight cs"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UtilityClass</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">UtilityClass</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>因为显式构造函数是私有的，所以在该类的外部它是不可被访问的。假设该构造函数不会被类自身从内部调用，就能保证该类永远不会被实例化，这种习惯用法有点违反直觉，好像构造函数就专门设计成不能被调用一样，神坑！所以，机智的程序员们的做法是在代码中对构造函数的作用加一些注释。<br>这种习惯用法也有副作用，它使得一个类不能被子类化。所有的构造函数都必须要调用一个可访问的超类构造函数，无论显式或者隐式地调用，在这种情形下，子类就没有可访问的构造函数来调用了。</p>
+		<p>In this article, we will use explicit rating data, without additional user or item metadata or other information related to the user-item interactions. Hence, the features that we need as inputs are simply the user IDs, movie IDs, and the ratings assigned to each user and movie pair</p>
+<a id="more"></a>
+<h1 id="Prepare_data">Prepare data</h1><p><a href="http://files.grouplens.org/datasets/%20movielens/ml-100k.zip" target="_blank" rel="external">DataSource Download</a></p>
+<h1 id="Upload_data_to_HDFS">Upload data to HDFS</h1><p>It’s easy for the programmers who are familiar to hadoop , not repeat them here, HDFS path data herein is located in<br><code>hdfs://master:9000/user/root/input/ml/</code></p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0656.png" alt=""><br></center>
+
+
+
+<h1 id="Dataset">Dataset</h1><p>We’re now ready to train our model! The other inputs required for our model are as follows:</p>
+<ul>
+<li><p>rank: This refers to the number of factors in our ALS model, that is,the number of hidden features in our low-rank approximation matrices.<br>Generally, the greater the number of factors, the better, but this has a direct impact on memory usage, both for computation and to store models for serving, particularly for large number of users or items. Hence, this is often a trade-off in real-world use cases. A rank in the range of 10 to 200 is usually reasonable.</p>
+</li>
+<li><p>iterations: This refers to the number of iterations to run. While each iteration in ALS is guaranteed to decrease the reconstruction error of the ratings matrix, ALS models will converge to a reasonably good solution after relatively few iterations. So, we don’t need to run for too many iterations in most cases (around 10 is often a good default).</p>
+</li>
+<li><p>lambda: This parameter controls the regularization of our model.<br>Thus, lambda controls over fitting. The higher the value of lambda,<br>the more is the regularization applied. What constitutes a sensible value is very dependent on the size, nature, and sparsity of the underlying data, and as with almost all machine learning models, the regularization parameter is something that should be tuned using out-of-sample test data and cross-validation approaches.</p>
+</li>
+</ul>
+<h1 id="Training_the_recommendation_model">Training the recommendation model</h1><p>Once we have extracted these simple features from our raw data, we are ready to proceed with model training; MLlib takes care of this for us. </p>
+<p>All we have to do is provide the correctly-parsed input RDD we just created as well as our chosen model parameters.</p>
+<p>Training a model on the MovieLens 100k</p>
+<p><strong>The source follows：</strong><br><figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.SparkContext</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.SparkConf</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.mllib.recommendation.ALS</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.mllib.recommendation.Rating</span><br><span class="line"></span><br><span class="line"><span class="keyword">object</span> ScalaApp &#123;</span><br><span class="line"></span><br><span class="line">  def main(args: Array[String]): <span class="typename">Unit</span> = &#123;</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> conf</span> = new SparkConf().setAppName(<span class="string">"ml Application"</span>)</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> sc</span> = new SparkContext(conf)</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> rawData</span> = sc.textFile(<span class="string">"hdfs://master:9000/user/root/input/ml/u.data"</span>)</span><br><span class="line">    <span class="comment">//print(rawData.first())</span></span><br><span class="line">    <span class="variable"><span class="keyword">val</span> rawRating</span> = rawData.map(_.split(<span class="string">"\t"</span>).take(<span class="number">3</span>))</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> ratings</span> = rawRating.map &#123;</span><br><span class="line">      case Array(user, movie, rating) =&gt; Rating(</span><br><span class="line">        user.toInt, movie.toInt, rating.toFloat)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// print(ratings.first())</span></span><br><span class="line">    <span class="comment">/*We'll use rank of 50, 10 iterations, and a lambda parameter of 0.01 to illustrate how</span><br><span class="line">to train our model:*/</span></span><br><span class="line">    <span class="variable"><span class="keyword">val</span> model</span> = ALS.train(ratings, <span class="number">50</span>, <span class="number">10</span>, <span class="number">0.01</span>)</span><br><span class="line">    <span class="comment">//print(model.userFeatures.count)</span></span><br><span class="line">    <span class="variable"><span class="keyword">val</span> predictedRating</span> = model.predict(<span class="number">789</span>, <span class="number">123</span>)</span><br><span class="line">    <span class="comment">//print(predictedRating)</span></span><br><span class="line">    <span class="variable"><span class="keyword">val</span> userId</span> = <span class="number">789</span></span><br><span class="line">    <span class="variable"><span class="keyword">val</span> K</span> = <span class="number">10</span></span><br><span class="line">    <span class="variable"><span class="keyword">val</span> topKRecs</span> = model.recommendProducts(userId, K)</span><br><span class="line">    println(topKRecs.mkString(<span class="string">"\n"</span>))</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> movies</span> = sc.textFile(<span class="string">"hdfs://master:9000/user/root/input/ml/u.item"</span>)</span><br><span class="line">    <span class="variable"><span class="keyword">val</span> titles</span> = movies.map(line =&gt; line.split(<span class="string">"\\|"</span>).take(<span class="number">2</span>)).map(array =&gt; (array(<span class="number">0</span>).toInt,</span><br><span class="line">      array(<span class="number">1</span>))).collectAsMap()</span><br><span class="line">    <span class="comment">//println(titles(123))</span></span><br><span class="line">    <span class="variable"><span class="keyword">val</span> moviesForUser</span> = ratings.keyBy(_.user).lookup(<span class="number">789</span>)</span><br><span class="line">    <span class="comment">//println(moviesForUser.size)</span></span><br><span class="line">    moviesForUser.sortBy(-_.rating).take(<span class="number">10</span>).map(rating =&gt; (titles(rating.</span><br><span class="line">      product), rating.rating)).foreach(println)</span><br><span class="line">    topKRecs.map(rating=&gt;(titles(rating.product),rating.rating)).foreach(println)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Results">Results</h1><center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0657.png" alt=" "><br></center>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -108,7 +129,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Java/">Java</a><a href="/tags/性能优化/">性能优化</a>
+  <span></span> <a href="/tags/Spark/">Spark</a><a href="/tags/机器学习/">机器学习</a>
   </div>
 
 </div>
@@ -152,19 +173,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/08/30/Java性能优化-4-避免创建重复对象/" title="Java性能优化(4):避免创建重复对象">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Java性能优化(4):避免创建重复对象</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/08/28/Java性能优化-2-使用私有构造函数强化singleton属性/"  title="Java性能优化(2):使用私有构造函数强化singleton属性">
+<a href="/2016/01/04/大数据可视化Google-Chart实现/"  title="大数据可视化Google Chart实现">
  <strong>下一篇：</strong><br/> 
- <span>Java性能优化(2):使用私有构造函数强化singleton属性
+ <span>大数据可视化Google Chart实现
 </span>
 </a>
 </div>
@@ -173,7 +186,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/08/29/Java性能优化-3-通过私有构造函数强化不可实例化的能力/" data-title="Java性能优化(3):通过私有构造函数强化不可实例化的能力" data-url="http://pangjiuzala.github.io/2015/08/29/Java性能优化-3-通过私有构造函数强化不可实例化的能力/"></div>
+	<div class="ds-thread" data-thread-key="2016/02/02/《machine-learning-with-spark》学习笔记-推荐模型/" data-title="《machine learning with spark》学习笔记--推荐模型" data-url="http://pangjiuzala.github.io/2016/02/02/《machine-learning-with-spark》学习笔记-推荐模型/"></div>
 </section>
 
 
@@ -183,7 +196,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Prepare_data"><span class="toc-number">1.</span> <span class="toc-text">Prepare data</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Upload_data_to_HDFS"><span class="toc-number">2.</span> <span class="toc-text">Upload data to HDFS</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Dataset"><span class="toc-number">3.</span> <span class="toc-text">Dataset</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Training_the_recommendation_model"><span class="toc-number">4.</span> <span class="toc-text">Training the recommendation model</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Results"><span class="toc-number">5.</span> <span class="toc-text">Results</span></a></li></ol>
  
   </div>
 
