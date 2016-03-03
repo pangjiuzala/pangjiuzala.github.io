@@ -11,27 +11,21 @@
     
 
     
-    <meta name="description" content="在⽐特币系统中， 我们⽤公钥加密创建⼀个密钥对， ⽤于控制⽐特币的获取。 密钥对包括⼀个私钥， 和由其衍⽣出的唯⼀的公钥。 公钥⽤于接收⽐特币， ⽽私钥⽤于⽐特币⽀付时的交易签名。
-公钥和私钥之间的数学关系， 使得私钥可⽤于⽣成特定消息的签名。 此签名可以在不泄露私钥的同时对公钥进⾏验证。
-⽀付⽐特币时， ⽐特币的当前所有者需要在交易中提交其公钥和签名（ 每次交易的签名都不同， 但均从同⼀个私钥⽣">
+    <meta name="description" content="在⽐特币系统中， 我们⽤公钥加密创建⼀个密钥对， ⽤于控制⽐特币的获取。 密钥对包括⼀个私钥， 和由其衍⽣出的唯⼀的公钥。 公钥⽤于接收⽐特币， ⽽私钥⽤于⽐特币⽀付时的交易签名。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Bitcoin加密技术之椭圆曲线密码学">
 <meta property="og:url" content="http://pangjiuzala.github.io/2016/03/03/Bitcoin加密技术之椭圆曲线密码学/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="在⽐特币系统中， 我们⽤公钥加密创建⼀个密钥对， ⽤于控制⽐特币的获取。 密钥对包括⼀个私钥， 和由其衍⽣出的唯⼀的公钥。 公钥⽤于接收⽐特币， ⽽私钥⽤于⽐特币⽀付时的交易签名。
-公钥和私钥之间的数学关系， 使得私钥可⽤于⽣成特定消息的签名。 此签名可以在不泄露私钥的同时对公钥进⾏验证。
-⽀付⽐特币时， ⽐特币的当前所有者需要在交易中提交其公钥和签名（ 每次交易的签名都不同， 但均从同⼀个私钥⽣">
+<meta property="og:description" content="在⽐特币系统中， 我们⽤公钥加密创建⼀个密钥对， ⽤于控制⽐特币的获取。 密钥对包括⼀个私钥， 和由其衍⽣出的唯⼀的公钥。 公钥⽤于接收⽐特币， ⽽私钥⽤于⽐特币⽀付时的交易签名。">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0658.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0659.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0667.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0665.png">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0666.png">
-<meta property="og:updated_time" content="2016-03-03T09:25:02.000Z">
+<meta property="og:updated_time" content="2016-03-03T09:28:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Bitcoin加密技术之椭圆曲线密码学">
-<meta name="twitter:description" content="在⽐特币系统中， 我们⽤公钥加密创建⼀个密钥对， ⽤于控制⽐特币的获取。 密钥对包括⼀个私钥， 和由其衍⽣出的唯⼀的公钥。 公钥⽤于接收⽐特币， ⽽私钥⽤于⽐特币⽀付时的交易签名。
-公钥和私钥之间的数学关系， 使得私钥可⽤于⽣成特定消息的签名。 此签名可以在不泄露私钥的同时对公钥进⾏验证。
-⽀付⽐特币时， ⽐特币的当前所有者需要在交易中提交其公钥和签名（ 每次交易的签名都不同， 但均从同⼀个私钥⽣">
+<meta name="twitter:description" content="在⽐特币系统中， 我们⽤公钥加密创建⼀个密钥对， ⽤于控制⽐特币的获取。 密钥对包括⼀个私钥， 和由其衍⽣出的唯⼀的公钥。 公钥⽤于接收⽐特币， ⽽私钥⽤于⽐特币⽀付时的交易签名。">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -109,6 +103,7 @@
 		</div>
 		
 		<p>在⽐特币系统中， 我们⽤公钥加密创建⼀个密钥对， ⽤于控制⽐特币的获取。 密钥对包括⼀个私钥， 和由其衍⽣出的唯⼀的公钥。 公钥⽤于接收⽐特币， ⽽私钥⽤于⽐特币⽀付时的交易签名。</p>
+<a id="more"></a>
 <p>公钥和私钥之间的数学关系， 使得私钥可⽤于⽣成特定消息的签名。 此签名可以在不泄露私钥的同时对公钥进⾏验证。</p>
 <p>⽀付⽐特币时， ⽐特币的当前所有者需要在交易中提交其公钥和签名（ 每次交易的签名都不同， 但均从同⼀个私钥⽣成） 。</p>
 <p>⽐特币⽹络中的所有⼈都可以通过所提交的公钥和签名进⾏验证， 并确认该交易是否有效， 即确认⽀付者在该时刻对所交易的⽐特币拥有所有权。</p>
