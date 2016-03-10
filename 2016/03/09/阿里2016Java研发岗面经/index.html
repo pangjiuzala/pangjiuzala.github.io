@@ -18,7 +18,7 @@
 <meta property="og:site_name" content="XingLiu's  Blog">
 <meta property="og:description" content="1.什么是 java 序列化， 如何实现 java 序列化？或者请解释 Serializable 接口 接口的作用？答：我们有时候将一个java 对象变成字节流的形式传出去或者从一个字节流中恢复成一个java 对象，例如，要将java 对象存储到硬盘或者传送给网络上的其他计算机，这个过程我们可以自己写代码去把一个java 对象变成某个格式的字节流再传输，但是，jre 本身就提供了这种支持，我们可以">
 <meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0672.png">
-<meta property="og:updated_time" content="2016-03-10T03:47:55.000Z">
+<meta property="og:updated_time" content="2016-03-10T03:58:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="阿里2016Java研发岗面经">
 <meta name="twitter:description" content="1.什么是 java 序列化， 如何实现 java 序列化？或者请解释 Serializable 接口 接口的作用？答：我们有时候将一个java 对象变成字节流的形式传出去或者从一个字节流中恢复成一个java 对象，例如，要将java 对象存储到硬盘或者传送给网络上的其他计算机，这个过程我们可以自己写代码去把一个java 对象变成某个格式的字节流再传输，但是，jre 本身就提供了这种支持，我们可以">
@@ -120,22 +120,6 @@
 <p><strong>13.list去重？</strong><br>方法一： 通过Iterator 的remove方法<br>方法二：直接将结果赋值给另一个List<br>代码见<a href="http://lhkzyz.iteye.com/blog/1682641" target="_blank" rel="external">http://lhkzyz.iteye.com/blog/1682641</a></p>
 <p><strong>14.arraylist和hashmap在内存中开销？</strong><br>ArrayList   有序集合    底层为数组     按下标查找快   增删慢    按元素查找、增删都慢<br>HashMap   无序哈希表  底层哈希表   按下标查找一般比LinkedList快   增删快跟主体大小有关 按元素查找快  增删快跟主体大小有关，越大越慢<br>HashMap是适用小数据量的快速查找、增删操作，大数量之后，由于插入和查找的内存消耗和冲突排除都会大大提高，所以大数量都不敢用hashMap</p>
 <p><strong>15.sql行转列？</strong><br>见<a href="http://my.oschina.net/boltwu/blog/508565" target="_blank" rel="external">http://my.oschina.net/boltwu/blog/508565</a></p>
-<p>底层是将你加入其中的对象进行HASH排列后在放的时候，将key和对应的value发在一起，可以随时用key找到value，所以其中如果你让如相同的key但value不同时，后者value会替换前者。详见<strong><a href="http://liaokang-java.iteye.com/blog/1098404" target="_blank" rel="external">http://liaokang-java.iteye.com/blog/1098404</a></strong><br>6.arrayList底层如何扩展的？</p>
-<figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">boolean</span> <span class="built_in">add</span>(E e) &#123;</span><br><span class="line">ensureCapacityInternal(<span class="built_in">size</span> + <span class="number">1</span>); <span class="comment">// Increments modCount!!</span></span><br><span class="line">elementData[<span class="built_in">size</span>++] = e;</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;<span class="comment">//arraylist的java底层实现</span></span><br></pre></td></tr></table></figure>
-<p>arraylist的add方法底层实际就是一个数组如果这个数组满了就将创建新数组比旧数组大的然后复制旧数组到新数组去 </p>
-<p><strong>7.谈谈Hibernate的理解，一级和二级缓存的作用，在项目中Hibernate都是怎么使用缓存的？</strong><br>Hibernate是一个开发的对象关系映射框架（ORM）。它对JDBC进行了非常对象封装，Hibernate允许程序员采用面向对象的方式来操作关系数据库。Hibernate的优点：<br>1、程序更加面向对象<br>2、提高了生产率<br>3、方便移植<br>4、无入侵性。<br>缺点：<br>1、效率比JDBC略差<br>2、不适合批量操作<br>3、只能配置一种关联关系<br>Hibernate有四种查询方式：<br>1、get、load方法，根据id号查询对象。<br>2、Hibernate query language<br>3、标准查询语言<br>4、通过sql查询<br>Hibernage工作原理：<br>1、配置hibernate对象关系映射文件、启动服务器<br>2、服务器通过实例化Configuration对象，读取hibernate.cfg.xml文件的配置内容，并根据相关的需求建好表以及表之间的映射关系。<br>3、通过实例化的Configuration对象建立SeesionFactory实例，通过SessionFactory实例创建Session对象。<br>4、通过Seesion对象完成数据库的增删改查操作。<br>Hibernate中的状态转移<br>临时状态（transient）<br>1、不处于session缓存中<br>2、数据库中没有对象记录<br>java是如何进入临时状态的：1、通过new语句创建一个对象时。2、刚调用session的delete方法时，从seesion缓存中删除一个对象时。<br>持久化状态(persisted)<br>1、处于session缓存中<br>2、持久化对象数据库中没有对象记录<br>3、seesion在特定的时刻会保存两者同步<br>java如何进入持久化状态：1、seesion的save()方法。2、seesion的load().get()方法返回的对象。3、seesion的find()方法返回的list集合中存放的对象。4、Session的update().save()方法。<br>流离状态（detached）<br>1、不再位于session缓存中<br>2、游离对象由持久化状态转变而来，数据库中还没有相应记录。<br>java如何进入流离状态：1、Session的close()。Session的evict()方法，从缓存中删除一个对象。<br>具体如下图所示： </p>
-<p>Hibernate中的缓存主要有Session缓存（一级缓存）和SessionFactory缓存（二级缓存，一般由第三方提供）。 </p>
-<p>8.谈谈你在项目中的角色？<br>9.你做过的项目模块实现？<br><strong>10.线程同步，并发操作怎么控制？</strong></p>
-<p>见：<a href="http://www.cnblogs.com/yanghuahui/p/3734565.html" target="_blank" rel="external">http://www.cnblogs.com/yanghuahui/p/3734565.html</a></p>
-<p><strong>11.servlet容器启动过程，生命周期？</strong><br>Servlet生命周期分为三个阶段：<br>　　1，初始化阶段 ：调用init()方法<br>　　2，响应客户请求阶段：调用service()方法<br>　　3，终止阶段：调用destroy()方法<br>Servlet初始化阶段：<br>　　在下列时刻Servlet容器装载Servlet：<br>　　　　1，Servlet容器启动时自动装载某些Servlet，实现它只需要在web.XML文件中的<servlet></servlet>之间添加如下代码：</p>
-<p><loadon-startup>1</loadon-startup><br>　　　　2，在Servlet容器启动后，客户首次向Servlet发送请求<br>　　　　3，Servlet类文件被更新后，重新装载Servlet<br>　　Servlet被装载后，Servlet容器创建一个Servlet实例并且调用Servlet的init()方法进行初始化。在Servlet的整个生命周期内，init()方法只被调用一次。<br>　　　　<br>Servlet工作原理：<br>　 　首先简单解释一下Servlet接收和响应客户请求的过程，首先客户发送一个请求，Servlet是调用service()方法对请求进行响应的，通过 源代码可见，service()方法中对请求的方式进行了匹配，选择调用doGet,doPost等这些方法，然后再进入对应的方法中调用逻辑层的方法， 实现对客户的响应。在Servlet接口和GenericServlet中是没有doGet,doPost等等这些方法的，HttpServlet中定义 了这些方法，但是都是返回error信息，所以，我们每次定义一个Servlet的时候，都必须实现doGet或doPost等这些方法。<br>　　每 一个自定义的Servlet都必须实现Servlet的接口，Servlet接口中定义了五个方法，其中比较重要的三个方法涉及到Servlet的生命周 期，分别是上文提到的init(),service(),destroy()方法。GenericServlet是一个通用的，不特定于任何协议的 Servlet,它实现了Servlet接口。而HttpServlet继承于GenericServlet，因此HttpServlet也实现了 Servlet接口。所以我们定义Servlet的时候只需要继承HttpServlet即可。<br>　　Servlet接口和 GenericServlet是不特定于任何协议的，而HttpServlet是特定于HTTP协议的类，所以HttpServlet中实现了 service()方法，并将请求ServletRequest,ServletResponse强转为HttpRequest和 HttpResponse。</p>
-<figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest req,ServletResponse res)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">throws</span> ServletException,IOException</span><br><span class="line"></span>&#123;</span><br><span class="line"></span><br><span class="line">HttpRequest request;</span><br><span class="line">HttpResponse response;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">req = (HttpRequest)request;</span><br><span class="line"></span><br><span class="line">res = (HttpResponse)response;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span>(ClassCastException e)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> ServletException(<span class="string">"non-HTTP request response"</span>); </span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service(request,response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码的最后调用了HTTPServlet自己的service(request,response)方法，然后根据请求去调用对应的doXXX方法，因为HttpServlet中的doXXX方法都是返回错误信息，</p>
-<figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest res,HttpServletResponse resp)</span></span><br><span class="line"><span class="keyword">throws</span> ServletException,IOException</span><br><span class="line"></span>&#123;</span><br><span class="line"></span><br><span class="line">String protocol = req.getProtocol();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(protocol.equals(<span class="string">"1.1"</span>))</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">resp.sendError(HttpServletResponse.SC.METHOD.NOT.ALLOWED,msg);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">esle</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">resp.sendError(HttpServletResponse.SC_BAD_REQUEST,msg);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>12.SQL关联关系？</strong><br>如果是 父子关系， 或者 一对多 关系<br>可以通过 创建外键的方式， 在 父表 与 子表之间， 创建一个关联关系。</p>
-<p><strong>13.list去重？</strong><br>方法一： 通过Iterator 的remove方法<br>方法二：直接将结果赋值给另一个List<br>代码见<a href="http://lhkzyz.iteye.com/blog/1682641" target="_blank" rel="external">http://lhkzyz.iteye.com/blog/1682641</a></p>
-<p><strong>14.arraylist和hashmap在内存中开销？</strong><br>ArrayList   有序集合    底层为数组     按下标查找快   增删慢    按元素查找、增删都慢<br>HashMap   无序哈希表  底层哈希表   按下标查找一般比LinkedList快   增删快跟主体大小有关 按元素查找快  增删快跟主体大小有关，越大越慢<br>HashMap是适用小数据量的快速查找、增删操作，大数量之后，由于插入和查找的内存消耗和冲突排除都会大大提高，所以大数量都不敢用hashMap</p>
-<p><strong>15.sql行转列？</strong><br>见<a href="http://my.oschina.net/boltwu/blog/508565" target="_blank" rel="external">http://my.oschina.net/boltwu/blog/508565</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -188,6 +172,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2016/03/10/Spark学习笔记（一）-Spark架构/" title="Spark学习笔记（一）--Spark架构">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Spark学习笔记（一）--Spark架构</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2016/03/08/10G数据不用框架快速去重/"  title="10G数据不用框架快速去重">
@@ -259,7 +251,7 @@
 			
 		
 			
-				<li><a href="/tags/Spark/" title="Spark">Spark<sup>6</sup></a></li>
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>7</sup></a></li>
 			
 		
 			
@@ -317,7 +309,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
   </div>
 
 
