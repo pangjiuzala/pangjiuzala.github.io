@@ -1,0 +1,648 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>10G数据不用框架快速去重 | XingLiu&#39;s  Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="XingLiu">
+    
+
+    
+    <meta name="description" content="试想一下，如果有10G数据，或者更多；怎么才能够快速地去重呢？你会说将数据导入到数据库（mysql等）进行去重，或者用java写个程序进行去重，或者用Hadoop进行处理。如果是大量的数据要写入数据库也不是一件容易的事情，首先你需要开发一个程序将数据写入数据库，然后再用数据库的select distinct或者group by进行去重。如果是一次性的工作，这种方式显得就比较笨拙了。那么有没有更好的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10G数据不用框架快速去重">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/03/08/10G数据不用框架快速去重/index.html">
+<meta property="og:site_name" content="XingLiu's  Blog">
+<meta property="og:description" content="试想一下，如果有10G数据，或者更多；怎么才能够快速地去重呢？你会说将数据导入到数据库（mysql等）进行去重，或者用java写个程序进行去重，或者用Hadoop进行处理。如果是大量的数据要写入数据库也不是一件容易的事情，首先你需要开发一个程序将数据写入数据库，然后再用数据库的select distinct或者group by进行去重。如果是一次性的工作，这种方式显得就比较笨拙了。那么有没有更好的">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0669.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0670.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0671.png">
+<meta property="og:updated_time" content="2016-03-10T03:47:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="10G数据不用框架快速去重">
+<meta name="twitter:description" content="试想一下，如果有10G数据，或者更多；怎么才能够快速地去重呢？你会说将数据导入到数据库（mysql等）进行去重，或者用java写个程序进行去重，或者用Hadoop进行处理。如果是大量的数据要写入数据库也不是一件容易的事情，首先你需要开发一个程序将数据写入数据库，然后再用数据库的select distinct或者group by进行去重。如果是一次性的工作，这种方式显得就比较笨拙了。那么有没有更好的">
+
+    
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/08/10G数据不用框架快速去重/" title="10G数据不用框架快速去重" itemprop="url">10G数据不用框架快速去重</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-08T03:36:04.000Z" itemprop="datePublished"> 发表于 2016-03-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#说明"><span class="toc-number">1.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实现思路和测试"><span class="toc-number">2.</span> <span class="toc-text">实现思路和测试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#脚本批量处理"><span class="toc-number">3.</span> <span class="toc-text">脚本批量处理</span></a></li></ol>
+		
+		</div>
+		
+		<p>试想一下，如果有10G数据，或者更多；怎么才能够快速地去重呢？你会说将数据导入到数据库（mysql等）进行去重，或者用java写个程序进行去重，或者用Hadoop进行处理。如果是大量的数据要写入数据库也不是一件容易的事情，首先你需要开发一个程序将数据写入数据库，然后再用数据库的select distinct或者group by进行去重。如果是一次性的工作，这种方式显得就比较笨拙了。那么有没有更好的办法呢？下面记录一下我是怎么从10G数据里面迅速去重的。这里采用shell脚本的方式进行处理。<br><a id="more"></a></p>
+<h1 id="说明">说明</h1><ul>
+<li><p>这10G数据分布在七八个文件中</p>
+</li>
+<li><p>文件编码格式为gb2312</p>
+</li>
+<li><p>数据格式：</p>
+</li>
+</ul>
+<figure class="highlight 1c"><table><tr><td class="code"><pre><span class="line"><span class="string">"ID"</span>,<span class="string">"已采"</span>,<span class="string">"已发"</span>,<span class="string">"内容"</span>,<span class="string">"PageUrl"</span></span><br><span class="line"><span class="string">"1"</span>,<span class="string">"1"</span>,<span class="string">"1"</span>,<span class="string">"====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span>,<span class="string">"http://www.xxx.com/"</span></span><br><span class="line"><span class="string">"1"</span>,<span class="string">"1"</span>,<span class="string">"1"</span>,<span class="string">"====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span>,<span class="string">"http://www.xxx.com/"</span></span><br><span class="line"><span class="string">"1"</span>,<span class="string">"1"</span>,<span class="string">"1"</span>,<span class="string">"====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span>,<span class="string">"http://www.xxx.com/"</span></span><br></pre></td></tr></table></figure>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0669.png" alt=""><br></center>
+
+
+<p>数据格式说明：</p>
+<ul>
+<li>上面是3行数据</li>
+<li>每行都是5个field</li>
+<li>每个field间用“,”隔开</li>
+<li>而需要的内容在第4个field（也就是内容这个field）</li>
+<li>内容field间会员用“ ==================== ”隔开<br><strong>要达到的效果：将会员信息提取出来并去重</strong></li>
+</ul>
+<h1 id="实现思路和测试">实现思路和测试</h1><p>1.由于文件编码是gb2312编码，所以第一步是将文件编码转成utf-8编码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iconv -c <span class="operator">-f</span> gb2312 -t utf-<span class="number">8</span> test.txt &gt; <span class="built_in">test</span>2.txt</span><br></pre></td></tr></table></figure>
+<p>这里我们用linux系统自带的iconv命令进行转换，-c的意思是将无法识别的字符直接忽略掉</p>
+<p>2、获取会员信息，由于是第4个field，因而我们只需要获取第四个field即可，这里采用awk命令获取</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">awk <span class="string">'BEGIN&#123; FS=",";&#125;&#123; print $4 &#125;'</span> <span class="built_in">test</span>2.txt &gt; <span class="built_in">test</span>_menber.txt</span><br></pre></td></tr></table></figure>
+<p>awk指定分隔符的方法为FS=”,”，运行后的结果如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi <span class="built_in">test</span>_menber.txt</span><br></pre></td></tr></table></figure>
+<figure class="highlight 1c"><table><tr><td class="code"><pre><span class="line"><span class="string">"内容"</span></span><br><span class="line"><span class="string">"====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span></span><br><span class="line"><span class="string">"====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span></span><br><span class="line"><span class="string">"====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||====================会员名：鬼脚七||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span></span><br></pre></td></tr></table></figure>
+<p>这里已经获取到了会员的信息；但是一行有多个会员的信息，而个数又是不固定的。因此下面是想办法一行显示一个会员</p>
+<p>3、一行显示一个会员</p>
+<p>由于会员信息间通过“====================”分割，要实现一行显示一个会员只需要将“====================”替换成换行即可。</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">sed -<span class="tag">i</span> <span class="string">"s/====================/\n/g"</span> test_menber.txt</span><br></pre></td></tr></table></figure>
+<p>查看test_menber.txt的内容</p>
+<figure class="highlight 1c"><table><tr><td class="code"><pre><span class="line">vi test_menber.txt </span><br><span class="line">  <span class="number">1</span> <span class="string">"内容"</span></span><br><span class="line">  <span class="number">2</span> <span class="string">"</span></span><br><span class="line">  <span class="number">3</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">  <span class="number">4</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">  <span class="number">5</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">  <span class="number">6</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span></span><br><span class="line">  <span class="number">7</span> <span class="string">"</span></span><br><span class="line">  <span class="number">8</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">  <span class="number">9</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">     <span class="number">10</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">     <span class="number">11</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span></span><br><span class="line">     <span class="number">12</span> <span class="string">"</span></span><br><span class="line">     <span class="number">13</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">     <span class="number">14</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">     <span class="number">15</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||</span></span><br><span class="line">     <span class="number">16</span> 会员名：鬼脚七<span class="string">||||||||||||||||||会员等级：军长第5年|||姓名：张三 |||"</span></span><br></pre></td></tr></table></figure>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0670.png" alt=""><br></center>
+
+<p>4、替换掉其他字符“””、空行和“|||”</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#将“"”替换成空字符串</span></span><br><span class="line">sed -i <span class="string">"s/\"//g"</span> <span class="built_in">test</span>_menber.txt</span><br><span class="line"><span class="comment">#删除空行</span></span><br><span class="line">sed -i <span class="string">'/^$/d'</span> <span class="built_in">test</span>_menber.txt</span><br><span class="line"><span class="comment">#将分隔符|||换成@</span></span><br><span class="line">sed -i <span class="string">"s/|||/@/g"</span> <span class="built_in">test</span>_menber.txt</span><br></pre></td></tr></table></figure>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0671.png" alt=""><br></center>
+
+<p>5、根据会员名去重</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sort -t $<span class="string">"@"</span> -k <span class="number">1</span>,<span class="number">1</span> -su <span class="built_in">test</span>_menber.txt &gt;<span class="built_in">test</span>_uniq.txt</span><br></pre></td></tr></table></figure>
+<p>-t可以指定分隔符，-k指定排序的field， -su表示稳定排序并去重</p>
+<p>查看结果</p>
+<figure class="highlight autoit"><table><tr><td class="code"><pre><span class="line">[root<span class="constant">@bogon</span> yichen]<span class="preprocessor"># more test_uniq.txt</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight mel"><table><tr><td class="code"><pre><span class="line">会员名：鬼脚七<span class="variable">@@</span><span class="variable">@@</span><span class="variable">@@</span>会员等级：军长第<span class="number">5</span>年<span class="variable">@姓</span>名：张三 @</span><br><span class="line">内容</span><br></pre></td></tr></table></figure>
+<p>思路和测试完成了，但是文件比较多，一个个文件去处理也比较麻烦。因而写个脚本去处理即可</p>
+<h1 id="脚本批量处理">脚本批量处理</h1><p>1、转换文件编码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@bogon yichen]<span class="comment"># vi iconv_shell.sh </span></span><br><span class="line"><span class="shebang">#!/bin/sh</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$#</span>"</span> != <span class="string">"2"</span> ]; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Usage: `basename <span class="variable">$0</span>` dir filter"</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$1</span></span><br><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> `find <span class="variable">$1</span> -name <span class="string">"<span class="variable">$2</span>"</span>`; <span class="keyword">do</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span>"</span></span><br><span class="line">iconv -c <span class="operator">-f</span> gb2312 -t utf8 <span class="variable">$file</span> &gt; <span class="variable">$&#123;file&#125;</span>_utf8</span><br></pre></td></tr></table></figure>
+<p>调用./iconv_shell.sh 目录 文件通配符，例如：</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">./iconv_shell<span class="class">.sh</span> ./ <span class="string">"*txt"</span></span><br></pre></td></tr></table></figure>
+<p>此时生成的文件后缀为：.txt_utf8</p>
+<p>2、提取会员信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi awk_filler.sh </span><br><span class="line"><span class="shebang">#!/bin/sh</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$#</span>"</span> != <span class="string">"2"</span> ]; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Usage: `basename <span class="variable">$0</span>` dir filter"</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> `find <span class="variable">$1</span> -name <span class="string">"<span class="variable">$2</span>"</span>`; <span class="keyword">do</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span>"</span></span><br><span class="line">awk <span class="string">'BEGIN&#123; FS=",";&#125;&#123; print $4 &#125;'</span> <span class="variable">$file</span> &gt; <span class="variable">$&#123;file&#125;</span>_menber</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>调用</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">./awk_filler<span class="class">.sh</span> ./ <span class="string">"*.txt_utf8"</span></span><br></pre></td></tr></table></figure>
+<p>此时生成的文件后缀为：.txt_utf8 _menber</p>
+<p>3、替换“ ==================== ”、“””、“|||”和换行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi sed_shell.sh </span><br><span class="line"><span class="shebang">#!/bin/sh</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$#</span>"</span> != <span class="string">"2"</span> ]; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Usage: `basename <span class="variable">$0</span>` dir filter"</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> `find <span class="variable">$1</span> -name <span class="string">"<span class="variable">$2</span>"</span>`; <span class="keyword">do</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span>"</span></span><br><span class="line">sed -i <span class="string">"s/====================/\n/g; s/\"//g; /^$/d; s/|||/@/g"</span> <span class="variable">$file</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> `find <span class="variable">$1</span> -name <span class="string">"<span class="variable">$2</span>"</span>`; <span class="keyword">do</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span>"</span></span><br><span class="line">sed -i <span class="string">"/^$/d"</span> <span class="variable">$file</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>sed支持多表达式：sed “表达式1;表达式2” filename，注意表达式之间用“;”号隔开。</p>
+<p>调用：</p>
+<figure class="highlight stata"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sh</span> ./sed_shell.<span class="keyword">sh</span> ./ <span class="string">"*.txt_utf8_menber"</span></span><br></pre></td></tr></table></figure>
+<p>替换后的文件后缀仍为txt_utf8_menber</p>
+<p>4、去重</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi uniq_shell.sh </span><br><span class="line"><span class="shebang">#!/bin/sh</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$#</span>"</span> != <span class="string">"2"</span> ]; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Usage: `basename <span class="variable">$0</span>` dir filter"</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> `find <span class="variable">$1</span> -name <span class="string">"<span class="variable">$2</span>"</span>`; <span class="keyword">do</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$file</span>"</span></span><br><span class="line">sort -t $<span class="string">"@"</span> -k <span class="number">1</span>,<span class="number">1</span> -su <span class="variable">$&#123;file&#125;</span> &gt;<span class="variable">$&#123;file&#125;</span>_uniq</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>调用：</p>
+<figure class="highlight stata"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sh</span> ./uniq_shell.<span class="keyword">sh</span> ./ <span class="string">"*.txt_utf8_menber"</span></span><br></pre></td></tr></table></figure>
+<p>最后生成去重后的文件后缀为txt_utf8_menber_uniq</p>
+<p>其实也可以放在一个shell脚本里面完成，这里就不再阐述了。想想看10G的文件用几个简单的命令就完成了去重，可见linux的强大。所以说学几个简单的linux命令还是很有必要的，这样可以大大地降低你的工作量，提高工作的效率。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/大数据/">大数据</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/03/09/阿里2016Java研发岗面经/" title="阿里2016Java研发岗面经">
+  <strong>上一篇：</strong><br/>
+  <span>
+  阿里2016Java研发岗面经</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/03/03/Bitcoin加密技术之椭圆曲线密码学/"  title="Bitcoin加密技术之椭圆曲线密码学">
+ <strong>下一篇：</strong><br/> 
+ <span>Bitcoin加密技术之椭圆曲线密码学
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/03/08/10G数据不用框架快速去重/" data-title="10G数据不用框架快速去重" data-url="http://pangjiuzala.github.io/2016/03/08/10G数据不用框架快速去重/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#说明"><span class="toc-number">1.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实现思路和测试"><span class="toc-number">2.</span> <span class="toc-text">实现思路和测试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#脚本批量处理"><span class="toc-number">3.</span> <span class="toc-text">脚本批量处理</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=2129798793&verifier=c0951e84&dpc=1"></iframe>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>31</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/性能优化/" title="性能优化">性能优化<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/移动互联网/" title="移动互联网">移动互联网<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络爬虫/" title="网络爬虫">网络爬虫<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/智慧医疗/" title="智慧医疗">智慧医疗<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tomcat/" title="tomcat">tomcat<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/爬虫/" title="爬虫">爬虫<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.changhuiyuan.com/" target="_blank" title="常惠源的博客">常惠源的博客</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="https://github.com/search?q=pangjiuzala&amp;type=Users" target="_blank" title="关注刘兴的github">关注</a>
+</div>
+
+  
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello,I&#39;m from ZjuCs! <br/>
+			The more you diligent, the more you lucky!</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Copyright@ 2015 Liuxing All rights reserved.
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"pangjiuzala"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ffeafc504b70a541dd3845d467335f367' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_null'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3Dnull' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

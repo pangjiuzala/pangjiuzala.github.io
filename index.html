@@ -78,6 +78,124 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/03/09/阿里2016Java研发岗面经/" title="阿里2016Java研发岗面经" itemprop="url">阿里2016Java研发岗面经</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-09T03:46:59.000Z" itemprop="datePublished"> 发表于 2016-03-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><strong>1.什么是 java 序列化， 如何实现 java 序列化？或者请解释 Serializable 接口 接口的作用？</strong><br>答：我们有时候将一个java 对象变成字节流的形式传出去或者从一个字节流中恢复成一个java 对象，例如，要将java 对象存储到硬盘或者传送给网络上的其他计算机，这个过程我们可以自己写代码去把一个java 对象变成某个格式的字节流再传输，但是，jre 本身就提供了这种支持，我们可以调用OutputStream的writeObject方法来做，如果要让java帮我们做，要被传输的对象必须实现serializable 接口，这样，javac 编译时就会进行特殊处理，编译的类才可以被writeObject方法操作，这就是所谓的序列化。需要被序列化的类必须实现Serializable 接口，该接口是一个mini 接口，其中没有需要实现的方法，implements Serializable只是为了标注该对象是可被序列化的。<br>例如，在web 开发中，如果对象被保存在了Session 中，tomcat 在重启时要把Session对象序列化到硬盘，这个对象就必须实现Serializable接口。如果对象要经过分布式系统进行网络传输或通过rmi 等远程调用，这就需要在网络上传输对象，被传输的对象就必须实现Serializable接口。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/03/09/阿里2016Java研发岗面经/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/面经/">面经</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/03/09/阿里2016Java研发岗面经/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/09/阿里2016Java研发岗面经/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/08/10G数据不用框架快速去重/" title="10G数据不用框架快速去重" itemprop="url">10G数据不用框架快速去重</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-08T03:36:04.000Z" itemprop="datePublished"> 发表于 2016-03-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>试想一下，如果有10G数据，或者更多；怎么才能够快速地去重呢？你会说将数据导入到数据库（mysql等）进行去重，或者用java写个程序进行去重，或者用Hadoop进行处理。如果是大量的数据要写入数据库也不是一件容易的事情，首先你需要开发一个程序将数据写入数据库，然后再用数据库的select distinct或者group by进行去重。如果是一次性的工作，这种方式显得就比较笨拙了。那么有没有更好的办法呢？下面记录一下我是怎么从10G数据里面迅速去重的。这里采用shell脚本的方式进行处理。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/03/08/10G数据不用框架快速去重/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/大数据/">大数据</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/03/08/10G数据不用框架快速去重/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/08/10G数据不用框架快速去重/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/03/03/Bitcoin加密技术之椭圆曲线密码学/" title="Bitcoin加密技术之椭圆曲线密码学" itemprop="url">Bitcoin加密技术之椭圆曲线密码学</a>
   </h1>
   <p class="article-author">By
@@ -546,124 +664,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/12/23/eclipse运行spark程序/" title="eclipse运行spark程序" itemprop="url">eclipse运行spark程序</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-12-23T13:40:10.000Z" itemprop="datePublished"> 发表于 2015-12-23</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>最近在学spark，尝试在Windows+Eclipse运行程序，现在分享给大家<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/12/23/eclipse运行spark程序/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Spark/">Spark</a><a href="/tags/大数据/">大数据</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/12/23/eclipse运行spark程序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/23/eclipse运行spark程序/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/12/21/Java实现高斯模糊算法处理图像/" title="Java实现高斯模糊算法处理图像" itemprop="url">Java实现高斯模糊算法处理图像</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-12-21T14:08:37.000Z" itemprop="datePublished"> 发表于 2015-12-21</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>高斯模糊（英语：Gaussian Blur），也叫高斯平滑，是在Adobe Photoshop、GIMP以及Paint.NET等图像处理软件中广泛使用的处理效果，通常用它来减少图像噪声以及降低细节层次。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/12/21/Java实现高斯模糊算法处理图像/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Java/">Java</a><a href="/tags/数据挖掘/">数据挖掘</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/12/21/Java实现高斯模糊算法处理图像/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/21/Java实现高斯模糊算法处理图像/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/">下一页<span></span></a>
@@ -692,7 +692,7 @@
 			
 		
 			
-				<li><a href="/tags/大数据/" title="大数据">大数据<sup>26</sup></a></li>
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
 			
 		
 			
@@ -708,11 +708,11 @@
 			
 		
 			
-				<li><a href="/tags/算法/" title="算法">算法<sup>10</sup></a></li>
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+				<li><a href="/tags/算法/" title="算法">算法<sup>10</sup></a></li>
 			
 		
 			
@@ -736,6 +736,10 @@
 			
 		
 			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
 			
 		
@@ -744,15 +748,15 @@
 			
 		
 			
-				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/云计算/" title="云计算">云计算<sup>1</sup></a></li>
+				<li><a href="/tags/智慧医疗/" title="智慧医疗">智慧医疗<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tomcat/" title="tomcat">tomcat<sup>1</sup></a></li>
 			
 		
 			
@@ -763,10 +767,6 @@
 				<li><a href="/tags/爬虫/" title="爬虫">爬虫<sup>1</sup></a></li>
 			
 		
-			
-				<li><a href="/tags/python/" title="python">python<sup>1</sup></a></li>
-			
-		
 		</ul>
 </div>
 
@@ -774,7 +774,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
   </div>
 
 
