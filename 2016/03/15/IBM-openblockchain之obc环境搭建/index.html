@@ -21,7 +21,10 @@
 <meta property="og:description" content="配置开发环境
 当前开发环境使用varant来运行一个ubuntu镜像，ubuntu中运行着docker容器。主机-&amp;gt;ubuntu-&amp;gt;docker。
 该模型可以使开发者使用它们自己喜欢的编辑器/操作系统，并且为长期开发的团队提供可控制的环境。">
-<meta property="og:updated_time" content="2016-03-16T12:27:50.000Z">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0673.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0674.png">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0675.png">
+<meta property="og:updated_time" content="2016-03-17T06:24:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="IBM openblockchain之obc环境搭建">
 <meta name="twitter:description" content="配置开发环境
@@ -117,7 +120,7 @@
 <p>（5）安装虚拟机、推荐使用全局代理。<br>在WORKSPACE/obc-dev-env 目录下执行</p>
 <figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="title">vagrant</span> up</span><br></pre></td></tr></table></figure>
 <p>在这个过程中会下载镜像及其它文件。这一过程中要保证良好的网速。由于需要下一些被墙了的包，务必使用代理。</p>
-<p>没有返回错误后，运行<br>Vagrant ssh。<br>如果返回错误，则打开virtualbox，将下载的镜像删除，重新下载。</p>
+<p>没有返回错误后，运行<br>Vagrant ssh。<br>初始密码:<strong>vagrant</strong><br>如果返回错误，则打开virtualbox，将下载的镜像删除，重新下载。</p>
 <h1 id="编译运行">编译运行</h1><p>进入ubuntu的gopath路径下，</p>
 <figure class="highlight xquery"><table><tr><td class="code"><pre><span class="line">cd <span class="variable">$GOPATH</span>/src/github.com/openblockchain/obc-peer</span><br><span class="line">go build</span><br></pre></td></tr></table></figure>
 <p>进行编译。</p>
@@ -132,6 +135,15 @@
 <p><a href="http://pan.baidu.com/s/1boxMPHH" target="_blank" rel="external">vagrant安装包</a></p>
 <p><a href="http://pan.baidu.com/s/1o74RYaA" target="_blank" rel="external">linux go 安装包</a></p>
 <p><a href="http://pan.baidu.com/s/1jGZSwPS" target="_blank" rel="external">Vagrant Virtualbox windows版</a></p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0673.png" alt="vagrant up初始化失败"><br></center>
+
+<p>出现这种错误往往是秘钥不匹配的结果，在\obc-dev-env\目录下输入vagrant up 会自动生成一个.vagrant文件，然后在.vagrant\machines\default\virtualbox下新建一个文件private_key，</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0674.png" alt=""><br></center>
+
+<p>这个其中的秘钥要和openchain镜像中的vagrant_private_key中的内容保持一致</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0675.png" alt=""><br></center>
+
+<p>具体参考:<a href="http://serverfault.com/questions/586059/vagrant-error-connection-timeout-retrying" target="_blank" rel="external">http://serverfault.com/questions/586059/vagrant-error-connection-timeout-retrying</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
