@@ -1,0 +1,583 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>IBM openblockchain学习(二)--chaincode源码分析 | XingLiu&#39;s  Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="XingLiu">
+    
+
+    
+    <meta name="description" content="openblockchain是IBM开源的blockchain项目，具体安装流程之前已经介绍过，具体请看http://blog.csdn.net/pangjiuzala/article/details/50897819。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IBM openblockchain学习(二)--chaincode源码分析">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/03/24/IBM-openblockchain学习-二-chaincode源码分析/index.html">
+<meta property="og:site_name" content="XingLiu's  Blog">
+<meta property="og:description" content="openblockchain是IBM开源的blockchain项目，具体安装流程之前已经介绍过，具体请看http://blog.csdn.net/pangjiuzala/article/details/50897819。">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0676.png">
+<meta property="og:updated_time" content="2016-03-24T13:00:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IBM openblockchain学习(二)--chaincode源码分析">
+<meta name="twitter:description" content="openblockchain是IBM开源的blockchain项目，具体安装流程之前已经介绍过，具体请看http://blog.csdn.net/pangjiuzala/article/details/50897819。">
+
+    
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/24/IBM-openblockchain学习-二-chaincode源码分析/" title="IBM openblockchain学习(二)--chaincode源码分析" itemprop="url">IBM openblockchain学习(二)--chaincode源码分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-24T12:58:04.000Z" itemprop="datePublished"> 发表于 2016-03-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#chaincode-go"><span class="toc-number">1.</span> <span class="toc-text">chaincode.go</span></a></li></ol>
+		
+		</div>
+		
+		<p>openblockchain是IBM开源的blockchain项目，具体安装流程之前已经介绍过，具体请看<a href="http://blog.csdn.net/pangjiuzala/article/details/50897819。" target="_blank" rel="external">http://blog.csdn.net/pangjiuzala/article/details/50897819。</a><br><a id="more"></a><br>解压后会发现在obc-peer根目录下出现一个main.go文件，其中主要功能是生成obc-peer命令，核心代码集中在openchain中的。接下来，将首先从chaincode代码分析开始，包含了如图下图所示的几个核心文件。</p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0676.png" alt=""><br></center>
+
+<h1 id="chaincode-go">chaincode.go</h1><p>chaincode.go位于shim包中，</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="tag">var</span> chaincodeLogger = logging.<span class="function"><span class="title">MustGetLogger</span><span class="params">(<span class="string">"chaincode"</span>)</span></span></span><br><span class="line"><span class="comment">//调用go-logging中logging库的MustGetLogger函数对shim package进行记录，相当于日志文件</span></span><br><span class="line"><span class="comment">//其中传递的参数为当前go文件</span></span><br></pre></td></tr></table></figure>
+<p>MustGetLogger位于logger.go文件中，具体代码如下</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// GetLogger 创建和返回一个基于模块名称的Logger对象</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">GetLogger</span><span class="params">(module string)</span></span> (*<span class="type">Logger</span>, error) &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;<span class="type">Logger</span>&#123;<span class="type">Module</span>: module&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MustGetLogger 与GetLogger相似，但是当logger不能被创建时会出现</span></span><br><span class="line"><span class="comment">//错乱，它简化了安全初始化全局记录器</span></span><br><span class="line"></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">MustGetLogger</span><span class="params">(module string)</span></span> *<span class="type">Logger</span> &#123;</span><br><span class="line">	logger, err := <span class="type">GetLogger</span>(module)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		panic(<span class="string">"logger: "</span> + module + <span class="string">": "</span> + err.<span class="type">Error</span>())</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> logger</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义chaincode接口，它是一个供chaincode开发者需要实现标准回调接口<br><figure class="highlight d"><table><tr><td class="code"><pre><span class="line">type Chaincode <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// run方法在每一笔交易初始化的时候被调用</span></span><br><span class="line">	Run(stub *ChaincodeStub, <span class="built_in">function</span> <span class="built_in">string</span>, args []<span class="built_in">string</span>) ([]<span class="keyword">byte</span>, error)</span><br><span class="line">	<span class="comment">// Query函数以只读方式查询chaincode状态</span></span><br><span class="line">	Query(stub *ChaincodeStub, <span class="built_in">function</span> <span class="built_in">string</span>, args []<span class="built_in">string</span>) ([]<span class="keyword">byte</span>, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>启动chaincode引导程序的入口节点</p>
+<figure class="highlight stata"><table><tr><td class="code"><pre><span class="line">func Start(<span class="keyword">cc</span> Chaincode) <span class="keyword">error</span> &#123;</span><br><span class="line">	viper.SetEnvPrefix(<span class="string">"OPENCHAIN"</span>)</span><br><span class="line">	viper.AutomaticEnv()</span><br><span class="line">	replacer := strings.NewReplacer(<span class="string">"."</span>, <span class="string">"_"</span>)</span><br><span class="line">	<span class="comment">//替换前缀为openchain的文件中的.为_</span></span><br><span class="line">	viper.SetEnvKeyReplacer(replacer)</span><br><span class="line"></span><br><span class="line">	flag.StringVar(&amp;peerAddress, <span class="string">"peer.address"</span>, <span class="string">""</span>, <span class="string">"peer address"</span>)</span><br><span class="line"></span><br><span class="line">	flag.<span class="keyword">Parse</span>()</span><br><span class="line"></span><br><span class="line">	chaincodeLogger.Debug(<span class="string">"Peer address: %s"</span>, getPeerAddress())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 使用同步检验建立与client的连接 </span></span><br><span class="line">	clientConn, <span class="keyword">err</span> := newPeerClientConnection()</span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</span><br><span class="line">		chaincodeLogger.<span class="keyword">Error</span>(fmt.Sprintf(<span class="string">"Error trying to connect to local peer: %s"</span>, <span class="keyword">err</span>))</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"Error trying to connect to local peer: %s"</span>, <span class="keyword">err</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	chaincodeLogger.Debug(<span class="string">"os.Args returns: %s"</span>, os.<span class="keyword">Args</span>)</span><br><span class="line"></span><br><span class="line">	chaincodeSupportClient := pb.NewChaincodeSupportClient(clientConn)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">err</span> = chatWithPeer(chaincodeSupportClient, <span class="keyword">cc</span>)</span><br><span class="line">	<span class="comment">//启动chiancodeSuppportClient</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">err</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取peer地址</p>
+<figure class="highlight livecodeserver"><table><tr><td class="code"><pre><span class="line">func getPeerAddress() <span class="keyword">string</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">peerAddress</span> != <span class="string">""</span> &#123;</span><br><span class="line">		<span class="constant">return</span> <span class="built_in">peerAddress</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">peerAddress</span> = viper.GetString(<span class="string">"peer.address"</span>); <span class="built_in">peerAddress</span> == <span class="string">""</span> &#123;</span><br><span class="line">	<span class="comment">	//加入被docker容器包含，返回主机地址</span></span><br><span class="line">		<span class="built_in">peerAddress</span> = <span class="string">"172.17.42.1:30303"</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="constant">return</span> <span class="built_in">peerAddress</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建peer 客户端连接</p>
+<figure class="highlight stata"><table><tr><td class="code"><pre><span class="line">func newPeerClientConnection() (*grpc.ClientConn, <span class="keyword">error</span>) &#123;</span><br><span class="line"><span class="comment">//调用google.golang.org中grpc的ClinetConn方法</span></span><br><span class="line">	<span class="keyword">var</span> opts []grpc.DialOption</span><br><span class="line">	<span class="keyword">if</span> viper.GetBool(<span class="string">"peer.tls.enabled"</span>) &#123;</span><br><span class="line"><span class="comment">//viper来源于github.com/spf13/viper，一个应用程序的配置系统</span></span><br><span class="line">		<span class="keyword">var</span> sn <span class="literal">string</span></span><br><span class="line">		<span class="keyword">if</span> viper.GetString(<span class="string">"peer.tls.server-host-override"</span>) != <span class="string">""</span> &#123;</span><br><span class="line">			sn = viper.GetString(<span class="string">"peer.tls.server-host-override"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">var</span> creds credentials.TransportAuthenticator</span><br><span class="line">		<span class="comment">//credenetials包实现了各种支持g RPC库调用的凭证</span></span><br><span class="line">		<span class="keyword">if</span> viper.GetString(<span class="string">"peer.tls.cert.file"</span>) != <span class="string">""</span> &#123;</span><br><span class="line">			<span class="keyword">var</span> <span class="keyword">err</span> <span class="keyword">error</span></span><br><span class="line">			creds, <span class="keyword">err</span> = credentials.NewClientTLSFromFile(viper.GetString(<span class="string">"peer.tls.cert.file"</span>), sn)</span><br><span class="line">			<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</span><br><span class="line">				grpclog.Fatalf(<span class="string">"Failed to create TLS credentials %v"</span>, <span class="keyword">err</span>)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			creds = credentials.NewClientTLSFromCert(nil, sn)</span><br><span class="line"><span class="comment">//NewClientTLSFromCert从客户端输入的证书中构造了TLS</span></span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">//append中grpc调用的方法在grpc根目录下下clientconn.go文件中定义方//法</span></span><br><span class="line">		opts = <span class="keyword">append</span>(opts, grpc.WithTransportCredentials(creds))</span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">///WithTransportCredentials返回配置了一个连接级别的安全凭据（例//如，TLS/ SSL）的拨号操作。</span></span><br><span class="line">	opts = <span class="keyword">append</span>(opts, grpc.WithTimeout(1*time.Second))</span><br><span class="line"><span class="comment">//WithTimeout返回配置客户端拨号超时连接的拨号操作</span></span><br><span class="line">	opts = <span class="keyword">append</span>(opts, grpc.WithBlock())</span><br><span class="line"><span class="comment">//WithBlock返回一个拨号选项，它将持续调用一个拨号块直到底层的连接已经建立。没有这一点，在后台发生将会立即返回拨打和服务器连接。</span></span><br><span class="line">	opts = <span class="keyword">append</span>(opts, grpc.WithInsecure())</span><br><span class="line">	conn, <span class="keyword">err</span> := grpc.Dial(getPeerAddress(), opts...)</span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</span><br><span class="line">		<span class="keyword">return</span> nil, <span class="keyword">err</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> conn, <span class="keyword">err</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>未完待续，这个代码各种方法库依赖较多，小编正在努力剖析中，欢迎各位大神指正</strong></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/BlockChain/">BlockChain</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/03/15/IBM-openblockchain学习-一-obc-peer环境搭建/"  title="IBM openblockchain学习(二)--obc-peer环境搭建">
+ <strong>下一篇：</strong><br/> 
+ <span>IBM openblockchain学习(二)--obc-peer环境搭建
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/03/24/IBM-openblockchain学习-二-chaincode源码分析/" data-title="IBM openblockchain学习(二)--chaincode源码分析" data-url="http://pangjiuzala.github.io/2016/03/24/IBM-openblockchain学习-二-chaincode源码分析/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#chaincode-go"><span class="toc-number">1.</span> <span class="toc-text">chaincode.go</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=2129798793&verifier=c0951e84&dpc=1"></iframe>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>31</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/性能优化/" title="性能优化">性能优化<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/移动互联网/" title="移动互联网">移动互联网<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络爬虫/" title="网络爬虫">网络爬虫<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/智慧医疗/" title="智慧医疗">智慧医疗<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/爬虫/" title="爬虫">爬虫<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.changhuiyuan.com/" target="_blank" title="常惠源的博客">常惠源的博客</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="https://github.com/search?q=pangjiuzala&amp;type=Users" target="_blank" title="关注刘兴的github">关注</a>
+</div>
+
+  
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello,I&#39;m from ZjuCs! <br/>
+			The more you diligent, the more you lucky!</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Copyright@ 2015 Liuxing All rights reserved.
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"pangjiuzala"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ffeafc504b70a541dd3845d467335f367' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_null'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3Dnull' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
