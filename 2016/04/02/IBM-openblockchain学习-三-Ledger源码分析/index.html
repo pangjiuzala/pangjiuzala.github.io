@@ -1,0 +1,626 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>IBM openblockchain学习(三)--Ledger源码分析 | XingLiu&#39;s  Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="XingLiu">
+    
+
+    
+    <meta name="description" content="Ledger是总账簿的意思，也就是blockchain中存储交易记录的部分。其代码包含如下，这块代码量大，可能分析时间会很长，希望读者耐心等待。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IBM openblockchain学习(三)--Ledger源码分析">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/04/02/IBM-openblockchain学习-三-Ledger源码分析/index.html">
+<meta property="og:site_name" content="XingLiu's  Blog">
+<meta property="og:description" content="Ledger是总账簿的意思，也就是blockchain中存储交易记录的部分。其代码包含如下，这块代码量大，可能分析时间会很长，希望读者耐心等待。">
+<meta property="og:image" content="http://7xiur2.com1.z0.glb.clouddn.com/0679.png">
+<meta property="og:updated_time" content="2016-04-02T08:17:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IBM openblockchain学习(三)--Ledger源码分析">
+<meta name="twitter:description" content="Ledger是总账簿的意思，也就是blockchain中存储交易记录的部分。其代码包含如下，这块代码量大，可能分析时间会很长，希望读者耐心等待。">
+
+    
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/04/02/IBM-openblockchain学习-三-Ledger源码分析/" title="IBM openblockchain学习(三)--Ledger源码分析" itemprop="url">IBM openblockchain学习(三)--Ledger源码分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-04-02T07:48:39.000Z" itemprop="datePublished"> 发表于 2016-04-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#blockchain"><span class="toc-number">1.</span> <span class="toc-text">blockchain</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#newBlockchain"><span class="toc-number">1.1.</span> <span class="toc-text">newBlockchain</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#startIndexer()"><span class="toc-number">1.2.</span> <span class="toc-text">startIndexer()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getLastBlock"><span class="toc-number">1.3.</span> <span class="toc-text">getLastBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getSize"><span class="toc-number">1.4.</span> <span class="toc-text">getSize</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getBlock"><span class="toc-number">1.5.</span> <span class="toc-text">getBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getBlockByHash"><span class="toc-number">1.6.</span> <span class="toc-text">getBlockByHash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransactionByUUID"><span class="toc-number">1.7.</span> <span class="toc-text">getTransactionByUUID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransactions"><span class="toc-number">1.8.</span> <span class="toc-text">getTransactions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransactionsByBlockHash"><span class="toc-number">1.9.</span> <span class="toc-text">getTransactionsByBlockHash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransaction"><span class="toc-number">1.10.</span> <span class="toc-text">getTransaction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransactionByBlockHash"><span class="toc-number">1.11.</span> <span class="toc-text">getTransactionByBlockHash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getBlockchainInfo"><span class="toc-number">1.12.</span> <span class="toc-text">getBlockchainInfo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#buildBlock"><span class="toc-number">1.13.</span> <span class="toc-text">buildBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#addPersistenceChangesForNewBlock"><span class="toc-number">1.14.</span> <span class="toc-text">addPersistenceChangesForNewBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#blockPersistenceStatus"><span class="toc-number">1.15.</span> <span class="toc-text">blockPersistenceStatus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#persistRawBlock"><span class="toc-number">1.16.</span> <span class="toc-text">persistRawBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchBlockFromDB"><span class="toc-number">1.17.</span> <span class="toc-text">fetchBlockFromDB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchTransactionFromDB"><span class="toc-number">1.18.</span> <span class="toc-text">fetchTransactionFromDB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchBlockchainSizeFromDB"><span class="toc-number">1.19.</span> <span class="toc-text">fetchBlockchainSizeFromDB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchBlockchainSizeFromSnapshot"><span class="toc-number">1.20.</span> <span class="toc-text">fetchBlockchainSizeFromSnapshot</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#String"><span class="toc-number">1.21.</span> <span class="toc-text">String</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#blockchain_indexes"><span class="toc-number">2.</span> <span class="toc-text">blockchain_indexes</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#addIndexDataForPersistence"><span class="toc-number">2.1.</span> <span class="toc-text">addIndexDataForPersistence</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getAuthorisedAddresses"><span class="toc-number">2.2.</span> <span class="toc-text">getAuthorisedAddresses</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#encodeBlockNumber"><span class="toc-number">2.3.</span> <span class="toc-text">encodeBlockNumber</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#encodeBlockNumTxIndex"><span class="toc-number">2.4.</span> <span class="toc-text">encodeBlockNumTxIndex</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#blockchain_indexes_async"><span class="toc-number">3.</span> <span class="toc-text">blockchain_indexes_async</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#createIndexesInternal"><span class="toc-number">3.1.</span> <span class="toc-text">createIndexesInternal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#indexPendingBlocks"><span class="toc-number">3.2.</span> <span class="toc-text">indexPendingBlocks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#blockIndexed"><span class="toc-number">3.3.</span> <span class="toc-text">blockIndexed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#waitForLastCommittedBlock"><span class="toc-number">3.4.</span> <span class="toc-text">waitForLastCommittedBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchLastIndexedBlockNumFromDB"><span class="toc-number">3.5.</span> <span class="toc-text">fetchLastIndexedBlockNumFromDB</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ledger"><span class="toc-number">4.</span> <span class="toc-text">ledger</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#genesis"><span class="toc-number">5.</span> <span class="toc-text">genesis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#genesis-1"><span class="toc-number">5.1.</span> <span class="toc-text">genesis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MakeGenesis"><span class="toc-number">5.1.1.</span> <span class="toc-text">MakeGenesis</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#statemgmt"><span class="toc-number">6.</span> <span class="toc-text">statemgmt</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#testutil"><span class="toc-number">7.</span> <span class="toc-text">testutil</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#util"><span class="toc-number">8.</span> <span class="toc-text">util</span></a></li></ol>
+		
+		</div>
+		
+		<p> Ledger是总账簿的意思，也就是blockchain中存储交易记录的部分。其代码包含如下，这块代码量大，可能分析时间会很长，希望读者耐心等待。<br> <a id="more"></a></p>
+<center><br><img src="http://7xiur2.com1.z0.glb.clouddn.com/0679.png" alt=""><br></center>
+
+<h1 id="blockchain">blockchain</h1><p>先看下Blockchain在内存中保存的基本信息，Blockchain中的操作不是线程安全的<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> blockchain <span class="keyword">struct</span> &#123;</span><br><span class="line">	size               <span class="typename">uint64</span>  <span class="comment">//块大小</span></span><br><span class="line">	previousBlockHash  []<span class="typename">byte</span>   <span class="comment">//上一个块的哈希</span></span><br><span class="line">	indexer            blockchainIndexer <span class="comment">//块索引</span></span><br><span class="line">	lastProcessedBlock *lastProcessedBlock  <span class="comment">//最后处理的块</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最后处理的块的结构<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">type</span> lastProcessedBlock <span class="keyword">struct </span>&#123;</span><br><span class="line">	<span class="keyword">block </span>      *protos.<span class="keyword">Block</span><br><span class="line"></span>	<span class="keyword">blockNumber </span>uint64  块号</span><br><span class="line">	<span class="keyword">blockHash </span>  []<span class="keyword">byte </span>块哈希值</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="newBlockchain">newBlockchain</h2><p>newBlockchain()用于创建一个区块<br><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">newBlockchain</span><span class="params">()</span></span> (*blockchain, error) &#123;</span><br><span class="line">	size, err := fetchBlockchainSizeFromDB()<span class="comment">//从数据库中读取blockchain的大小</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	blockchain := &amp;blockchain&#123;<span class="number">0</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>&#125;</span><br><span class="line">	blockchain.size = size</span><br><span class="line">	<span class="keyword">if</span> size &gt; <span class="number">0</span> &#123;</span><br><span class="line">		previousBlock, err := fetchBlockFromDB(size - <span class="number">1</span>)</span><br><span class="line">		<span class="comment">//如果为创世区块，则上一个块是创世区块的大小减一</span></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">		&#125;</span><br><span class="line">		previousBlockHash, err := previousBlock.<span class="type">GetHash</span>()</span><br><span class="line">		<span class="comment">//获取前驱块的哈希</span></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">		&#125;</span><br><span class="line">		blockchain.previousBlockHash = previousBlockHash</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err = blockchain.startIndexer()</span><br><span class="line">	<span class="comment">//开始创建索引</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> blockchain, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="startIndexer()">startIndexer()</h2><p>创建索引<br><figure class="highlight autoit"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(blockchain *blockchain)</span> <span class="title">startIndexer</span><span class="params">()</span> <span class="params">(err error)</span> &#123;</span></span><br><span class="line">	<span class="keyword">if</span> indexBlockDataSynchronously &#123;</span><br><span class="line">		blockchain.indexer = newBlockchainIndexerSync()</span><br><span class="line">		//同步创建区块链索引</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		blockchain.indexer = newBlockchainIndexerAsync()</span><br><span class="line">	&#125;</span><br><span class="line">	err = blockchain.indexer.start(blockchain)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="getLastBlock">getLastBlock</h2><p>getLastBlock创建最后区块</p>
+<figure class="highlight autoit"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(blockchain *blockchain)</span> <span class="title">getLastBlock</span><span class="params">()</span> <span class="params">(*protos.Block, error)</span> &#123;</span></span><br><span class="line">	<span class="keyword">if</span> blockchain.size == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> nil, nil</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> blockchain.getBlock(blockchain.size - <span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="getSize">getSize</h2><p>getSize用于返回块大小</p>
+<figure class="highlight autoit"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(blockchain *blockchain)</span> <span class="title">getSize</span><span class="params">()</span> <span class="title">uint64</span> &#123;</span></span><br><span class="line">	<span class="keyword">return</span> blockchain.size</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="getBlock">getBlock</h2><p>在blockchain中通过任意高度获取块<br><figure class="highlight autoit"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(blockchain *blockchain)</span> <span class="title">getBlock</span><span class="params">(blockNumber uint64)</span> <span class="params">(*protos.Block, error)</span> &#123;</span></span><br><span class="line">	<span class="keyword">return</span> fetchBlockFromDB(blockNumber)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="getBlockByHash">getBlockByHash</h2><p>通过块的哈希获取块</p>
+<figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">func</span> (<span class="keyword">blockchain </span>*<span class="keyword">blockchain) </span>getBlockByHash(<span class="keyword">blockHash </span>[]<span class="keyword">byte) </span>(*protos.<span class="keyword">Block, </span>error) &#123;</span><br><span class="line">	<span class="keyword">blockNumber, </span>err := <span class="keyword">blockchain.indexer.fetchBlockNumberByBlockHash(blockHash)</span><br><span class="line"></span>	<span class="preprocessor">if</span> err != nil &#123;</span><br><span class="line">		return nil, err</span><br><span class="line">	&#125;</span><br><span class="line">	return <span class="keyword">blockchain.getBlock(blockNumber)</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="getTransactionByUUID">getTransactionByUUID</h2><p>通过UUID获取交易记录<br><figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line">func (blockchain *blockchain) getTransactionByU<span class="built_in">UID</span>(txU<span class="built_in">UID</span> string) (*protos<span class="variable">.Transaction</span>, error) &#123;</span><br><span class="line">	blockNumber, txIndex, err := blockchain<span class="variable">.indexer</span><span class="variable">.fetchTransactionIndexByUUID</span>(txU<span class="built_in">UID</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	block, err := blockchain<span class="variable">.getBlock</span>(blockNumber)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	transaction := block<span class="variable">.GetTransactions</span>()[txIndex]</span><br><span class="line">	<span class="keyword">return</span> transaction, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="getTransactions">getTransactions</h2><p>通过有块号标识的块获取所有的交易<br><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="params">(blockchain *blockchain)</span></span> getTransactions(blockNumber uint64) ([]*protos.<span class="type">Transaction</span>, error) &#123;</span><br><span class="line">	block, err := blockchain.getBlock(blockNumber)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> block.<span class="type">GetTransactions</span>(), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="getTransactionsByBlockHash">getTransactionsByBlockHash</h2><p>通过块的哈希获取所有的交易<br><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="params">(blockchain *blockchain)</span></span> getTransactionsByBlockHash(blockHash []byte) ([]*protos.<span class="type">Transaction</span>, error) &#123;</span><br><span class="line">	block, err := blockchain.getBlockByHash(blockHash)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> block.<span class="type">GetTransactions</span>(), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="getTransaction">getTransaction</h2><p>通过数块和确定块内索引获取交易</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> (blockchain *blockchain) getTransaction(blockNumber <span class="typename">uint64</span>, txIndex <span class="typename">uint64</span>) (*protos.Transaction, error) &#123;</span><br><span class="line">	block, err := blockchain.getBlock(blockNumber)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="constant">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> block.GetTransactions()[txIndex], <span class="constant">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="getTransactionByBlockHash">getTransactionByBlockHash</h2><p>通过块内块的哈希和标识索引获取交易<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> (blockchain *blockchain) getTransactionByBlockHash(blockHash []<span class="typename">byte</span>, txIndex <span class="typename">uint64</span>) (*protos.Transaction, error) &#123;</span><br><span class="line">	block, err := blockchain.getBlockByHash(blockHash)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="constant">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> block.GetTransactions()[txIndex], <span class="constant">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="getBlockchainInfo">getBlockchainInfo</h2><p>获取区块链的信息</p>
+<figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">func</span> (<span class="keyword">blockchain </span>*<span class="keyword">blockchain) </span>getBlockchainInfo() (*protos.<span class="keyword">BlockchainInfo, </span>error) &#123;</span><br><span class="line">	<span class="preprocessor">if</span> <span class="keyword">blockchain.getSize() </span>== <span class="number">0</span> &#123;</span><br><span class="line">		return &amp;protos.<span class="keyword">BlockchainInfo&#123;Height: </span><span class="number">0</span>&#125;, nil</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	lastBlock, err := <span class="keyword">blockchain.getLastBlock()</span><br><span class="line"></span>	<span class="preprocessor">if</span> err != nil &#123;</span><br><span class="line">		return nil, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="preprocessor">info</span> := &amp;protos.<span class="keyword">BlockchainInfo&#123;</span><br><span class="line"></span><span class="label">		Height:</span>            <span class="keyword">blockchain.getSize(),</span><br><span class="line"></span><span class="label">		CurrentBlockHash:</span>  <span class="keyword">blockchain.previousBlockHash,</span><br><span class="line"></span><span class="label">		PreviousBlockHash:</span> lastBlock.PreviousBlockHash&#125;</span><br><span class="line"></span><br><span class="line">	return <span class="preprocessor">info</span>, nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="buildBlock">buildBlock</h2><p>创建块</p>
+<figure class="highlight pf"><table><tr><td class="code"><pre><span class="line">func (blockchain *blockchain) buildBlock(<span class="built_in">block</span> *protos.Block, <span class="keyword">state</span>Hash []byte) *protos.Block &#123;</span><br><span class="line">	<span class="built_in">block</span>.SetPreviousBlockHash(blockchain.previousBlockHash)</span><br><span class="line">	<span class="built_in">block</span>.StateHash = <span class="keyword">state</span>Hash</span><br><span class="line">	return <span class="built_in">block</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="addPersistenceChangesForNewBlock">addPersistenceChangesForNewBlock</h2><p>对于新块添加持久性的更改<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">func</span> (<span class="keyword">blockchain </span>*<span class="keyword">blockchain) </span><span class="keyword">addPersistenceChangesForNewBlock(ctx </span>context.Context,</span><br><span class="line">	<span class="keyword">block </span>*protos.<span class="keyword">Block, </span>stateHash []<span class="keyword">byte, </span>writeBatch *gorocksdb.WriteBatch) (uint64, error) &#123;</span><br><span class="line">	<span class="keyword">block </span>= <span class="keyword">blockchain.buildBlock(block, </span>stateHash)</span><br><span class="line">	<span class="preprocessor">if</span> <span class="keyword">block.NonHashData </span>== nil &#123;</span><br><span class="line">		<span class="keyword">block.NonHashData </span>= &amp;protos.NonHashData&#123;LocalLedgerCommitTimestamp: util.CreateUtcTimestamp()&#125;</span><br><span class="line">	&#125; <span class="preprocessor">else</span> &#123;</span><br><span class="line">		<span class="keyword">block.NonHashData.LocalLedgerCommitTimestamp </span>= util.CreateUtcTimestamp()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">blockNumber </span>:= <span class="keyword">blockchain.size</span><br><span class="line"></span>	<span class="keyword">blockHash, </span>err := <span class="keyword">block.GetHash()</span><br><span class="line"></span>	<span class="preprocessor">if</span> err != nil &#123;</span><br><span class="line">		return <span class="number">0</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">blockBytes, </span><span class="keyword">blockBytesErr </span>:= <span class="keyword">block.Bytes()</span><br><span class="line"></span>	<span class="preprocessor">if</span> <span class="keyword">blockBytesErr </span>!= nil &#123;</span><br><span class="line">		return <span class="number">0</span>, <span class="keyword">blockBytesErr</span><br><span class="line"></span>	&#125;</span><br><span class="line">	writeBatch.PutCF(db.GetDBHandle().<span class="keyword">BlockchainCF, </span>encodeBlockNumberDBKey(<span class="keyword">blockNumber), </span><span class="keyword">blockBytes)</span><br><span class="line"></span>	writeBatch.PutCF(db.GetDBHandle().<span class="keyword">BlockchainCF, </span><span class="keyword">blockCountKey, </span>encodeUint64(<span class="keyword">blockNumber+1))</span><br><span class="line"></span>	<span class="preprocessor">if</span> <span class="keyword">blockchain.indexer.isSynchronous() </span>&#123;</span><br><span class="line">		<span class="keyword">blockchain.indexer.createIndexesSync(block, </span><span class="keyword">blockNumber, </span><span class="keyword">blockHash, </span>writeBatch)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">blockchain.lastProcessedBlock </span>= &amp;lastProcessedBlock&#123;<span class="keyword">block, </span><span class="keyword">blockNumber, </span><span class="keyword">blockHash&#125;</span><br><span class="line"></span>	return <span class="keyword">blockNumber, </span>nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="blockPersistenceStatus">blockPersistenceStatus</h2><p>块持久状态</p>
+<figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">func</span> (<span class="keyword">blockchain </span>*<span class="keyword">blockchain) </span><span class="keyword">blockPersistenceStatus(success </span><span class="keyword">bool) </span>&#123;</span><br><span class="line">	<span class="preprocessor">if</span> success &#123;</span><br><span class="line">		<span class="keyword">blockchain.size++</span><br><span class="line"></span>		<span class="keyword">blockchain.previousBlockHash </span>= <span class="keyword">blockchain.lastProcessedBlock.blockHash</span><br><span class="line"></span>		<span class="preprocessor">if</span> !<span class="keyword">blockchain.indexer.isSynchronous() </span>&#123;</span><br><span class="line">			<span class="keyword">blockchain.indexer.createIndexesAsync(blockchain.lastProcessedBlock.block,</span><br><span class="line"></span>				<span class="keyword">blockchain.lastProcessedBlock.blockNumber, </span><span class="keyword">blockchain.lastProcessedBlock.blockHash)</span><br><span class="line"></span>		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">blockchain.lastProcessedBlock </span>= nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="persistRawBlock">persistRawBlock</h2><p>持久化原始块</p>
+<figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">func</span> (<span class="keyword">blockchain </span>*<span class="keyword">blockchain) </span>persistRawBlock(<span class="keyword">block </span>*protos.<span class="keyword">Block, </span><span class="keyword">blockNumber </span>uint64) error &#123;</span><br><span class="line">	<span class="keyword">blockBytes, </span><span class="keyword">blockBytesErr </span>:= <span class="keyword">block.Bytes()</span><br><span class="line"></span>	<span class="preprocessor">if</span> <span class="keyword">blockBytesErr </span>!= nil &#123;</span><br><span class="line">		return <span class="keyword">blockBytesErr</span><br><span class="line"></span>	&#125;</span><br><span class="line">	writeBatch := gorocksdb.NewWriteBatch()</span><br><span class="line">	defer writeBatch.Destroy()</span><br><span class="line">	writeBatch.PutCF(db.GetDBHandle().<span class="keyword">BlockchainCF, </span>encodeBlockNumberDBKey(<span class="keyword">blockNumber), </span><span class="keyword">blockBytes)</span><br><span class="line"></span></span><br><span class="line">	// 它需要检查，因为我们在这样的情况下块/状态同步支持乱序块。其真正意义区块链的高度，而不是规模。</span><br><span class="line">	<span class="preprocessor">if</span> <span class="keyword">blockchain.getSize() </span>&lt; <span class="keyword">blockNumber+1 </span>&#123;</span><br><span class="line">		sizeBytes := encodeUint64(<span class="keyword">blockNumber </span>+ <span class="number">1</span>)</span><br><span class="line">		writeBatch.PutCF(db.GetDBHandle().<span class="keyword">BlockchainCF, </span><span class="keyword">blockCountKey, </span>sizeBytes)</span><br><span class="line">		<span class="keyword">blockchain.size </span>= <span class="keyword">blockNumber </span>+ <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">blockHash, </span>err := <span class="keyword">block.GetHash()</span><br><span class="line"></span>	<span class="preprocessor">if</span> err != nil &#123;</span><br><span class="line">		return err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="preprocessor">if</span> <span class="keyword">blockchain.indexer.isSynchronous() </span>&#123;</span><br><span class="line">		<span class="keyword">blockchain.indexer.createIndexesSync(block, </span><span class="keyword">blockNumber, </span><span class="keyword">blockHash, </span>writeBatch)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="preprocessor">opt</span> := gorocksdb.NewDefaultWriteOptions()</span><br><span class="line">	defer <span class="preprocessor">opt</span>.Destroy()</span><br><span class="line">	err = db.GetDBHandle().DB.Write(<span class="preprocessor">opt</span>, writeBatch)</span><br><span class="line">	<span class="preprocessor">if</span> err != nil &#123;</span><br><span class="line">		return err</span><br><span class="line">	&#125;</span><br><span class="line">	return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="fetchBlockFromDB">fetchBlockFromDB</h2><p>从数据库中获取块<br><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">fetchBlockFromDB</span><span class="params">(blockNumber uint64)</span></span> (*protos.<span class="type">Block</span>, error) &#123;</span><br><span class="line">	blockBytes, err := db.<span class="type">GetDBHandle</span>().<span class="type">GetFromBlockchainCF</span>(encodeBlockNumberDBKey(blockNumber))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> blockBytes == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> protos.<span class="type">UnmarshallBlock</span>(blockBytes)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="fetchTransactionFromDB">fetchTransactionFromDB</h2><p>从数据库中获取交易记录</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> fetchTransactionFromDB(blockNum <span class="typename">uint64</span>, txIndex <span class="typename">uint64</span>) (*protos.Transaction, error) &#123;</span><br><span class="line">	block, err := fetchBlockFromDB(blockNum)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="constant">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> block.GetTransactions()[txIndex], <span class="constant">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="fetchBlockchainSizeFromDB">fetchBlockchainSizeFromDB</h2><p>从数据库中获取区块链的大小<br><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">fetchBlockchainSizeFromDB</span><span class="params">()</span></span> (uint64, error) &#123;</span><br><span class="line">	bytes, err := db.<span class="type">GetDBHandle</span>().<span class="type">GetFromBlockchainCF</span>(blockCountKey)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> bytes == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> decodeToUint64(bytes), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="fetchBlockchainSizeFromSnapshot">fetchBlockchainSizeFromSnapshot</h2><p>从快照中获取区块链大小<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> fetchBlockchainSizeFromSnapshot(snapshot *gorocksdb.Snapshot) (<span class="typename">uint64</span>, error) &#123;</span><br><span class="line">	blockNumberBytes, err := db.GetDBHandle().GetFromBlockchainCFSnapshot(snapshot, blockCountKey)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> blockNumber <span class="typename">uint64</span></span><br><span class="line">	<span class="keyword">if</span> blockNumberBytes != <span class="constant">nil</span> &#123;</span><br><span class="line">		blockNumber = decodeToUint64(blockNumberBytes)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> blockNumber, <span class="constant">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="String">String</h2><p>将区块链的信息以字符串形式输出<br><figure class="highlight scss"><table><tr><td class="code"><pre><span class="line">func (blockchain *blockchain) <span class="function">String</span>() string &#123;</span><br><span class="line">	<span class="tag">var</span> buffer bytes<span class="class">.Buffer</span></span><br><span class="line">	size <span class="value">:= blockchain.<span class="function">getSize</span>()</span><br><span class="line">	for i := <span class="function">uint64</span>(<span class="number">0</span>);</span> <span class="tag">i</span> &lt; size; <span class="tag">i</span>++ &#123;</span><br><span class="line">		<span class="value">block</span>, blockErr <span class="value">:= blockchain.<span class="function">getBlock</span>(i)</span><br><span class="line">		if blockErr != nil &#123;</span><br><span class="line">			return <span class="string">""</span></span><br><span class="line">		&#125;</span><br><span class="line">		buffer.<span class="function">WriteString</span>(<span class="string">"\n----------&lt;block #"</span>)</span><br><span class="line">		buffer.<span class="function">WriteString</span>(strconv.<span class="function">FormatUint</span>(i, <span class="number">10</span>))</span><br><span class="line">		buffer.<span class="function">WriteString</span>(<span class="string">"&gt;----------\n"</span>)</span><br><span class="line">		buffer.<span class="function">WriteString</span>(block.<span class="function">String</span>())</span><br><span class="line">		buffer.<span class="function">WriteString</span>(<span class="string">"\n----------&lt;\\block #"</span>)</span><br><span class="line">		buffer.<span class="function">WriteString</span>(strconv.<span class="function">FormatUint</span>(i, <span class="number">10</span>))</span><br><span class="line">		buffer.<span class="function">WriteString</span>(<span class="string">"&gt;----------\n"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	return buffer.<span class="function">String</span>()</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="blockchain_indexes">blockchain_indexes</h1><p>blockchainIndexer定义了以下几个接口<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> blockchainIndexer <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">//同步标识</span></span><br><span class="line">	isSynchronous() <span class="typename">bool</span></span><br><span class="line">	<span class="comment">//开始创建</span></span><br><span class="line">	start(blockchain *blockchain) error</span><br><span class="line">	<span class="comment">//同步创建索引</span></span><br><span class="line">	createIndexesSync(block *protos.Block, blockNumber <span class="typename">uint64</span>, blockHash []<span class="typename">byte</span>, writeBatch *gorocksdb.WriteBatch) error</span><br><span class="line">	<span class="comment">//异步创建索引</span></span><br><span class="line">	createIndexesAsync(block *protos.Block, blockNumber <span class="typename">uint64</span>, blockHash []<span class="typename">byte</span>) error</span><br><span class="line">	<span class="comment">//通过块哈希获取块号</span></span><br><span class="line">	fetchBlockNumberByBlockHash(blockHash []<span class="typename">byte</span>) (<span class="typename">uint64</span>, error)</span><br><span class="line">	<span class="comment">//通过UUID获取块号</span></span><br><span class="line">	fetchTransactionIndexByUUID(txUUID <span class="typename">string</span>) (<span class="typename">uint64</span>, <span class="typename">uint64</span>, error)</span><br><span class="line">	<span class="comment">//停止创建</span></span><br><span class="line">	stop()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="addIndexDataForPersistence">addIndexDataForPersistence</h2><p>持久化并且检索索引数据<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">func</span> <span class="keyword">addIndexDataForPersistence(block </span>*protos.<span class="keyword">Block, </span><span class="keyword">blockNumber </span>uint64, <span class="keyword">blockHash </span>[]<span class="keyword">byte, </span>writeBatch *gorocksdb.WriteBatch) error &#123;</span><br><span class="line">	openchainDB := db.GetDBHandle()</span><br><span class="line">	cf := openchainDB.IndexesCF</span><br><span class="line"></span><br><span class="line">	// 块号映射成块哈希值</span><br><span class="line">	indexLogger.Debug(<span class="string">"Indexing block number [%d] by hash = [%x]"</span>, <span class="keyword">blockNumber, </span><span class="keyword">blockHash)</span><br><span class="line"></span>	writeBatch.PutCF(cf, encodeBlockHashKey(<span class="keyword">blockHash), </span>encodeBlockNumber(<span class="keyword">blockNumber))</span><br><span class="line"></span></span><br><span class="line">	<span class="keyword">addressToTxIndexesMap </span>:= make(<span class="preprocessor">map</span>[<span class="keyword">string][]uint64)</span><br><span class="line"></span>	<span class="keyword">addressToChaincodeIDsMap </span>:= make(<span class="preprocessor">map</span>[<span class="keyword">string][]*protos.ChaincodeID)</span><br><span class="line"></span></span><br><span class="line">	transactions := <span class="keyword">block.GetTransactions()</span><br><span class="line"></span>	for txIndex, tx := range transactions &#123;</span><br><span class="line">		// 添加TXT UUID - &gt;（块号，索引中块）</span><br><span class="line">		writeBatch.PutCF(cf, encodeTxUUIDKey(tx.Uuid), encodeBlockNumTxIndex(<span class="keyword">blockNumber, </span>uint64(txIndex)))</span><br><span class="line"></span><br><span class="line">		txExecutingAddress := getTxExecutingAddress(tx)</span><br><span class="line">		<span class="keyword">addressToTxIndexesMap[txExecutingAddress] </span>= append(<span class="keyword">addressToTxIndexesMap[txExecutingAddress], </span>uint64(txIndex))</span><br><span class="line"></span><br><span class="line">		<span class="keyword">switch </span>tx.Type &#123;</span><br><span class="line">		case protos.Transaction_CHAINCODE_NEW, protos.Transaction_CHAINCODE_UPDATE:</span><br><span class="line">			authroizedAddresses, chaincodeID := getAuthorisedAddresses(tx)</span><br><span class="line">			for _, authroizedAddress := range authroizedAddresses &#123;</span><br><span class="line">				<span class="keyword">addressToChaincodeIDsMap[authroizedAddress] </span>= append(<span class="keyword">addressToChaincodeIDsMap[authroizedAddress], </span>chaincodeID)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	for <span class="keyword">address, </span>txsIndexes := range <span class="keyword">addressToTxIndexesMap </span>&#123;</span><br><span class="line">		writeBatch.PutCF(cf, encodeAddressBlockNumCompositeKey(<span class="keyword">address, </span><span class="keyword">blockNumber), </span>encodeListTxIndexes(txsIndexes))</span><br><span class="line">	&#125;</span><br><span class="line">	return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="getAuthorisedAddresses">getAuthorisedAddresses</h2><p>获得授权地址<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> getAuthorisedAddresses(tx *protos.Transaction) ([]<span class="typename">string</span>, *protos.ChaincodeID) &#123;</span><br><span class="line">	<span class="comment">// 从chaincode的部署TX中获取取地址</span></span><br><span class="line">	<span class="comment">// 这个方法也会返回错误</span></span><br><span class="line">	data := tx.ChaincodeID</span><br><span class="line">	cID := &amp;protos.ChaincodeID&#123;&#125;</span><br><span class="line">	err := proto.Unmarshal(data, cID)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="constant">nil</span>, <span class="constant">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> []<span class="typename">string</span>&#123;<span class="string">"address1"</span>, <span class="string">"address2"</span>&#125;, cID</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="encodeBlockNumber">encodeBlockNumber</h2><p>编码/解码数据库键/值函数，索引数据编码/解码块数<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="label">func</span> encodeBlockNumber(<span class="keyword">blockNumber </span>uint64) []<span class="keyword">byte </span>&#123;</span><br><span class="line">	return proto.EncodeVarint(<span class="keyword">blockNumber)</span><br><span class="line"></span>&#125;</span><br><span class="line"><span class="label">func</span> decodeBlockNumber(<span class="keyword">blockNumberBytes </span>[]<span class="keyword">byte) </span>(<span class="keyword">blockNumber </span>uint64) &#123;</span><br><span class="line">	<span class="keyword">blockNumber, </span>_ = proto.DecodeVarint(<span class="keyword">blockNumberBytes)</span><br><span class="line"></span>	return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="encodeBlockNumTxIndex">encodeBlockNumTxIndex</h2><p>对 块号的Tx索引进行编码/解码<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">func</span> encodeBlockNumTxIndex(<span class="keyword">blockNumber </span>uint64, txIndexInBlock uint64) []<span class="keyword">byte </span>&#123;</span><br><span class="line">	<span class="keyword">b </span>:= proto.NewBuffer([]<span class="keyword">byte&#123;&#125;)</span><br><span class="line"></span>	<span class="keyword">b.EncodeVarint(blockNumber)</span><br><span class="line"></span>	<span class="keyword">b.EncodeVarint(txIndexInBlock)</span><br><span class="line"></span>	return <span class="keyword">b.Bytes()</span><br><span class="line"></span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="label">func</span> decodeBlockNumTxIndex(<span class="keyword">bytes </span>[]<span class="keyword">byte) </span>(<span class="keyword">blockNum </span>uint64, txIndex uint64, err error) &#123;</span><br><span class="line">	<span class="keyword">b </span>:= proto.NewBuffer(<span class="keyword">bytes)</span><br><span class="line"></span>	<span class="keyword">blockNum, </span>err = <span class="keyword">b.DecodeVarint()</span><br><span class="line"></span>	<span class="preprocessor">if</span> err != nil &#123;</span><br><span class="line">		return</span><br><span class="line">	&#125;</span><br><span class="line">	txIndex, err = <span class="keyword">b.DecodeVarint()</span><br><span class="line"></span>	<span class="preprocessor">if</span> err != nil &#123;</span><br><span class="line">		return</span><br><span class="line">	&#125;</span><br><span class="line">	return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对区块哈希的键值进行编码<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="label">func</span> encodeBlockHashKey(<span class="keyword">blockHash </span>[]<span class="keyword">byte) </span>[]<span class="keyword">byte </span>&#123;</span><br><span class="line">	return prependKeyPrefix(prefixBlockHashKey, <span class="keyword">blockHash)</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对TxUUID的键值进行编码</p>
+<figure class="highlight cs"><table><tr><td class="code"><pre><span class="line"><span class="function">func <span class="title">encodeTxUUIDKey</span>(<span class="params">txUUID <span class="keyword">string</span></span>) []<span class="keyword">byte</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> prependKeyPrefix(prefixTxUUIDKey, []<span class="keyword">byte</span>(txUUID))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对区块号地址的复合键值进行编码<br><figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">func</span> <span class="tag">encodeAddressBlockNumCompositeKey</span>(<span class="tag">address</span> <span class="tag">string</span>, <span class="tag">blockNumber</span> <span class="tag">uint64</span>) <span class="attr_selector">[]</span><span class="tag">byte</span> <span class="rules">&#123;</span><br><span class="line">	<span class="rule"><span class="attribute">b </span>:<span class="value">= proto.<span class="function">NewBuffer</span>([]byte&#123;prefixAddressBlockNumCompositeKey</span></span></span>&#125;)</span><br><span class="line">	<span class="tag">b</span><span class="class">.EncodeRawBytes</span>(<span class="attr_selector">[]</span><span class="tag">byte</span>(<span class="tag">address</span>))</span><br><span class="line">	<span class="tag">b</span><span class="class">.EncodeVarint</span>(<span class="tag">blockNumber</span>)</span><br><span class="line">	<span class="tag">return</span> <span class="tag">b</span><span class="class">.Bytes</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对Tx的索引清单进行编码<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> encodeListTxIndexes(listTx []<span class="typename">uint64</span>) []<span class="typename">byte</span> &#123;</span><br><span class="line">	b := proto.NewBuffer([]<span class="typename">byte</span>&#123;&#125;)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> listTx &#123;</span><br><span class="line">		b.EncodeVarint(listTx[i])</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b.Bytes()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对chaincode的ID进行编码<br><figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="tag">func</span> <span class="tag">encodeChaincodeID</span>(c *protos.ChaincodeID) <span class="attr_selector">[]</span><span class="tag">byte</span> &#123;</span><br><span class="line">	<span class="comment">// 序列化chaincode ID</span></span><br><span class="line">	<span class="tag">return</span> <span class="attr_selector">[]</span><span class="tag">byte</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>前置键值前缀</p>
+<figure class="highlight processing"><table><tr><td class="code"><pre><span class="line">func prependKeyPrefix(prefix <span class="built_in">byte</span>, <span class="variable">key</span> []<span class="built_in">byte</span>) []<span class="built_in">byte</span> &#123;</span><br><span class="line">	modifiedKey := []<span class="built_in">byte</span>&#123;&#125;</span><br><span class="line">	modifiedKey = <span class="built_in">append</span>(modifiedKey, prefix)</span><br><span class="line">	modifiedKey = <span class="built_in">append</span>(modifiedKey, <span class="variable">key</span>...)</span><br><span class="line">	<span class="keyword">return</span> modifiedKey</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="blockchain_indexes_async">blockchain_indexes_async</h1><p>整个代码主要执行对blockchain的异步创建索引<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="label">type</span> <span class="keyword">blockchainIndexerAsync </span><span class="keyword">struct </span>&#123;</span><br><span class="line">	<span class="keyword">blockchain </span>*<span class="keyword">blockchain</span><br><span class="line"></span>	//从块链转移块索引的通道</span><br><span class="line">	<span class="keyword">blockChan </span>   chan <span class="keyword">blockWrapper</span><br><span class="line"></span>	indexerState *<span class="keyword">blockchainIndexerState</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="createIndexesInternal">createIndexesInternal</h2><p>创建索引条目并逐步添加到数据库，用于创建各种属性的索引<br><figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">func</span> (<span class="tag">indexer</span> *<span class="tag">blockchainIndexerAsync</span>) <span class="tag">createIndexesInternal</span>(<span class="tag">block</span> *<span class="tag">protos</span><span class="class">.Block</span>, <span class="tag">blockNumber</span> <span class="tag">uint64</span>, <span class="tag">blockHash</span> <span class="attr_selector">[]</span><span class="tag">byte</span>) <span class="tag">error</span> <span class="rules">&#123;</span><br><span class="line">	<span class="rule"><span class="attribute">openchainDB </span>:<span class="value">= db.<span class="function">GetDBHandle</span>()</span><br><span class="line">	writeBatch := gorocksdb.<span class="function">NewWriteBatch</span>()</span><br><span class="line">	defer writeBatch.<span class="function">Destroy</span>()</span><br><span class="line">	<span class="function">addIndexDataForPersistence</span>(block, blockNumber, blockHash, writeBatch)</span><br><span class="line">	writeBatch.<span class="function">PutCF</span>(openchainDB.IndexesCF, lastIndexedBlockKey, <span class="function">encodeBlockNumber</span>(blockNumber))</span><br><span class="line">	opt := gorocksdb.<span class="function">NewDefaultWriteOptions</span>()</span><br><span class="line">	defer opt.<span class="function">Destroy</span>()</span><br><span class="line">	err := openchainDB.DB.<span class="function">Write</span>(opt, writeBatch)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return err</span><br><span class="line">	</span></span></span>&#125;</span><br><span class="line">	<span class="tag">indexer</span><span class="class">.indexerState</span><span class="class">.blockIndexed</span>(<span class="tag">blockNumber</span>)</span><br><span class="line">	<span class="tag">return</span> <span class="tag">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="indexPendingBlocks">indexPendingBlocks</h2><p>待定块的索引<br><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="params">(indexer *blockchainIndexerAsync)</span></span> indexPendingBlocks() error &#123;</span><br><span class="line">	blockchain := indexer.blockchain</span><br><span class="line">	<span class="keyword">if</span> blockchain.getSize() == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="comment">// 链至今为空</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	lastCommittedBlockNum := blockchain.getSize() - <span class="number">1</span></span><br><span class="line">	lastIndexedBlockNum := indexer.indexerState.getLastIndexedBlockNumber()</span><br><span class="line">	<span class="keyword">if</span> lastCommittedBlockNum == lastIndexedBlockNum &#123;</span><br><span class="line">		<span class="comment">//所有块索引的提交</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> ; lastIndexedBlockNum &lt; lastCommittedBlockNum; lastIndexedBlockNum++ &#123;</span><br><span class="line">		blockNumToIndex := lastIndexedBlockNum + <span class="number">1</span></span><br><span class="line">		blockToIndex, errBlockFetch := blockchain.getBlock(blockNumToIndex)</span><br><span class="line">		<span class="keyword">if</span> errBlockFetch != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> errBlockFetch</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		blockHash, errBlockHash := blockToIndex.<span class="type">GetHash</span>()</span><br><span class="line">		<span class="keyword">if</span> errBlockHash != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> errBlockHash</span><br><span class="line">		&#125;</span><br><span class="line">		indexer.createIndexesInternal(blockToIndex, blockNumToIndex, blockHash)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="blockIndexed">blockIndexed</h2><p>块索引<br><figure class="highlight roboconf"><table><tr><td class="code"><pre><span class="line"><span class="component">func (indexerState *blockchainIndexerState) blockIndexed(blockNumber uint64) &#123;</span><br><span class="line">	indexerState<span class="string">.newBlockIndexed.L.Lock()</span></span><br><span class="line">	defer indexerState<span class="string">.newBlockIndexed.L.Unlock()</span></span><br><span class="line">	indexerState<span class="string">.lastBlockIndexed</span> = blockNumber</span><br><span class="line">	indexerState<span class="string">.zerothBlockIndexed</span> = true</span><br><span class="line">	indexerState<span class="string">.newBlockIndexed.Broadcast()</span></span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="waitForLastCommittedBlock">waitForLastCommittedBlock</h2><p>等待最后一个块的创建<br><figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line">func (indexerState *blockchainIndexerState) waitForLastCommittedBlock() (err <span class="keyword">error</span>) &#123;</span><br><span class="line">	chain := indexerState.indexer.blockchain</span><br><span class="line">	<span class="keyword">if</span> err != nil || chain.getSize() == 0 &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	lastBlockCommitted := chain.getSize() - 1</span><br><span class="line"></span><br><span class="line">	indexerState.newBlockIndexed.L.Lock()</span><br><span class="line">	defer indexerState.newBlockIndexed.L.Unlock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> !indexerState.zerothBlockIndexed &#123;</span><br><span class="line">		indexLogger.Debug(</span><br><span class="line">			<span class="string">"Waiting for zeroth block to be indexed. lastBlockCommitted=[%d] and lastBlockIndexed=[%d]"</span>,</span><br><span class="line">			lastBlockCommitted, indexerState.lastBlockIndexed)</span><br><span class="line">		indexerState.newBlockIndexed.Wait()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> indexerState.lastBlockIndexed &lt; lastBlockCommitted &#123;</span><br><span class="line">		indexLogger.Debug(</span><br><span class="line">			<span class="string">"Waiting for index to catch up with block chain. lastBlockCommitted=[%d] and lastBlockIndexed=[%d]"</span>,</span><br><span class="line">			lastBlockCommitted, indexerState.lastBlockIndexed)</span><br><span class="line">		indexerState.newBlockIndexed.Wait()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="fetchLastIndexedBlockNumFromDB">fetchLastIndexedBlockNumFromDB</h2><p>获取从数据库中得到上一个块号的块索引<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> fetchLastIndexedBlockNumFromDB() (zerothBlockIndexed <span class="typename">bool</span>, lastIndexedBlockNum <span class="typename">uint64</span>, err error) &#123;</span><br><span class="line">	lastIndexedBlockNumberBytes, err := db.GetDBHandle().GetFromIndexesCF(lastIndexedBlockKey)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> lastIndexedBlockNumberBytes == <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	lastIndexedBlockNum = decodeBlockNumber(lastIndexedBlockNumberBytes)</span><br><span class="line">	zerothBlockIndexed = <span class="constant">true</span></span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="ledger">ledger</h1><h1 id="genesis">genesis</h1><h2 id="genesis-1">genesis</h2><p>类似于chaincode，调用go-logging中logging库的MustGetLogger函数对genesis package进行记录</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="tag">var</span> genesisLogger = logging.<span class="function"><span class="title">MustGetLogger</span><span class="params">(<span class="string">"genesis"</span>)</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="MakeGenesis">MakeGenesis</h3><p>MakeGenesis基于在openchain.yaml中配置创建创世区块，并把它添加到blockchain。</p>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">func MakeGenesis() error &#123;</span><br><span class="line">	once.Do(func() &#123;</span><br><span class="line">		ledger, <span class="string">err :</span>= ledger.GetLedger()</span><br><span class="line">		<span class="keyword">if</span> err != nil &#123;</span><br><span class="line">			makeGenesisError = err</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> ledger.GetBlockchainSize() &gt; <span class="number">0</span> &#123;</span><br><span class="line">			<span class="comment">// 获取blockchain的大小，如果大于0代表创世区块已经存在</span></span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		genesisLogger.Info(<span class="string">"Creating genesis block."</span>)</span><br><span class="line"></span><br><span class="line">		ledger.BeginTxBatch(<span class="number">0</span>)</span><br><span class="line">		var genesisTransactions []*protos.Transaction</span><br><span class="line">		<span class="comment">//我们现在禁用在有效期内部署，甚至不应该允许它在配置中启用，将其设置为false</span></span><br><span class="line">		<span class="string">allowDeployValidityPeriod :</span>= <span class="literal">false</span></span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span>(deploySystemChaincodeEnabled() &amp;&amp; allowDeployValidityPeriod)&#123;</span><br><span class="line">			vpTransaction, <span class="string">deployErr :</span>=  deployUpdateValidityPeriodChaincode()</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> deployErr != nil &#123;</span><br><span class="line">				genesisLogger.Error(<span class="string">"Error deploying validity period system chaincode for genesis block."</span>, deployErr)</span><br><span class="line">				makeGenesisError = deployErr</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			genesisTransactions = append(genesisTransactions, vpTransaction)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="string">genesis :</span>= viper.GetStringMap(<span class="string">"ledger.blockchain.genesisBlock"</span>)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> genesis == nil &#123;</span><br><span class="line">			genesisLogger.Info(<span class="string">"No genesis block chaincodes defined."</span>)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			</span><br><span class="line">			chaincodes, <span class="string">chaincodesOK :</span>= genesis[<span class="string">"chaincode"</span>].([]<span class="class"><span class="keyword">interface</span>&#123;</span>&#125;)</span><br><span class="line">			<span class="keyword">if</span> !chaincodesOK &#123;</span><br><span class="line">				genesisLogger.Info(<span class="string">"No genesis block chaincodes defined."</span>)</span><br><span class="line">				ledger.CommitTxBatch(<span class="number">0</span>, genesisTransactions, nil, nil)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">	</span><br><span class="line">			genesisLogger.Debug(<span class="string">"Genesis chaincodes are %s"</span>, chaincodes)</span><br><span class="line">	</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">for</span> <span class="string">i :</span>= <span class="number">0</span>; i &lt; len(chaincodes); i++ &#123;</span><br><span class="line">				genesisLogger.Debug(<span class="string">"Chaincode %d is %s"</span>, i, chaincodes[i])</span><br><span class="line">	</span><br><span class="line">				chaincodeMap, <span class="string">chaincodeMapOK :</span>= chaincodes[i].(map[<span class="class"><span class="keyword">interface</span>&#123;</span>&#125;]<span class="class"><span class="keyword">interface</span>&#123;</span>&#125;)</span><br><span class="line">				<span class="keyword">if</span> !chaincodeMapOK &#123;</span><br><span class="line">					genesisLogger.Error(<span class="string">"Invalid chaincode defined in genesis configuration:"</span>, chaincodes[i])</span><br><span class="line">					makeGenesisError = fmt.Errorf(<span class="string">"Invalid chaincode defined in genesis configuration: %s"</span>, chaincodes[i])</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">	</span><br><span class="line">				path, <span class="string">pathOK :</span>= chaincodeMap[<span class="string">"path"</span>].(string)</span><br><span class="line">				<span class="keyword">if</span> !pathOK &#123;</span><br><span class="line">					genesisLogger.Error(<span class="string">"Invalid chaincode URL defined in genesis configuration:"</span>, chaincodeMap[<span class="string">"path"</span>])</span><br><span class="line">					makeGenesisError = fmt.Errorf(<span class="string">"Invalid chaincode URL defined in genesis configuration: %s"</span>, chaincodeMap[<span class="string">"path"</span>])</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">	</span><br><span class="line">				chaincodeType, <span class="string">chaincodeTypeOK :</span>= chaincodeMap[<span class="string">"type"</span>].(string)</span><br><span class="line">				<span class="keyword">if</span> !chaincodeTypeOK &#123;</span><br><span class="line">					genesisLogger.Error(<span class="string">"Invalid chaincode type defined in genesis configuration:"</span>, chaincodeMap[<span class="string">"type"</span>])</span><br><span class="line">					makeGenesisError = fmt.Errorf(<span class="string">"Invalid chaincode type defined in genesis configuration: %s"</span>, chaincodeMap[<span class="string">"type"</span>])</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">	</span><br><span class="line">				<span class="string">chaincodeID :</span>= &amp;protos.ChaincodeID&#123;<span class="string">Path:</span> path, <span class="string">Name:</span> <span class="string">""</span>&#125;</span><br><span class="line">	</span><br><span class="line">				genesisLogger.Debug(<span class="string">"Genesis chaincodeID %s"</span>, chaincodeID)</span><br><span class="line">				genesisLogger.Debug(<span class="string">"Genesis chaincode type %s"</span>, chaincodeType)</span><br><span class="line">	</span><br><span class="line">				constructorMap, <span class="string">constructorMapOK :</span>= chaincodeMap[<span class="string">"constructor"</span>].(map[<span class="class"><span class="keyword">interface</span>&#123;</span>&#125;]<span class="class"><span class="keyword">interface</span>&#123;</span>&#125;)</span><br><span class="line">				<span class="keyword">if</span> !constructorMapOK &#123;</span><br><span class="line">					genesisLogger.Error(<span class="string">"Invalid chaincode constructor defined in genesis configuration:"</span>, chaincodeMap[<span class="string">"constructor"</span>])</span><br><span class="line">					makeGenesisError = fmt.Errorf(<span class="string">"Invalid chaincode constructor defined in genesis configuration: %s"</span>, chaincodeMap[<span class="string">"constructor"</span>])</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">	</span><br><span class="line">				var spec protos.ChaincodeSpec</span><br><span class="line">				<span class="keyword">if</span> constructorMap == nil &#123;</span><br><span class="line">					genesisLogger.Debug(<span class="string">"Genesis chaincode has no constructor."</span>)</span><br><span class="line">					spec = protos.ChaincodeSpec&#123;<span class="string">Type:</span> protos.ChaincodeSpec_Type(protos.ChaincodeSpec_Type_value[chaincodeType]), <span class="string">ChaincodeID:</span> chaincodeID&#125;</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	</span><br><span class="line">					ctorFunc, <span class="string">ctorFuncOK :</span>= constructorMap[<span class="string">"func"</span>].(string)</span><br><span class="line">					<span class="keyword">if</span> !ctorFuncOK &#123;</span><br><span class="line">						genesisLogger.Error(<span class="string">"Invalid chaincode constructor function defined in genesis configuration:"</span>, constructorMap[<span class="string">"func"</span>])</span><br><span class="line">						makeGenesisError = fmt.Errorf(<span class="string">"Invalid chaincode constructor function args defined in genesis configuration: %s"</span>, constructorMap[<span class="string">"func"</span>])</span><br><span class="line">						<span class="keyword">return</span></span><br><span class="line">					&#125;</span><br><span class="line">	</span><br><span class="line">					ctorArgs, <span class="string">ctorArgsOK :</span>= constructorMap[<span class="string">"args"</span>].([]<span class="class"><span class="keyword">interface</span>&#123;</span>&#125;)</span><br><span class="line">					<span class="keyword">if</span> !ctorArgsOK &#123;</span><br><span class="line">						genesisLogger.Error(<span class="string">"Invalid chaincode constructor args defined in genesis configuration:"</span>, constructorMap[<span class="string">"args"</span>])</span><br><span class="line">						makeGenesisError = fmt.Errorf(<span class="string">"Invalid chaincode constructor args defined in genesis configuration: %s"</span>, constructorMap[<span class="string">"args"</span>])</span><br><span class="line">						<span class="keyword">return</span></span><br><span class="line">					&#125;</span><br><span class="line">	</span><br><span class="line">					genesisLogger.Debug(<span class="string">"Genesis chaincode constructor func %s"</span>, ctorFunc)</span><br><span class="line">					genesisLogger.Debug(<span class="string">"Genesis chaincode constructor args %s"</span>, ctorArgs)</span><br><span class="line">					var ctorArgsStringArray []string</span><br><span class="line">					<span class="keyword">for</span> <span class="string">j :</span>= <span class="number">0</span>; j &lt; len(ctorArgs); j++ &#123;</span><br><span class="line">						ctorArgsStringArray = append(ctorArgsStringArray, ctorArgs[j].(string))</span><br><span class="line">					&#125;</span><br><span class="line">	</span><br><span class="line">					spec = protos.ChaincodeSpec&#123;<span class="string">Type:</span> protos.ChaincodeSpec_Type(protos.ChaincodeSpec_Type_value[chaincodeType]), <span class="string">ChaincodeID:</span> chaincodeID, <span class="string">CtorMsg:</span> &amp;protos.ChaincodeInput&#123;<span class="string">Function:</span> ctorFunc, <span class="string">Args:</span> ctorArgsStringArray&#125;&#125;</span><br><span class="line">				&#125;</span><br><span class="line">	</span><br><span class="line">				transaction, _, <span class="string">deployErr :</span>= DeployLocal(context.Background(), &amp;spec)</span><br><span class="line">				<span class="keyword">if</span> deployErr != nil &#123;</span><br><span class="line">					genesisLogger.Error(<span class="string">"Error deploying chaincode for genesis block."</span>, deployErr)</span><br><span class="line">					makeGenesisError = deployErr</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">	</span><br><span class="line">				genesisTransactions = append(genesisTransactions, transaction)</span><br><span class="line">	</span><br><span class="line">			&#125;<span class="comment">//for</span></span><br><span class="line"></span><br><span class="line">		&#125;<span class="comment">//else</span></span><br><span class="line"></span><br><span class="line">		genesisLogger.Info(<span class="string">"Adding %d system chaincodes to the genesis block."</span>, len(genesisTransactions))</span><br><span class="line">		ledger.CommitTxBatch(<span class="number">0</span>, genesisTransactions, nil, nil)</span><br><span class="line"></span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">return</span> makeGenesisError</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="statemgmt">statemgmt</h1><h1 id="testutil">testutil</h1><h1 id="util">util</h1>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/BlockChain/">BlockChain</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/03/24/IBM-openblockchain学习-二-chaincode源码分析/"  title="IBM openblockchain学习(二)--chaincode源码分析">
+ <strong>下一篇：</strong><br/> 
+ <span>IBM openblockchain学习(二)--chaincode源码分析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/04/02/IBM-openblockchain学习-三-Ledger源码分析/" data-title="IBM openblockchain学习(三)--Ledger源码分析" data-url="http://pangjiuzala.github.io/2016/04/02/IBM-openblockchain学习-三-Ledger源码分析/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#blockchain"><span class="toc-number">1.</span> <span class="toc-text">blockchain</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#newBlockchain"><span class="toc-number">1.1.</span> <span class="toc-text">newBlockchain</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#startIndexer()"><span class="toc-number">1.2.</span> <span class="toc-text">startIndexer()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getLastBlock"><span class="toc-number">1.3.</span> <span class="toc-text">getLastBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getSize"><span class="toc-number">1.4.</span> <span class="toc-text">getSize</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getBlock"><span class="toc-number">1.5.</span> <span class="toc-text">getBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getBlockByHash"><span class="toc-number">1.6.</span> <span class="toc-text">getBlockByHash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransactionByUUID"><span class="toc-number">1.7.</span> <span class="toc-text">getTransactionByUUID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransactions"><span class="toc-number">1.8.</span> <span class="toc-text">getTransactions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransactionsByBlockHash"><span class="toc-number">1.9.</span> <span class="toc-text">getTransactionsByBlockHash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransaction"><span class="toc-number">1.10.</span> <span class="toc-text">getTransaction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getTransactionByBlockHash"><span class="toc-number">1.11.</span> <span class="toc-text">getTransactionByBlockHash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getBlockchainInfo"><span class="toc-number">1.12.</span> <span class="toc-text">getBlockchainInfo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#buildBlock"><span class="toc-number">1.13.</span> <span class="toc-text">buildBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#addPersistenceChangesForNewBlock"><span class="toc-number">1.14.</span> <span class="toc-text">addPersistenceChangesForNewBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#blockPersistenceStatus"><span class="toc-number">1.15.</span> <span class="toc-text">blockPersistenceStatus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#persistRawBlock"><span class="toc-number">1.16.</span> <span class="toc-text">persistRawBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchBlockFromDB"><span class="toc-number">1.17.</span> <span class="toc-text">fetchBlockFromDB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchTransactionFromDB"><span class="toc-number">1.18.</span> <span class="toc-text">fetchTransactionFromDB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchBlockchainSizeFromDB"><span class="toc-number">1.19.</span> <span class="toc-text">fetchBlockchainSizeFromDB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchBlockchainSizeFromSnapshot"><span class="toc-number">1.20.</span> <span class="toc-text">fetchBlockchainSizeFromSnapshot</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#String"><span class="toc-number">1.21.</span> <span class="toc-text">String</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#blockchain_indexes"><span class="toc-number">2.</span> <span class="toc-text">blockchain_indexes</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#addIndexDataForPersistence"><span class="toc-number">2.1.</span> <span class="toc-text">addIndexDataForPersistence</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getAuthorisedAddresses"><span class="toc-number">2.2.</span> <span class="toc-text">getAuthorisedAddresses</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#encodeBlockNumber"><span class="toc-number">2.3.</span> <span class="toc-text">encodeBlockNumber</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#encodeBlockNumTxIndex"><span class="toc-number">2.4.</span> <span class="toc-text">encodeBlockNumTxIndex</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#blockchain_indexes_async"><span class="toc-number">3.</span> <span class="toc-text">blockchain_indexes_async</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#createIndexesInternal"><span class="toc-number">3.1.</span> <span class="toc-text">createIndexesInternal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#indexPendingBlocks"><span class="toc-number">3.2.</span> <span class="toc-text">indexPendingBlocks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#blockIndexed"><span class="toc-number">3.3.</span> <span class="toc-text">blockIndexed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#waitForLastCommittedBlock"><span class="toc-number">3.4.</span> <span class="toc-text">waitForLastCommittedBlock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetchLastIndexedBlockNumFromDB"><span class="toc-number">3.5.</span> <span class="toc-text">fetchLastIndexedBlockNumFromDB</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ledger"><span class="toc-number">4.</span> <span class="toc-text">ledger</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#genesis"><span class="toc-number">5.</span> <span class="toc-text">genesis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#genesis-1"><span class="toc-number">5.1.</span> <span class="toc-text">genesis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MakeGenesis"><span class="toc-number">5.1.1.</span> <span class="toc-text">MakeGenesis</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#statemgmt"><span class="toc-number">6.</span> <span class="toc-text">statemgmt</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#testutil"><span class="toc-number">7.</span> <span class="toc-text">testutil</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#util"><span class="toc-number">8.</span> <span class="toc-text">util</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=2129798793&verifier=c0951e84&dpc=1"></iframe>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>31</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/性能优化/" title="性能优化">性能优化<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/移动互联网/" title="移动互联网">移动互联网<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络爬虫/" title="网络爬虫">网络爬虫<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/智慧医疗/" title="智慧医疗">智慧医疗<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/爬虫/" title="爬虫">爬虫<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.changhuiyuan.com/" target="_blank" title="常惠源的博客">常惠源的博客</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="https://github.com/search?q=pangjiuzala&amp;type=Users" target="_blank" title="关注刘兴的github">关注</a>
+</div>
+
+  
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello,I&#39;m from ZjuCs! <br/>
+			The more you diligent, the more you lucky!</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Copyright@ 2015 Liuxing All rights reserved.
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"pangjiuzala"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ffeafc504b70a541dd3845d467335f367' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_null'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3Dnull' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
