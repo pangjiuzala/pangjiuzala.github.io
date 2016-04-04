@@ -1,0 +1,585 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>IBM openblockchain学习(四)--crypto源码分析 | XingLiu&#39;s  Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="XingLiu">
+    
+
+    
+    <meta name="description" content="crypto是blockchain中加密技术功能的实现，其中包括了椭圆曲线加密和SHA256等加密算法等，接下来将对其核心部分进行解析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IBM openblockchain学习(四)--crypto源码分析">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/04/04/IBM-openblockchain学习-四-crypto源码分析/index.html">
+<meta property="og:site_name" content="XingLiu's  Blog">
+<meta property="og:description" content="crypto是blockchain中加密技术功能的实现，其中包括了椭圆曲线加密和SHA256等加密算法等，接下来将对其核心部分进行解析。">
+<meta property="og:updated_time" content="2016-04-04T11:13:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IBM openblockchain学习(四)--crypto源码分析">
+<meta name="twitter:description" content="crypto是blockchain中加密技术功能的实现，其中包括了椭圆曲线加密和SHA256等加密算法等，接下来将对其核心部分进行解析。">
+
+    
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/04/04/IBM-openblockchain学习-四-crypto源码分析/" title="IBM openblockchain学习(四)--crypto源码分析" itemprop="url">IBM openblockchain学习(四)--crypto源码分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-04-04T11:13:09.000Z" itemprop="datePublished"> 发表于 2016-04-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#elliptic"><span class="toc-number">1.</span> <span class="toc-text">elliptic</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#hash"><span class="toc-number">2.</span> <span class="toc-text">hash</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#init"><span class="toc-number">3.</span> <span class="toc-text">init</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#generic"><span class="toc-number">4.</span> <span class="toc-text">generic</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#engine"><span class="toc-number">4.1.</span> <span class="toc-text">engine</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#aesEncrypt"><span class="toc-number">4.1.1.</span> <span class="toc-text">aesEncrypt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#aesDecrypt"><span class="toc-number">4.1.2.</span> <span class="toc-text">aesDecrypt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eciesGenerateKey"><span class="toc-number">4.1.3.</span> <span class="toc-text">eciesGenerateKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eciesEncrypt"><span class="toc-number">4.1.4.</span> <span class="toc-text">eciesEncrypt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eciesDecrypt"><span class="toc-number">4.1.5.</span> <span class="toc-text">eciesDecrypt</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#es"><span class="toc-number">4.2.</span> <span class="toc-text">es</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kg"><span class="toc-number">4.3.</span> <span class="toc-text">kg</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#params"><span class="toc-number">4.4.</span> <span class="toc-text">params</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pk"><span class="toc-number">4.5.</span> <span class="toc-text">pk</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sk"><span class="toc-number">4.6.</span> <span class="toc-text">sk</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spi"><span class="toc-number">4.7.</span> <span class="toc-text">spi</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#crypto"><span class="toc-number">5.</span> <span class="toc-text">crypto</span></a></li></ol>
+		
+		</div>
+		
+		<p>crypto是blockchain中加密技术功能的实现，其中包括了椭圆曲线加密和SHA256等加密算法等，接下来将对其核心部分进行解析。</p>
+<a id="more"></a>
+<h1 id="elliptic">elliptic</h1><p>返回加密层中使用的默认椭圆曲线<br><figure class="highlight autoit"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetDefaultCurve</span><span class="params">()</span> <span class="title">elliptic</span>.<span class="title">Curve</span> &#123;</span></span><br><span class="line">	<span class="keyword">return</span> defaultCurve</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="hash">hash</h1><p>返回加密层中使用的默认哈希值<br><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">GetDefaultHash</span><span class="params">()</span></span> <span class="func"><span class="keyword">func</span><span class="params">()</span></span> hash.<span class="type">Hash</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> defaultHash</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="init">init</h1><p>在给定的安全级别内初始化密码层<br><figure class="highlight autoit"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InitSecurityLevel</span><span class="params">(level int)</span> <span class="params">(err error)</span> &#123;</span></span><br><span class="line">	initOnce.<span class="keyword">Do</span>(<span class="function"><span class="keyword">func</span><span class="params">()</span> &#123;</span></span><br><span class="line">		<span class="keyword">switch</span> level &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">256</span>:</span><br><span class="line">			defaultCurve = elliptic.P256()</span><br><span class="line">			defaultHash = sha3.New256</span><br><span class="line">		<span class="keyword">case</span> <span class="number">384</span>:</span><br><span class="line">			defaultCurve = elliptic.P384()</span><br><span class="line">			defaultHash = sha3.New384</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			err = fmt.Errorf(<span class="string">"Security level not supported [%d]"</span>, level)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="generic">generic</h1><p>generic位于ecies包下</p>
+<h2 id="engine">engine</h2><h3 id="aesEncrypt">aesEncrypt</h3><p>ase加密<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> aesEncrypt(key, plain []<span class="typename">byte</span>) ([]<span class="typename">byte</span>, error) &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="constant">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	text := <span class="built_in">make</span>([]<span class="typename">byte</span>, aes.BlockSize+<span class="built_in">len</span>(plain))</span><br><span class="line">	iv := text[:aes.BlockSize]</span><br><span class="line">	<span class="keyword">if</span> _, err := io.ReadFull(rand.Reader, iv); err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="constant">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	cfb := cipher.NewCFBEncrypter(block, iv)</span><br><span class="line">	cfb.XORKeyStream(text[aes.BlockSize:], plain)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> text, <span class="constant">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="aesDecrypt">aesDecrypt</h3><p>aes解密<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> aesDecrypt(key, text []<span class="typename">byte</span>) ([]<span class="typename">byte</span>, error) &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="constant">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(text) &lt; aes.BlockSize &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="constant">nil</span>, errors.New(<span class="string">"cipher text too short"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	cfb := cipher.NewCFBDecrypter(block, text[:aes.BlockSize])</span><br><span class="line">	plain := <span class="built_in">make</span>([]<span class="typename">byte</span>, <span class="built_in">len</span>(text)-aes.BlockSize)</span><br><span class="line">	cfb.XORKeyStream(plain, text[aes.BlockSize:])</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> plain, <span class="constant">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="eciesGenerateKey">eciesGenerateKey</h3><p>ECIES生成密钥<br><figure class="highlight mel"><table><tr><td class="code"><pre><span class="line">func eciesGenerateKey(<span class="keyword">rand</span> io.Reader, <span class="keyword">curve</span> elliptic.Curve, params <span class="variable">*Params</span>) (<span class="variable">*ecdsa</span>.PrivateKey, <span class="keyword">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> ecdsa.GenerateKey(<span class="keyword">curve</span>, <span class="keyword">rand</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="eciesEncrypt">eciesEncrypt</h3><figure class="highlight scss"><table><tr><td class="code"><pre><span class="line">func <span class="function">eciesEncrypt</span>(rand io<span class="class">.Reader</span>, pub *ecdsa<span class="class">.PublicKey</span>, s1, s2 <span class="attr_selector">[]</span>byte, plain <span class="attr_selector">[]</span>byte) (<span class="attr_selector">[]</span>byte, error) &#123;</span><br><span class="line">	params <span class="value">:= pub.Curve.<span class="function">Params</span>()</span><br><span class="line"></span><br><span class="line">	//选择带有椭圆曲线域参数相关的临时椭圆曲线密钥对</span><br><span class="line">	priv, Rx, Ry, err := elliptic.<span class="function">GenerateKey</span>(pub.Curve, rand)</span><br><span class="line">	//fmt.<span class="function">Printf</span>(<span class="string">"Rx %s\n"</span>, utils.<span class="function">EncodeBase64</span>(Rx.<span class="function">Bytes</span>()))</span><br><span class="line">	//fmt.<span class="function">Printf</span>(<span class="string">"Ry %s\n"</span>, utils.<span class="function">EncodeBase64</span>(Ry.<span class="function">Bytes</span>()))</span><br><span class="line"></span><br><span class="line">	// 转换 R=(Rx,Ry) 为R字节串</span><br><span class="line">	// 这是未压缩的</span><br><span class="line">	Rb := elliptic.<span class="function">Marshal</span>(pub.Curve, Rx, Ry)</span><br><span class="line"></span><br><span class="line">	// 从暂时的私钥k得出一个公钥元素z，并且将字节串z转化为Z</span><br><span class="line">	z, _ := params.<span class="function">ScalarMult</span>(pub.X, pub.Y, priv)</span><br><span class="line">	Z := z.<span class="function">Bytes</span>()</span><br><span class="line">	//fmt.<span class="function">Printf</span>(<span class="string">"Z %s\n"</span>, utils.<span class="function">EncodeBase64</span>(Z))</span><br><span class="line"></span><br><span class="line">	//借助Z中生成长度为ecnKeyLen+macKeyLen的公钥数据K</span><br><span class="line">	</span><br><span class="line">	// ans s1</span><br><span class="line">	kE := <span class="function">make</span>([]byte, <span class="number">32</span>)</span><br><span class="line">	kM := <span class="function">make</span>([]byte, <span class="number">32</span>)</span><br><span class="line">	hkdf := hkdf.<span class="function">New</span>(conf.<span class="function">GetDefaultHash</span>(), Z, s1, nil)</span><br><span class="line">	_, err = hkdf.<span class="function">Read</span>(kE)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return nil, err</span><br><span class="line">	&#125;</span><br><span class="line">	_, err = hkdf.<span class="function">Read</span>(kM)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return nil, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//使用对称加密方案的加密运算加密m在EK中的密文EM</span><br><span class="line">	EM, err := <span class="function">aesEncrypt</span>(kE, plain)</span><br><span class="line"></span><br><span class="line">	//使用MAC方案的标签操作来计算EM上的标签D||S2</span><br><span class="line">	mac := hmac.<span class="function">New</span>(conf.<span class="function">GetDefaultHash</span>(), kM)</span><br><span class="line">	mac.<span class="function">Write</span>(EM)</span><br><span class="line">	if <span class="function">len</span>(s2) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		mac.<span class="function">Write</span>(s2)</span><br><span class="line">	&#125;</span><br><span class="line">	D := mac.<span class="function">Sum</span>(nil)</span><br><span class="line"></span><br><span class="line">	// Output R,EM,D</span><br><span class="line">	ciphertext := <span class="function">make</span>([]byte, <span class="function">len</span>(Rb)+<span class="function">len</span>(EM)+<span class="function">len</span>(D))</span><br><span class="line">	//fmt.<span class="function">Printf</span>(<span class="string">"Rb %s\n"</span>, utils.<span class="function">EncodeBase64</span>(Rb))</span><br><span class="line">	//fmt.<span class="function">Printf</span>(<span class="string">"EM %s\n"</span>, utils.<span class="function">EncodeBase64</span>(EM))</span><br><span class="line">	//fmt.<span class="function">Printf</span>(<span class="string">"D %s\n"</span>, utils.<span class="function">EncodeBase64</span>(D))</span><br><span class="line">	<span class="function">copy</span>(ciphertext, Rb)</span><br><span class="line">	<span class="function">copy</span>(ciphertext[<span class="function">len</span>(Rb):], EM)</span><br><span class="line">	<span class="function">copy</span>(ciphertext[<span class="function">len</span>(Rb)+<span class="function">len</span>(EM):], D)</span><br><span class="line"></span><br><span class="line">	return ciphertext, nil</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="eciesDecrypt">eciesDecrypt</h3><figure class="highlight lisp"><table><tr><td class="code"><pre><span class="line">func eciesDecrypt<span class="list">(<span class="keyword">priv</span> <span class="variable">*ecdsa.PrivateKey, s1, s2 []byte, ciphertext []byte) ([]byte, error) &#123;</span><br><span class="line">	params := priv.Curve.Params()</span><br><span class="line"></span><br><span class="line">	var (</span><br><span class="line">		rLen   int</span><br><span class="line">		hLen   int = conf.GetDefaultHash()().Size()</span><br><span class="line">		mStart int</span><br><span class="line">		mEnd   int</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	//fmt.Printf("Decrypt\n")</span><br><span class="line">	switch ciphertext[0] &#123;</span><br><span class="line">	case 2, 3:</span><br><span class="line">		rLen = ((priv.PublicKey.Curve.Params().BitSize + 7) / 8) + 1</span><br><span class="line">		if len(ciphertext) &lt; (rLen + hLen + 1) &#123;</span><br><span class="line">			return nil, errors.New("Invalid ciphertext")</span><br><span class="line">		&#125;</span><br><span class="line">		break</span><br><span class="line">	case 4:</span><br><span class="line">		rLen = 2*</span><span class="list">(<span class="list">(<span class="keyword">priv</span>.PublicKey.Curve.Params<span class="list">()</span>.BitSize+7)</span>/8)</span> + <span class="number">1</span></span><br><span class="line">		if len<span class="list">(<span class="keyword">ciphertext</span>)</span> &lt; <span class="list">(<span class="keyword">rLen</span> + hLen + <span class="number">1</span>)</span> &#123;</span><br><span class="line">			return <span class="literal">nil</span>, errors.New<span class="list">(<span class="string">"Invalid ciphertext"</span>)</span></span><br><span class="line">		&#125;</span><br><span class="line">		break</span><br><span class="line"></span><br><span class="line">	default:</span><br><span class="line">		return <span class="literal">nil</span>, errors.New<span class="list">(<span class="string">"Invalid ciphertext"</span>)</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	mStart = rLen</span><br><span class="line">	mEnd = len<span class="list">(<span class="keyword">ciphertext</span>)</span> - hLen</span><br><span class="line">	//fmt.Printf<span class="list">(<span class="string">"Rb %s\n"</span>, utils.EncodeBase64<span class="list">(<span class="keyword">ciphertext</span>[<span class="keyword">:rLen</span>])</span>)</span></span><br><span class="line"></span><br><span class="line">	Rx, Ry <span class="keyword">:=</span> elliptic.Unmarshal<span class="list">(<span class="keyword">priv</span>.Curve, ciphertext[<span class="keyword">:rLen</span>])</span></span><br><span class="line">	if Rx == <span class="literal">nil</span> &#123;</span><br><span class="line">		return <span class="literal">nil</span>, errors.New<span class="list">(<span class="string">"Invalid ephemeral PK"</span>)</span></span><br><span class="line">	&#125;</span><br><span class="line">	if !priv.Curve.IsOnCurve<span class="list">(<span class="keyword">Rx</span>, Ry)</span> &#123;</span><br><span class="line">		return <span class="literal">nil</span>, errors.New<span class="list">(<span class="string">"Invalid point on curve"</span>)</span></span><br><span class="line">	&#125;</span><br><span class="line">	//fmt.Printf<span class="list">(<span class="string">"Rx %s\n"</span>, utils.EncodeBase64<span class="list">(<span class="keyword">Rx</span>.Bytes<span class="list">()</span>)</span>)</span></span><br><span class="line">	//fmt.Printf<span class="list">(<span class="string">"Ry %s\n"</span>, utils.EncodeBase64<span class="list">(<span class="keyword">Ry</span>.Bytes<span class="list">()</span>)</span>)</span></span><br><span class="line"></span><br><span class="line">	// 从暂时的私钥k得出一个公钥z，并转换z到字节串Z</span><br><span class="line">	z, _ <span class="keyword">:=</span> params.ScalarMult<span class="list">(<span class="keyword">Rx</span>, Ry, priv.D.Bytes<span class="list">()</span>)</span></span><br><span class="line">	Z <span class="keyword">:=</span> z.Bytes<span class="list">()</span></span><br><span class="line">	//fmt.Printf<span class="list">(<span class="string">"Z %s\n"</span>, utils.EncodeBase64<span class="list">(<span class="keyword">Z</span>)</span>)</span></span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	kE <span class="keyword">:=</span> make<span class="list">([]byte, <span class="number">32</span>)</span></span><br><span class="line">	kM <span class="keyword">:=</span> make<span class="list">([]byte, <span class="number">32</span>)</span></span><br><span class="line">	hkdf <span class="keyword">:=</span> hkdf.New<span class="list">(<span class="keyword">conf</span>.GetDefaultHash<span class="list">()</span>, Z, s1, <span class="literal">nil</span>)</span></span><br><span class="line">	_, err <span class="keyword">:=</span> hkdf.Read<span class="list">(<span class="keyword">kE</span>)</span></span><br><span class="line">	if err != <span class="literal">nil</span> &#123;</span><br><span class="line">		return <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	_, err = hkdf.Read<span class="list">(<span class="keyword">kM</span>)</span></span><br><span class="line">	if err != <span class="literal">nil</span> &#123;</span><br><span class="line">		return <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// 使用MAC方案的标签操作来计算EM上的标签,再对比D||S2</span><br><span class="line">	mac <span class="keyword">:=</span> hmac.New<span class="list">(<span class="keyword">conf</span>.GetDefaultHash<span class="list">()</span>, kM)</span></span><br><span class="line">	mac.Write<span class="list">(<span class="keyword">ciphertext</span>[mStart<span class="keyword">:mEnd</span>])</span></span><br><span class="line">	if len<span class="list">(<span class="keyword">s2</span>)</span> &gt; <span class="number">0</span> &#123;</span><br><span class="line">		mac.Write<span class="list">(<span class="keyword">s2</span>)</span></span><br><span class="line">	&#125;</span><br><span class="line">	D <span class="keyword">:=</span> mac.Sum<span class="list">(<span class="keyword">nil</span>)</span></span><br><span class="line"></span><br><span class="line">	//fmt.Printf<span class="list">(<span class="string">"EM %s\n"</span>, utils.EncodeBase64<span class="list">(<span class="keyword">ciphertext</span>[mStart<span class="keyword">:mEnd</span>])</span>)</span></span><br><span class="line">	//fmt.Printf<span class="list">(<span class="string">"D' %s\n"</span>, utils.EncodeBase64<span class="list">(<span class="keyword">D</span>)</span>)</span></span><br><span class="line">	//fmt.Printf<span class="list">(<span class="string">"D %s\n"</span>, utils.EncodeBase64<span class="list">(<span class="keyword">ciphertext</span>[mEnd:])</span>)</span></span><br><span class="line">	if subtle.ConstantTimeCompare<span class="list">(<span class="keyword">ciphertext</span>[mEnd:], D)</span> != <span class="number">1</span> &#123;</span><br><span class="line">		return <span class="literal">nil</span>, errors.New<span class="list">(<span class="string">"Tag check failed"</span>)</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// 使用对称加密方案的解密操作使用明文EK解密EM</span><br><span class="line"></span><br><span class="line">	plaintext, err <span class="keyword">:=</span> aesDecrypt<span class="list">(<span class="keyword">kE</span>, ciphertext[mStart<span class="keyword">:mEnd</span>])</span></span><br><span class="line"></span><br><span class="line">	return plaintext, err</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="es">es</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> (es *encryptionSchemeImpl) Init(params ecies.AsymmetricCipherParameters) error &#123;</span><br><span class="line">	<span class="keyword">if</span> params == <span class="constant">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ecies.ErrInvalidKeyParameter</span><br><span class="line">	&#125;</span><br><span class="line">	es.isForEncryption = params.IsPublic()</span><br><span class="line">	es.params = params</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> es.isForEncryption &#123;</span><br><span class="line">		<span class="keyword">switch</span> pk := params.(<span class="keyword">type</span>) &#123;</span><br><span class="line">		<span class="keyword">case</span> *publicKeyImpl:</span><br><span class="line">			es.pub = pk</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">return</span> ecies.ErrInvalidKeyParameter</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">switch</span> sk := params.(<span class="keyword">type</span>) &#123;</span><br><span class="line">		<span class="keyword">case</span> *secretKeyImpl:</span><br><span class="line">			es.priv = sk</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">return</span> ecies.ErrInvalidKeyParameter</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="constant">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">func</span> (es *encryptionSchemeImpl) Process(msg []<span class="typename">byte</span>) ([]<span class="typename">byte</span>, error) &#123;</span><br><span class="line">	<span class="keyword">if</span> es.isForEncryption &#123;</span><br><span class="line">		<span class="comment">// 加密</span></span><br><span class="line">		<span class="keyword">return</span> eciesEncrypt(es.params.GetRand(), es.pub.pub, <span class="constant">nil</span>, <span class="constant">nil</span>, msg)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// 解密</span></span><br><span class="line">		<span class="keyword">return</span> eciesDecrypt(es.priv.priv, <span class="constant">nil</span>, <span class="constant">nil</span>, msg)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="constant">nil</span>, <span class="constant">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="kg">kg</h2><p>生成密钥<br><figure class="highlight sqf"><table><tr><td class="code"><pre><span class="line">func (kg *keyGeneratorImpl) GenerateKey() (ecies.PrivateKey, error) &#123;</span><br><span class="line"></span><br><span class="line">	privKey, err := eciesGenerateKey(</span><br><span class="line">		kg.<span class="built_in">params</span>.rand,</span><br><span class="line">		kg.<span class="built_in">params</span>.curve,</span><br><span class="line">		kg.<span class="built_in">params</span>.<span class="built_in">params</span>,</span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		return <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return &amp;secretKeyImpl&#123;privKey, <span class="literal">nil</span>, kg.<span class="built_in">params</span>.<span class="built_in">params</span>, kg.<span class="built_in">params</span>.rand&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="params">params</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">type <span class="type">Params</span> <span class="class"><span class="keyword">struct</span> </span>&#123;</span><br><span class="line">	<span class="type">Hash</span>      <span class="func"><span class="keyword">func</span><span class="params">()</span></span> hash.<span class="type">Hash</span></span><br><span class="line">	hashAlgo  crypto.<span class="type">Hash</span> <span class="comment">//哈希加密</span></span><br><span class="line">	<span class="type">Cipher</span>    <span class="func"><span class="keyword">func</span><span class="params">([]byte)</span></span> (cipher.<span class="type">Block</span>, error) <span class="comment">//暗号</span></span><br><span class="line">	<span class="type">BlockSize</span> int <span class="comment">//块大小</span></span><br><span class="line">	<span class="type">KeyLen</span>    int <span class="comment">//密钥长度</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="pk">pk</h2><figure class="highlight autoit"><table><tr><td class="code"><pre><span class="line">//获取随机密钥</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pk *publicKeyImpl)</span> <span class="title">GetRand</span><span class="params">()</span> <span class="title">io</span>.<span class="title">Reader</span> &#123;</span></span><br><span class="line">	<span class="keyword">return</span> pk.rand</span><br><span class="line">&#125;</span><br><span class="line">//判断是否为公钥</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pk *publicKeyImpl)</span> <span class="title">IsPublic</span><span class="params">()</span> <span class="title">bool</span> &#123;</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="sk">sk</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="params">(sk *secretKeyImpl)</span></span> <span class="type">IsPublic</span>() bool &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="params">(sk *secretKeyImpl)</span></span> <span class="type">GetRand</span>() io.<span class="type">Reader</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> sk.rand</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="params">(sk *secretKeyImpl)</span></span> <span class="type">GetPublicKey</span>() ecies.<span class="type">PublicKey</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> sk.pub == <span class="literal">nil</span> &#123;</span><br><span class="line">		sk.pub = &amp;publicKeyImpl&#123;&amp;sk.priv.<span class="type">PublicKey</span>, sk.rand, sk.params&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> sk.pub</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//转换为字节</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="params">(sks *secretKeySerializerImpl)</span></span> <span class="type">ToBytes</span>(key interface&#123;&#125;) ([]byte, error) &#123;</span><br><span class="line">	<span class="keyword">switch</span> sk := key.(type) &#123;</span><br><span class="line">	<span class="keyword">case</span> *secretKeyImpl:</span><br><span class="line">		<span class="keyword">return</span> x509.<span class="type">MarshalECPrivateKey</span>(sk.priv)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, ecies.<span class="type">ErrInvalidKeyParameter</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, ecies.<span class="type">ErrInvalidKeyParameter</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//从字节中转换私钥</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="params">(sks *secretKeySerializerImpl)</span></span> <span class="type">FromBytes</span>(bytes []byte) (interface&#123;&#125;, error) &#123;</span><br><span class="line">	key, err := x509.<span class="type">ParseECPrivateKey</span>(bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// <span class="doctag">TODO:</span> add params here</span></span><br><span class="line">	<span class="keyword">return</span> &amp;secretKeyImpl&#123;key, <span class="literal">nil</span>, <span class="literal">nil</span>, rand.<span class="type">Reader</span>&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="spi">spi</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//序列化私钥</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">serializePrivateKey</span><span class="params">(priv ecies.PrivateKey)</span></span> ([]byte, error) &#123;</span><br><span class="line">	serializer := secretKeySerializerImpl&#123;&#125;</span><br><span class="line">	<span class="keyword">return</span> serializer.<span class="type">ToBytes</span>(priv)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//反序列化私钥</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">deserializePrivateKey</span><span class="params">(bytes []byte)</span></span> (ecies.<span class="type">PrivateKey</span>, error) &#123;</span><br><span class="line">	serializer := secretKeySerializerImpl&#123;&#125;</span><br><span class="line">	priv, err := serializer.<span class="type">FromBytes</span>(bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> priv.(ecies.<span class="type">PrivateKey</span>), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//生成非对称密码</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">newAsymmetricCipher</span><span class="params">()</span></span> (ecies.<span class="type">AsymmetricCipher</span>, error) &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;encryptionSchemeImpl&#123;&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//生成私钥</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">newPrivateKey</span><span class="params">(rand io.Reader, curve elliptic.Curve)</span></span> (ecies.<span class="type">PrivateKey</span>, error) &#123;</span><br><span class="line">	kg, err := newKeyGeneratorFromCurve(rand, curve)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> kg.<span class="type">GenerateKey</span>()</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//从私钥创建非对称密码</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">newAsymmetricCipherFromPrivateKey</span><span class="params">(priv ecies.PrivateKey)</span></span> (ecies.<span class="type">AsymmetricCipher</span>, error) &#123;</span><br><span class="line">	es, err := newAsymmetricCipher()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err = es.<span class="type">Init</span>(priv)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> es, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//从公钥创建非对称密码</span></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">newAsymmetricCipherFromPublicKey</span><span class="params">(pub ecies.PublicKey)</span></span> (ecies.<span class="type">AsymmetricCipher</span>, error) &#123;</span><br><span class="line">	es, err := newAsymmetricCipher()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err = es.<span class="type">Init</span>(pub)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> es, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="crypto">crypto</h1><p>cypto实现了和密钥有关的接口<br><figure class="highlight cs"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	<span class="comment">// 无效的密钥参数</span></span><br><span class="line">	ErrInvalidKeyParameter = errors.New(<span class="string">"Invalid Key Parameter."</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//无效的密钥生成器参数</span></span><br><span class="line">	ErrInvalidKeyGeneratorParameter = errors.New(<span class="string">"Invalid Key Generator Parameter."</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对于所有参数的通用接口</span></span><br><span class="line">type Parameters <span class="keyword">interface</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 随机生成关联参数</span></span><br><span class="line">	GetRand() io.Reader</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通用接口来表示密码参数</span></span><br><span class="line">type CipherParameters <span class="keyword">interface</span> &#123;</span><br><span class="line">	Parameters</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通用接口来表示非对称密码参数</span></span><br><span class="line">type AsymmetricCipherParameters <span class="keyword">interface</span> &#123;</span><br><span class="line">	Parameters</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 如果参数是公开的返回true，否则为false。</span></span><br><span class="line">	IsPublic() <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//通用接口代表非对称公钥参数</span></span><br><span class="line">type PublicKey <span class="keyword">interface</span> &#123;</span><br><span class="line">	AsymmetricCipherParameters</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//通用接口代表非对称私钥参数</span></span><br><span class="line">type PrivateKey <span class="keyword">interface</span> &#123;</span><br><span class="line">	AsymmetricCipherParameters</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回关联公钥</span></span><br><span class="line">	GetPublicKey() PublicKey</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通用接口来表示密钥生成参数</span></span><br><span class="line">type KeyGeneratorParameters <span class="keyword">interface</span> &#123;</span><br><span class="line">	Parameters</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义密钥生成器</span></span><br><span class="line">type KeyGenerator <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">//初始化生成使用传递的参数</span></span><br><span class="line">	Init(<span class="keyword">params</span> KeyGeneratorParameters) error</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 生成一个新的私钥</span></span><br><span class="line">	GenerateKey() (PrivateKey, error)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//定义了一个非对称密码</span></span><br><span class="line">type AsymmetricCipher <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 使用传递的参数初始化</span></span><br><span class="line">	Init(<span class="keyword">params</span> AsymmetricCipherParameters) error</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 处理输入给出的字节数组的过程</span></span><br><span class="line">	Process(msg []<span class="keyword">byte</span>) ([]<span class="keyword">byte</span>, error)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 密钥序列化/反序列化</span></span><br><span class="line">type KeySerializer <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 转换密钥为字节</span></span><br><span class="line">	ToBytes(key <span class="keyword">interface</span>&#123;&#125;) ([]<span class="keyword">byte</span>, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 转换字节为密钥</span></span><br><span class="line">	FromBytes([]<span class="keyword">byte</span>) (<span class="keyword">interface</span>&#123;&#125;, error)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ECIES服务提供接口</span></span><br><span class="line">type SPI <span class="keyword">interface</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//从秘钥创建解密一个新的非对称密码</span></span><br><span class="line">	NewAsymmetricCipherFromPrivateKey(priv PrivateKey) (AsymmetricCipher, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//从公钥创建解密一个新的非对称密码</span></span><br><span class="line">	NewAsymmetricCipherFromPublicKey(pub PublicKey) (AsymmetricCipher, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 从(rand, params)创建一个新的私钥</span></span><br><span class="line">	NewPrivateKey(rand io.Reader, <span class="keyword">params</span> <span class="keyword">interface</span>&#123;&#125;) (PrivateKey, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//从(rand, params)创建一个新的公钥</span></span><br><span class="line">	NewPublicKey(rand io.Reader, <span class="keyword">params</span> <span class="keyword">interface</span>&#123;&#125;) (PublicKey, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化私钥</span></span><br><span class="line">	SerializePrivateKey(priv PrivateKey) ([]<span class="keyword">byte</span>, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 反序列化私钥</span></span><br><span class="line">	DeserializePrivateKey(bytes []<span class="keyword">byte</span>) (PrivateKey, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/BlockChain/">BlockChain</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/04/02/IBM-openblockchain学习-三-Ledger源码分析/"  title="IBM openblockchain学习(三)--Ledger源码分析">
+ <strong>下一篇：</strong><br/> 
+ <span>IBM openblockchain学习(三)--Ledger源码分析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/04/04/IBM-openblockchain学习-四-crypto源码分析/" data-title="IBM openblockchain学习(四)--crypto源码分析" data-url="http://pangjiuzala.github.io/2016/04/04/IBM-openblockchain学习-四-crypto源码分析/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#elliptic"><span class="toc-number">1.</span> <span class="toc-text">elliptic</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#hash"><span class="toc-number">2.</span> <span class="toc-text">hash</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#init"><span class="toc-number">3.</span> <span class="toc-text">init</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#generic"><span class="toc-number">4.</span> <span class="toc-text">generic</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#engine"><span class="toc-number">4.1.</span> <span class="toc-text">engine</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#aesEncrypt"><span class="toc-number">4.1.1.</span> <span class="toc-text">aesEncrypt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#aesDecrypt"><span class="toc-number">4.1.2.</span> <span class="toc-text">aesDecrypt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eciesGenerateKey"><span class="toc-number">4.1.3.</span> <span class="toc-text">eciesGenerateKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eciesEncrypt"><span class="toc-number">4.1.4.</span> <span class="toc-text">eciesEncrypt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eciesDecrypt"><span class="toc-number">4.1.5.</span> <span class="toc-text">eciesDecrypt</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#es"><span class="toc-number">4.2.</span> <span class="toc-text">es</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kg"><span class="toc-number">4.3.</span> <span class="toc-text">kg</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#params"><span class="toc-number">4.4.</span> <span class="toc-text">params</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pk"><span class="toc-number">4.5.</span> <span class="toc-text">pk</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sk"><span class="toc-number">4.6.</span> <span class="toc-text">sk</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spi"><span class="toc-number">4.7.</span> <span class="toc-text">spi</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#crypto"><span class="toc-number">5.</span> <span class="toc-text">crypto</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=2129798793&verifier=c0951e84&dpc=1"></iframe>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>31</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/性能优化/" title="性能优化">性能优化<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/移动互联网/" title="移动互联网">移动互联网<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络爬虫/" title="网络爬虫">网络爬虫<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/智慧医疗/" title="智慧医疗">智慧医疗<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/爬虫/" title="爬虫">爬虫<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.changhuiyuan.com/" target="_blank" title="常惠源的博客">常惠源的博客</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="https://github.com/search?q=pangjiuzala&amp;type=Users" target="_blank" title="关注刘兴的github">关注</a>
+</div>
+
+  
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello,I&#39;m from ZjuCs! <br/>
+			The more you diligent, the more you lucky!</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Copyright@ 2015 Liuxing All rights reserved.
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"pangjiuzala"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ffeafc504b70a541dd3845d467335f367' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_null'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3Dnull' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
