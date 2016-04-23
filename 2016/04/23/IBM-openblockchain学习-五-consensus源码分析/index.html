@@ -4,23 +4,23 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Java性能优化(2):使用私有构造函数强化singleton属性 | XingLiu&#39;s  Blog</title>
+    <title>IBM openblockchain学习(五)--consensus源码分析 | XingLiu&#39;s  Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="XingLiu">
     
 
     
-    <meta name="description" content="singleton是指这样的类，它只能实例化一次。singleton通常被用来代表那些本质上具有唯一性的系统组件，比如视频显示或者文件系统。实现singleton有两种方法。这两种方法都要把构造函数保持为私有的，并且提供一个静态成员，以便允许客户能够访问该类唯一的实例：在第一种方法中，公有静态成员是一个final域：">
+    <meta name="description" content="这段时间小编一直忙着找实习，现在开始接着分析了，不好意思让大家久等了。好了，直接上干货。consensus是blockchain中实现obc peer端一致性的插件，诸位请看">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java性能优化(2):使用私有构造函数强化singleton属性">
-<meta property="og:url" content="http://pangjiuzala.github.io/2015/08/28/Java性能优化-2-使用私有构造函数强化singleton属性/index.html">
+<meta property="og:title" content="IBM openblockchain学习(五)--consensus源码分析">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/04/23/IBM-openblockchain学习-五-consensus源码分析/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="singleton是指这样的类，它只能实例化一次。singleton通常被用来代表那些本质上具有唯一性的系统组件，比如视频显示或者文件系统。实现singleton有两种方法。这两种方法都要把构造函数保持为私有的，并且提供一个静态成员，以便允许客户能够访问该类唯一的实例：在第一种方法中，公有静态成员是一个final域：">
-<meta property="og:updated_time" content="2015-09-06T07:34:54.000Z">
+<meta property="og:description" content="这段时间小编一直忙着找实习，现在开始接着分析了，不好意思让大家久等了。好了，直接上干货。consensus是blockchain中实现obc peer端一致性的插件，诸位请看">
+<meta property="og:updated_time" content="2016-04-23T11:08:09.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java性能优化(2):使用私有构造函数强化singleton属性">
-<meta name="twitter:description" content="singleton是指这样的类，它只能实例化一次。singleton通常被用来代表那些本质上具有唯一性的系统组件，比如视频显示或者文件系统。实现singleton有两种方法。这两种方法都要把构造函数保持为私有的，并且提供一个静态成员，以便允许客户能够访问该类唯一的实例：在第一种方法中，公有静态成员是一个final域：">
+<meta name="twitter:title" content="IBM openblockchain学习(五)--consensus源码分析">
+<meta name="twitter:description" content="这段时间小编一直忙着找实习，现在开始接着分析了，不好意思让大家久等了。好了，直接上干货。consensus是blockchain中实现obc peer端一致性的插件，诸位请看">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -77,14 +77,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/08/28/Java性能优化-2-使用私有构造函数强化singleton属性/" title="Java性能优化(2):使用私有构造函数强化singleton属性" itemprop="url">Java性能优化(2):使用私有构造函数强化singleton属性</a>
+      <a href="/2016/04/23/IBM-openblockchain学习-五-consensus源码分析/" title="IBM openblockchain学习(五)--consensus源码分析" itemprop="url">IBM openblockchain学习(五)--consensus源码分析</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
 		
   <p class="article-time">
-    <time datetime="2015-08-28T12:14:48.000Z" itemprop="datePublished"> 发表于 2015-08-28</time>
+    <time datetime="2016-04-23T11:07:13.000Z" itemprop="datePublished"> 发表于 2016-04-23</time>
     
   </p>
 </header>
@@ -93,16 +93,13 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#consensus"><span class="toc-number">1.</span> <span class="toc-text">consensus</span></a></li></ol>
 		
 		</div>
 		
-		<p>singleton是指这样的类，它只能实例化一次。singleton通常被用来代表那些本质上具有唯一性的系统组件，比如视频显示或者文件系统。<br>实现singleton有两种方法。这两种方法都要把构造函数保持为私有的，并且提供一个静态成员，以便允许客户能够访问该类唯一的实例：在第一种方法中，公有静态成员是一个final域：<br><a id="more"></a><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Elvis</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Elvis INSTANCE = <span class="keyword">new</span> Elvis();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Elvis</span><span class="params">()</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>私有构造函数仅被调用一次，用来实例化公有的静态final域Elvis.INSTANCE,由于缺少公有的或者受保护的构造函数，所以保证了Elvis的全局唯一性，一旦Elvis类被实例化之后，只有一个Elvis实例存在——不多也不少，客户的任何行为都不会改变这一点。</p>
-<p>第二种方法提供了一个公有的静态工厂方法，而不是公有的静态final域：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Elvis</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Elvis INSTANCE = <span class="keyword">new</span> Elvis();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Elvis</span><span class="params">()</span></span><br><span class="line">    </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Elvis <span class="title">getInstance</span><span class="params">()</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>所有对于静态方法Elivis.getInstance的调用，都会返回同一个对象引用，所以，不会有别的Elvis实例被创建。<br>第一种方法的主要好处在于，组成类的成员声明很清楚的表明了这个类是一个singleton：公有的静态域是final的，所以该域将总是包含相同的对象引用。第一种方法可能在性能上稍微领先，但是在第二种方法中，一个优秀的JVM实现应该能够通过静态工厂方法的调用内联化，来消除这种差别。<br>第二种方法的主要好处在于，它提供了灵活性：在不改变API的前提下，允许我们改变想法，把该类做成singleton，或者不做成singleton。singleton的静态工厂方法返回该类的唯一实例，但是，它也很容易被修改。比如说，为每个调用该方法的线程返回一个唯一的实例。<br>总而言之，如果你确信该类将永远是一个singleton，那么使用第一种方法是有意义的。如果你希望保留一点余地，那么还有一招。<br>为了使一个singleton类变成可序列化的（serializable），仅仅在声明中加上“implements serializable”是不够的，为了维护singleton性，你必须也要提供一个readResolve方法。否则的话，一个序列化的实例在每次反序列化的时候，都会导致创建一个新的实例，比如说，在我们的例子中，会导致“假冒的Elvis“。为了防止这种情况，在Elvis类中加入下面的readResolve方法：</p>
-<p>```<br>private Object readResolve() throws ObjectStreamException<br>{<br>    return INSTANCE;<br>}</p>
-<p>在两种情况下，私有的构造函数与公有的静态成员联合起来，以确保当该类被初始化之后，不会再有新的实例被创建。在本条目的情形下，该类只有一个实例被创建；枚举类型的每一个成员都有一个实例被创建。这种方法会被进一步发挥：不存在公有的构造函数，以确保一个类永远也不会有实例被创建。</p>
+		<p>这段时间小编一直忙着找实习，现在开始接着分析了，不好意思让大家久等了。好了，直接上干货。<br>consensus是blockchain中实现obc peer端一致性的插件，诸位请看</p>
+<a id="more"></a>
+<h1 id="consensus">consensus</h1><figure class="highlight elm"><table><tr><td class="code"><pre><span class="line">// <span class="type">Consenter</span>用于从网络接收消息</span><br><span class="line">// 每一个consensus插件需要实现这个接口</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Consenter</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">RecvMsg</span>(msg *pb.<span class="type">OpenchainMessage</span>, senderHandle *pb.<span class="type">PeerID</span>) error</span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">Inquirer</span> 用于获取有关网络网络的验证信息</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Inquirer</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">GetNetworkInfo</span>() (self *pb.<span class="type">PeerEndpoint</span>, network []*pb.<span class="type">PeerEndpoint</span>, err error)</span><br><span class="line">	<span class="type">GetNetworkHandles</span>() (self *pb.<span class="type">PeerID</span>, network []*pb.<span class="type">PeerID</span>, err error)</span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">Communicator</span> 用于发送消息给其他验证端</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Communicator</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">Broadcast</span>(msg *pb.<span class="type">OpenchainMessage</span>, peerType pb.<span class="type">PeerEndpoint_Type</span>) error</span><br><span class="line">	<span class="type">Unicast</span>(msg *pb.<span class="type">OpenchainMessage</span>, receiverHandle *pb.<span class="type">PeerID</span>) error</span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">SecurityUtils</span> 用于访问标志/验证crypto包中的方法</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">SecurityUtils</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">Sign</span>(msg []byte) ([]byte, error)</span><br><span class="line">	<span class="type">Verify</span>(peerID *pb.<span class="type">PeerID</span>, signature []byte, message []byte) error</span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">ReadOnlyLedger</span> 用于询问区块链</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">ReadOnlyLedger</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">GetBlock</span>(id uint64) (block *pb.<span class="type">Block</span>, err error)</span><br><span class="line">	<span class="type">GetCurrentStateHash</span>() (stateHash []byte, err error)</span><br><span class="line">	<span class="type">GetBlockchainSize</span>() (uint64, error)</span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">UtilLedger</span> 包含询问区块链的附加的实用功能</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">UtilLedger</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">HashBlock</span>(block *pb.<span class="type">Block</span>) ([]byte, error)</span><br><span class="line">	<span class="type">VerifyBlockchain</span>(start, finish uint64) (uint64, error)</span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">WritableLedger</span> is 用户更新转移blockchain状态过程</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">WritableLedger</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">PutBlock</span>(blockNumber uint64, block *pb.<span class="type">Block</span>) error</span><br><span class="line">	<span class="type">ApplyStateDelta</span>(id interface&#123;&#125;</span>, delta *statemgmt.<span class="type">StateDelta</span>) error</span></span><br><span class="line">	<span class="type">CommitStateDelta</span>(id interface&#123;&#125;) error</span><br><span class="line">	<span class="type">RollbackStateDelta</span>(id interface&#123;&#125;) error</span><br><span class="line">	<span class="type">EmptyState</span>() error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// <span class="type">Ledger</span> is 一个不受限制的读取、效用和更新的联合</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Ledger</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">ReadOnlyLedger</span></span><br><span class="line">	<span class="type">UtilLedger</span></span><br><span class="line">	<span class="type">WritableLedger</span></span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">Executor</span> is 用于调用交易接口，有可能修改依托总账</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Executor</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">BeginTxBatch</span>(id interface&#123;&#125;</span>) error</span></span><br><span class="line">	<span class="type">ExecTxs</span>(id interface&#123;&#125;, txs []*pb.<span class="type">Transaction</span>) ([]byte, error)</span><br><span class="line">	<span class="type">CommitTxBatch</span>(id interface&#123;&#125;, metadata []byte) (*pb.<span class="type">Block</span>, error)</span><br><span class="line">	<span class="type">RollbackTxBatch</span>(id interface&#123;&#125;) error</span><br><span class="line">	<span class="type">PreviewCommitTxBatch</span>(id interface&#123;&#125;, metadata []byte) (*pb.<span class="type">Block</span>, error)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// <span class="type">RemoteLedgers</span> is 用于查询blockchain的其他副本</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">RemoteLedgers</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">GetRemoteBlocks</span>(replicaID *pb.<span class="type">PeerID</span>, start, finish uint64) (&lt;-chan *pb.<span class="type">SyncBlocks</span>, error)</span><br><span class="line">	<span class="type">GetRemoteStateSnapshot</span>(replicaID *pb.<span class="type">PeerID</span>) (&lt;-chan *pb.<span class="type">SyncStateSnapshot</span>, error)</span><br><span class="line">	<span class="type">GetRemoteStateDeltas</span>(replicaID *pb.<span class="type">PeerID</span>, start, finish uint64) (&lt;-chan *pb.<span class="type">SyncStateDeltas</span>, error)</span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">LedgerStack</span> 用作面向blockchain的活动接口，诸如执行交易，查询和更新总账</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">LedgerStack</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">Executor</span></span><br><span class="line">	<span class="type">Ledger</span></span><br><span class="line">	<span class="type">RemoteLedgers</span></span><br><span class="line">&#125;</span></span></span><br><span class="line"></span><br><span class="line">// <span class="type">Stack</span> 可用于consensus插件的一套面向堆栈的方法</span><br><span class="line"><span class="typedef"><span class="keyword">type</span> <span class="type">Stack</span> interface <span class="container">&#123;</span><br><span class="line">	<span class="type">Inquirer</span></span><br><span class="line">	<span class="type">Communicator</span></span><br><span class="line">	<span class="type">SecurityUtils</span></span><br><span class="line">	<span class="type">LedgerStack</span></span><br><span class="line">&#125;</span></span></span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -111,7 +108,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Java/">Java</a><a href="/tags/性能优化/">性能优化</a>
+  <span></span> <a href="/tags/BlockChain/">BlockChain</a>
   </div>
 
 </div>
@@ -155,19 +152,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/08/29/Java性能优化-3-通过私有构造函数强化不可实例化的能力/" title="Java性能优化(3):通过私有构造函数强化不可实例化的能力">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Java性能优化(3):通过私有构造函数强化不可实例化的能力</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/08/27/Java性能优化-1-用静态工厂方法代替构造函数/"  title="Java性能优化(1):用静态工厂方法代替构造函数">
+<a href="/2016/04/04/IBM-openblockchain学习-四-crypto源码分析/"  title="IBM openblockchain学习(四)--crypto源码分析">
  <strong>下一篇：</strong><br/> 
- <span>Java性能优化(1):用静态工厂方法代替构造函数
+ <span>IBM openblockchain学习(四)--crypto源码分析
 </span>
 </a>
 </div>
@@ -176,7 +165,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/08/28/Java性能优化-2-使用私有构造函数强化singleton属性/" data-title="Java性能优化(2):使用私有构造函数强化singleton属性" data-url="http://pangjiuzala.github.io/2015/08/28/Java性能优化-2-使用私有构造函数强化singleton属性/"></div>
+	<div class="ds-thread" data-thread-key="2016/04/23/IBM-openblockchain学习-五-consensus源码分析/" data-title="IBM openblockchain学习(五)--consensus源码分析" data-url="http://pangjiuzala.github.io/2016/04/23/IBM-openblockchain学习-五-consensus源码分析/"></div>
 </section>
 
 
@@ -186,7 +175,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#consensus"><span class="toc-number">1.</span> <span class="toc-text">consensus</span></a></li></ol>
  
   </div>
 
