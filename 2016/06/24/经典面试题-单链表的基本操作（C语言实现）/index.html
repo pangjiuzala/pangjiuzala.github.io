@@ -1,0 +1,578 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>经典面试题---单链表的基本操作（C语言实现） | XingLiu&#39;s  Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="XingLiu">
+    
+
+    
+    <meta name="description" content="以下是常见的单链表操作，包括倒序、排序、查找等函数，亲调可用，基础知识，值得品味">
+<meta property="og:type" content="article">
+<meta property="og:title" content="经典面试题---单链表的基本操作（C语言实现）">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/06/24/经典面试题-单链表的基本操作（C语言实现）/index.html">
+<meta property="og:site_name" content="XingLiu's  Blog">
+<meta property="og:description" content="以下是常见的单链表操作，包括倒序、排序、查找等函数，亲调可用，基础知识，值得品味">
+<meta property="og:updated_time" content="2016-10-07T02:53:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="经典面试题---单链表的基本操作（C语言实现）">
+<meta name="twitter:description" content="以下是常见的单链表操作，包括倒序、排序、查找等函数，亲调可用，基础知识，值得品味">
+
+    
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/24/经典面试题-单链表的基本操作（C语言实现）/" title="经典面试题---单链表的基本操作（C语言实现）" itemprop="url">经典面试题---单链表的基本操作（C语言实现）</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-24T02:29:15.000Z" itemprop="datePublished"> 发表于 2016-06-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>以下是常见的单链表操作，包括倒序、排序、查找等函数，亲调可用，基础知识，值得品味</p>
+<a id="more"></a>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span><span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">define</span> ERROR <span class="number">0</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">define</span> OK    <span class="number">1</span></span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> status;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> ElemType;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> Node</span><br><span class="line">&#123;</span><br><span class="line"> ElemType data;</span><br><span class="line"> <span class="keyword">struct</span> Node *next;</span><br><span class="line">&#125; LNode,*LinkList;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Build</span><span class="params">(LinkList L)</span><span class="comment">//建立一个带头结点的单链表</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> <span class="keyword">int</span> n;</span><br><span class="line"> LinkList p,q;</span><br><span class="line"> p=L;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"请输入n和n个数据元素:\n"</span>);</span><br><span class="line"> <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);</span><br><span class="line"> <span class="keyword">while</span>(n--)</span><br><span class="line"> &#123;</span><br><span class="line">  q=(LinkList)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(LNode));</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;q-&gt;data);</span><br><span class="line">  q-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line">  p-&gt;next=q;</span><br><span class="line">  p=q;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Print</span><span class="params">(LinkList L)</span><span class="comment">//计算单链表的长度，然后输出单链表</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> <span class="keyword">int</span> num=<span class="number">0</span>;</span><br><span class="line"> LinkList p;</span><br><span class="line"> p=L-&gt;next;</span><br><span class="line"> <span class="keyword">while</span>(p)</span><br><span class="line"> &#123;</span><br><span class="line">  num++;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"%d "</span>,p-&gt;data);</span><br><span class="line">  p=p-&gt;next;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"\n长度为%d:\n"</span>,num);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Tips</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"按数字键选择相应操作\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;1&gt; 输出单链表及其长度:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;2&gt; 查找值为x的直接前驱结点:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;3&gt; 删除值为x的结点:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;4&gt; 将表中元素逆置:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;5&gt; 删除表中所有值大于mink且小于maxk的元素:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;6&gt; 删除表中所有值相同的多余元素:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;7&gt; 分解成两个链表:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;8&gt; 在升序链表插入值为X的结点，使仍然有序:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;9&gt; 按升序排列:\n"</span>);</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"&lt;0&gt; 退出:\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Find</span><span class="params">(LinkList L,<span class="keyword">int</span> x)</span><span class="comment">//查找值为x的直接前驱结点q</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> LinkList p;</span><br><span class="line"> p=L;</span><br><span class="line"> <span class="keyword">while</span>( p-&gt;next &amp;&amp;p-&gt;next-&gt;data!=x)</span><br><span class="line">  p=p-&gt;next;</span><br><span class="line"> <span class="keyword">if</span>(p-&gt;next)</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"%d的前驱结点为:%d\n\n"</span>,x,p-&gt;data);</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"没找到!!\n\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delete</span><span class="params">(LinkList L,<span class="keyword">int</span> x)</span><span class="comment">//删除值为x的结点</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> LinkList p,q;</span><br><span class="line"> p=L;</span><br><span class="line"> <span class="keyword">while</span>( p-&gt;next &amp;&amp;p-&gt;next-&gt;data!=x)</span><br><span class="line">  p=p-&gt;next;</span><br><span class="line"> <span class="keyword">if</span>(p-&gt;next)</span><br><span class="line"> &#123;</span><br><span class="line">  q=p-&gt;next;</span><br><span class="line">  p-&gt;next=q-&gt;next;</span><br><span class="line">  <span class="built_in">free</span>(q);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"删除成功!!\n\n"</span>);</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"链表中没有%d\n\n"</span>,x);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">NiZhi</span><span class="params">(LinkList L)</span><span class="comment">//把单向链表中元素逆置,类似于头插法建立链表!</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> LinkList p,s;</span><br><span class="line"> p=s=L-&gt;next;</span><br><span class="line"> L-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line"> <span class="keyword">while</span>(p)</span><br><span class="line"> &#123;</span><br><span class="line">  s=s-&gt;next;</span><br><span class="line">  p-&gt;next=L-&gt;next;</span><br><span class="line">  L-&gt;next=p;</span><br><span class="line">  p=s;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"逆置成功!!!\n\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delete1</span><span class="params">(LinkList L)</span><span class="comment">//删除表中所有值大于mink且小于maxk的元素</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> <span class="keyword">int</span> maxk,mink;</span><br><span class="line"> LinkList p,q,s;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"请输入mink,maxk:\n"</span>);</span><br><span class="line"> <span class="built_in">scanf</span>(<span class="string">"%d %d"</span>,&amp;mink,&amp;maxk);</span><br><span class="line"> p=L;</span><br><span class="line"> <span class="keyword">while</span>(p-&gt;next &amp;&amp; p-&gt;next-&gt;data&lt;=mink)</span><br><span class="line">  p=p-&gt;next;</span><br><span class="line"> s=p-&gt;next;</span><br><span class="line"> <span class="keyword">while</span>(s &amp;&amp; s-&gt;data&lt;maxk)</span><br><span class="line"> &#123;</span><br><span class="line">  q=s;</span><br><span class="line">  s=s-&gt;next;</span><br><span class="line">  <span class="built_in">free</span>(q);</span><br><span class="line"> &#125;</span><br><span class="line"> p-&gt;next=s;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"删除成功\n\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delete2</span><span class="params">(LinkList L)</span><span class="comment">//删除表中所有值相同的多余元素（使得操作后的线性表中所有元素的值均不相同），</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> LinkList p,q,s;</span><br><span class="line"> p=L;</span><br><span class="line"> q=L-&gt;next;</span><br><span class="line"> <span class="keyword">while</span>(q-&gt;next)</span><br><span class="line"> &#123;</span><br><span class="line">  <span class="keyword">if</span>(q-&gt;data==q-&gt;next-&gt;data)</span><br><span class="line">  &#123;</span><br><span class="line">   p-&gt;next=q-&gt;next;</span><br><span class="line">   s=q;</span><br><span class="line">   q=q-&gt;next;</span><br><span class="line">   <span class="built_in">free</span>(s);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">   p=p-&gt;next;</span><br><span class="line">   q=q-&gt;next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"删除成功!!!!\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fenjie</span><span class="params">(LinkList L)</span><span class="comment">//利用（1）建立的链表，实现将其分解成两个链表，其中一个全部为奇数，另一个全部为偶数</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> LinkList s,p,Lb,cur1,cur2;</span><br><span class="line"> Lb=(LinkList )<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(LNode));</span><br><span class="line"> Lb-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line"> s=L-&gt;next;</span><br><span class="line"> L-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line"> cur1=L;</span><br><span class="line"> cur2=Lb;</span><br><span class="line"> <span class="keyword">while</span>(s)</span><br><span class="line"> &#123;</span><br><span class="line">  p=s;</span><br><span class="line">  s=s-&gt;next;</span><br><span class="line">  p-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">if</span>(p-&gt;data&amp;<span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">   cur1-&gt;next=p;</span><br><span class="line">   cur1=cur1-&gt;next;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">   cur2-&gt;next=p;</span><br><span class="line">   cur2=cur2-&gt;next;</span><br><span class="line">  &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> cur1=L-&gt;next;</span><br><span class="line"> cur2=Lb-&gt;next;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"元素为奇数的链表:\n"</span>);</span><br><span class="line"> <span class="keyword">while</span>(cur1)</span><br><span class="line"> &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"%d "</span>,cur1-&gt;data);</span><br><span class="line">  cur1=cur1-&gt;next;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"\n元素为偶数的链表:\n"</span>);</span><br><span class="line"> <span class="keyword">while</span>(cur2)</span><br><span class="line"> &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"%d "</span>,cur2-&gt;data);</span><br><span class="line">  cur2=cur2-&gt;next;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">"\n\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Insert</span><span class="params">(LinkList L,LinkList p)</span><span class="comment">//在升序链表插入值为X的结点，使仍然有序</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> LinkList s;</span><br><span class="line"> s=L;</span><br><span class="line"> <span class="keyword">while</span>(s-&gt;next &amp;&amp; s-&gt;next-&gt;data &lt; p-&gt;data)</span><br><span class="line">  s=s-&gt;next;</span><br><span class="line"> p-&gt;next=s-&gt;next;</span><br><span class="line"> s-&gt;next=p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">status <span class="title">Sort</span><span class="params">(LinkList L)</span><span class="comment">//按升序排列</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> LinkList s,r;</span><br><span class="line"> s=L-&gt;next;</span><br><span class="line"> L-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line"> <span class="keyword">while</span>(s)</span><br><span class="line"> &#123;</span><br><span class="line">  r=s;</span><br><span class="line">  s=s-&gt;next;</span><br><span class="line">  r-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line">  Insert(L,r);  </span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> <span class="keyword">int</span> op,x,flag;</span><br><span class="line"> LinkList L,p;</span><br><span class="line"> L=(LinkList)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(LNode));</span><br><span class="line"> L-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line"> L-&gt;data=-<span class="number">1</span>;</span><br><span class="line"> Build(L);</span><br><span class="line"> Tips();</span><br><span class="line"> <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;op);</span><br><span class="line"> <span class="keyword">while</span>(op)</span><br><span class="line"> &#123;</span><br><span class="line">  <span class="keyword">switch</span>(op)</span><br><span class="line">  &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">   Print(L);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">   <span class="built_in">printf</span>(<span class="string">"请输入要查找的元素X:\n"</span>);</span><br><span class="line">   <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;x);</span><br><span class="line">   Find(L,x);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">   <span class="built_in">printf</span>(<span class="string">"请输入要查找的删除X:\n"</span>);</span><br><span class="line">   <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;x);</span><br><span class="line">   Delete(L,x);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">   NiZhi(L);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">   Delete1(L);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">   Delete2(L);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">   fenjie(L);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">8</span>:</span><br><span class="line">   <span class="built_in">printf</span>(<span class="string">"请输入要插入的元素X:\n"</span>);</span><br><span class="line">   <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;x);</span><br><span class="line">   p=(LinkList)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(LNode));</span><br><span class="line">   p-&gt;data=x;</span><br><span class="line">   Insert(L,p);</span><br><span class="line">   <span class="built_in">printf</span>(<span class="string">"插入成功!!!\n\n"</span>);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">9</span>:</span><br><span class="line">   flag=Sort(L);</span><br><span class="line">   <span class="keyword">if</span>(flag)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"排序成功!!\n"</span>);</span><br><span class="line">   <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  Tips();</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;op);</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/算法/">算法</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/09/01/word2vect实战/" title="word2vect实战">
+  <strong>上一篇：</strong><br/>
+  <span>
+  word2vect实战</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/04/23/IBM-openblockchain学习-五-consensus源码分析/"  title="IBM openblockchain学习(五)--consensus源码分析">
+ <strong>下一篇：</strong><br/> 
+ <span>IBM openblockchain学习(五)--consensus源码分析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/06/24/经典面试题-单链表的基本操作（C语言实现）/" data-title="经典面试题---单链表的基本操作（C语言实现）" data-url="http://pangjiuzala.github.io/2016/06/24/经典面试题-单链表的基本操作（C语言实现）/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=2129798793&verifier=c0951e84&dpc=1"></iframe>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>31</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/性能优化/" title="性能优化">性能优化<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/移动互联网/" title="移动互联网">移动互联网<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络爬虫/" title="网络爬虫">网络爬虫<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/c/" title="c++">c++<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tomcat/" title="tomcat">tomcat<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/爬虫/" title="爬虫">爬虫<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.changhuiyuan.com/" target="_blank" title="常惠源的博客">常惠源的博客</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="https://github.com/search?q=pangjiuzala&amp;type=Users" target="_blank" title="关注刘兴的github">关注</a>
+</div>
+
+  
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello,I&#39;m from ZjuCs! <br/>
+			The more you diligent, the more you lucky!</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Copyright@ 2015 Liuxing All rights reserved.
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"pangjiuzala"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ffeafc504b70a541dd3845d467335f367' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_null'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3Dnull' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
