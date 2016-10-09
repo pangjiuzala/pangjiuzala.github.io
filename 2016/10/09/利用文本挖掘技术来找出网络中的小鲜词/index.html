@@ -1,0 +1,629 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>利用文本挖掘技术来找出网络中的小鲜词 | XingLiu&#39;s  Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="XingLiu">
+    
+
+    
+    <meta name="description" content="开始之前，先看一下从人人网中发现的90后用户爱用的词">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用文本挖掘技术来找出网络中的小鲜词">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/10/09/利用文本挖掘技术来找出网络中的小鲜词/index.html">
+<meta property="og:site_name" content="XingLiu's  Blog">
+<meta property="og:description" content="开始之前，先看一下从人人网中发现的90后用户爱用的词">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009175748511">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009172838061">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009173343859">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009174328240">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009174432108">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009174600288">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009174827503">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009175014052">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009175214712">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009182047968">
+<meta property="og:image" content="http://img.blog.csdn.net/20161009180450491">
+<meta property="og:updated_time" content="2016-10-09T14:11:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用文本挖掘技术来找出网络中的小鲜词">
+<meta name="twitter:description" content="开始之前，先看一下从人人网中发现的90后用户爱用的词">
+
+    
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/09/利用文本挖掘技术来找出网络中的小鲜词/" title="利用文本挖掘技术来找出网络中的小鲜词" itemprop="url">利用文本挖掘技术来找出网络中的小鲜词</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-09T14:10:50.000Z" itemprop="datePublished"> 发表于 2016-10-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目结构"><span class="toc-number">1.</span> <span class="toc-text">项目结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#common"><span class="toc-number">2.</span> <span class="toc-text">common</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CountMap-java"><span class="toc-number">2.1.</span> <span class="toc-text">CountMap.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-java"><span class="toc-number">2.2.</span> <span class="toc-text">Node.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextDatReader-java"><span class="toc-number">2.3.</span> <span class="toc-text">TextDatReader.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextUtils-java"><span class="toc-number">2.4.</span> <span class="toc-text">TextUtils.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tree-java"><span class="toc-number">2.5.</span> <span class="toc-text">Tree.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#dic"><span class="toc-number">3.</span> <span class="toc-text">dic</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CnDictionary-java"><span class="toc-number">3.1.</span> <span class="toc-text">CnDictionary.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#evolution"><span class="toc-number">4.</span> <span class="toc-text">evolution</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#EntropyJudger-java"><span class="toc-number">4.1.</span> <span class="toc-text">EntropyJudger.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NewWordDiscover-java"><span class="toc-number">4.2.</span> <span class="toc-text">NewWordDiscover.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#index"><span class="toc-number">5.</span> <span class="toc-text">index</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CnPreviewTextIndexer-java"><span class="toc-number">5.1.</span> <span class="toc-text">CnPreviewTextIndexer.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pos-java"><span class="toc-number">5.2.</span> <span class="toc-text">Pos.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SimpleTextIndexer-java"><span class="toc-number">5.3.</span> <span class="toc-text">SimpleTextIndexer.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextIndexer-java"><span class="toc-number">5.4.</span> <span class="toc-text">TextIndexer.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#participle"><span class="toc-number">6.</span> <span class="toc-text">participle</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk-java"><span class="toc-number">6.1.</span> <span class="toc-text">Chunk.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ChunkStream-java"><span class="toc-number">6.2.</span> <span class="toc-text">ChunkStream.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MechanicalParticiple-java"><span class="toc-number">6.3.</span> <span class="toc-text">MechanicalParticiple.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#selector"><span class="toc-number">7.</span> <span class="toc-text">selector</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CnTextSelector-java"><span class="toc-number">7.1.</span> <span class="toc-text">CnTextSelector.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CommonTextSelector-java"><span class="toc-number">7.2.</span> <span class="toc-text">CommonTextSelector.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextSelector-java"><span class="toc-number">7.3.</span> <span class="toc-text">TextSelector.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#测试代码"><span class="toc-number">8.</span> <span class="toc-text">测试代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NewWordDiscoverTest-java"><span class="toc-number">8.1.</span> <span class="toc-text">NewWordDiscoverTest.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ParticipleTest-java"><span class="toc-number">8.2.</span> <span class="toc-text">ParticipleTest.java</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>开始之前，先看一下从人人网中发现的90后用户爱用的词</p>
+<a id="more"></a>
+<p><img src="http://img.blog.csdn.net/20161009175748511" alt="这里写图片描述"></p>
+<p>是不是很好玩，哈哈。写这篇文章就是让你简单的自动的从文本中找出新的词，这样就知道现在的年轻人喜欢什么了（对于博主这种上了年纪的人来说，真的是很有用，呜呜）</p>
+<h1 id="项目结构">项目结构</h1><p><img src="http://img.blog.csdn.net/20161009172838061" alt=""></p>
+<p>当然，text.dat和common.dic这两个文件你可以随意替换，注意text.dat中的数据一定要够份量，否则没啥效果</p>
+<p>原理么，看下Matrix67大牛的文章你就懂了</p>
+<p><a href="http://www.matrix67.com/blog/archives/5044" target="_blank" rel="external">互联网时代的社会语言学：基于SNS的文本数据挖掘</a></p>
+<p><a href="http://pan.baidu.com/s/1bpaFxSV" target="_blank" rel="external">训练数据下载</a></p>
+<p>下边开始上代码</p>
+<h1 id="common">common</h1><p>这个里边包含以下几个类，主要是定义数据结构</p>
+<p><img src="http://img.blog.csdn.net/20161009173343859" alt="这里写图片描述"></p>
+<h2 id="CountMap-java">CountMap.java</h2><p>定义一个计数Map来进行数据操作和持久化<br><figure class="highlight axapta"><table><tr><td class="code"><pre><span class="line">package grid.<span class="keyword">common</span>;</span><br><span class="line"></span><br><span class="line">import java.io.Serializable;</span><br><span class="line">import java.util.HashMap;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CountMap</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">HashMap</span>&lt;<span class="title">T</span>, <span class="title">Integer</span>&gt; <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">6097963798841161750</span>L;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> increase(T t) &#123;<span class="comment">//添加元素</span></span><br><span class="line">		Integer <span class="keyword">count</span> = get(t);</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">null</span> == <span class="keyword">count</span>) &#123;</span><br><span class="line">			put(t, <span class="number">1</span>);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			put(t, ++<span class="keyword">count</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">count</span>() &#123;   <span class="comment">//计数</span></span><br><span class="line">		<span class="keyword">int</span> <span class="keyword">count</span> = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (T t : keySet()) &#123;</span><br><span class="line">			<span class="keyword">count</span> += get(t);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">count</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> get(<span class="keyword">char</span> c) &#123;</span><br><span class="line">		Integer <span class="keyword">count</span> = <span class="keyword">super</span>.get(c);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span> == <span class="keyword">count</span> ? <span class="number">0</span> : <span class="keyword">count</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Node-java">Node.java</h2><p>定义语法树的节点</p>
+<figure class="highlight crmsh"><table><tr><td class="code"><pre><span class="line">package grid.common;</span><br><span class="line"></span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Collections;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">public class <span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; &#123;</span><br><span class="line">	protected List<span class="tag">&lt;Node&lt;T&gt;</span>&gt; children;</span><br><span class="line"></span><br><span class="line">	protected <span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; parent;</span><br><span class="line"></span><br><span class="line">	protected T value;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">Node</span><span class="identifier"></span><span class="title">(T</span> value) &#123;</span><br><span class="line">		this.value = value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public <span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; add(T value) &#123;</span><br><span class="line">		if (null == children) &#123;</span><br><span class="line">			children = new ArrayList<span class="tag">&lt;Node&lt;T&gt;</span>&gt;();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; child = new <span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt;(value);</span><br><span class="line">		child.setParent(this);</span><br><span class="line">		children.add(child);</span><br><span class="line">		return child;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public T getValue() &#123;</span><br><span class="line">		return value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public <span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; getParent() &#123;</span><br><span class="line">		return parent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setParent(<span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; parent) &#123;</span><br><span class="line">		this.parent = parent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void recurseChildren(List<span class="tag">&lt;Node&lt;T&gt;</span>&gt; list, <span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; parent) &#123;</span><br><span class="line">		if (null == parent.children) &#123;</span><br><span class="line">			list.add(parent);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			for (<span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; <span class="keyword">node</span><span class="identifier"> </span><span class="title">: parent</span>.children) &#123;</span><br><span class="line">				recurseChildren(list, <span class="keyword">node</span><span class="identifier"></span><span class="title">);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public</span> List<span class="tag">&lt;Node&lt;T&gt;</span>&gt; getLeaves() &#123;</span><br><span class="line">		List<span class="tag">&lt;Node&lt;T&gt;</span>&gt; list = new ArrayList<span class="tag">&lt;Node&lt;T&gt;</span>&gt;();</span><br><span class="line">		recurseChildren(list, this);</span><br><span class="line">		return list;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public List<span class="tag">&lt;T&gt;</span> getBranchPath() &#123;</span><br><span class="line">		List<span class="tag">&lt;T&gt;</span> list = new ArrayList<span class="tag">&lt;T&gt;</span>();</span><br><span class="line">		<span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; <span class="keyword">node</span><span class="identifier"> </span><span class="title">= this</span>;</span><br><span class="line">		do &#123;</span><br><span class="line">			list.add(<span class="keyword">node</span>.<span class="identifier"></span><span class="title">getValue</span>());</span><br><span class="line">			<span class="keyword">node</span><span class="identifier"> </span><span class="title">= node</span>.parent;</span><br><span class="line">		&#125; while (null != <span class="keyword">node</span><span class="identifier"> </span><span class="title">&amp;&amp; !(node</span> instanceof Tree<span class="tag">&lt;?&gt;</span>));</span><br><span class="line">		Collections.reverse(list);</span><br><span class="line">		return list;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void append(StringBuilder builder, int deep, <span class="keyword">Node</span><span class="identifier"></span><span class="title">&lt;T</span>&gt; <span class="keyword">node</span><span class="identifier"></span><span class="title">) &#123;</span><br><span class="line">		for</span> (int i = <span class="number">0</span>; i <span class="tag">&lt; deep; i++) &#123;</span><br><span class="line">			builder.append("  ");</span><br><span class="line">		&#125;</span><br><span class="line">		builder.append("|--");</span><br><span class="line">		builder.append(node.getValue());</span><br><span class="line">		builder.append("\n");</span><br><span class="line">		if (null != node.children) &#123;</span><br><span class="line">			for (Node&lt;T&gt;</span> child : <span class="keyword">node</span>.<span class="identifier"></span><span class="title">children</span>) &#123;</span><br><span class="line">				append(builder, deep + <span class="number">1</span>, child);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public <span class="type">String</span> dump() &#123;</span><br><span class="line">		StringBuilder builder = new StringBuilder();</span><br><span class="line">		append(builder, <span class="number">0</span>, this);</span><br><span class="line">		return builder.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public <span class="type">String</span> toString() &#123;</span><br><span class="line">		return value.toString();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="TextDatReader-java">TextDatReader.java</h2><p>读取训练数据</p>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.common;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.<span class="keyword">File</span>;</span><br><span class="line"><span class="keyword">import</span> java.io.FileReader;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> TextDatReader &#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> String <span class="keyword">read</span>(String path) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">		<span class="keyword">File</span> <span class="keyword">file</span> = <span class="keyword">new</span> <span class="keyword">File</span>(path);</span><br><span class="line">		FileReader reader = <span class="keyword">new</span> FileReader(<span class="keyword">file</span>);</span><br><span class="line">		<span class="keyword">char</span> buffer[] = <span class="keyword">new</span> <span class="keyword">char</span>[(<span class="keyword">int</span>) <span class="keyword">file</span>.length()];</span><br><span class="line">		reader.<span class="keyword">read</span>(buffer);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> String(buffer);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="TextUtils-java">TextUtils.java</h2><p>用来做文本处理，如判断是否为空、匹配字符等<br><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.common;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class TextUtils &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">boolean</span> isCnLetter(<span class="built_in">char</span> c) &#123;</span><br><span class="line">		<span class="keyword">return</span> c &gt;= <span class="number">0x4E00</span> &amp;&amp; c &lt;= <span class="number">0x9FCB</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">boolean</span> isNumeric(<span class="built_in">char</span> c) &#123;</span><br><span class="line">		<span class="keyword">return</span> c &gt;= <span class="string">'0'</span> &amp;&amp; c &lt;= <span class="string">'9'</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">boolean</span> isEnLetter(<span class="built_in">char</span> c) &#123;</span><br><span class="line">		<span class="keyword">return</span> (c &gt;= <span class="string">'a'</span> &amp;&amp; c &lt;= <span class="string">'z'</span>) || (c &gt;= <span class="string">'A'</span> &amp;&amp; c &lt;= <span class="string">'Z'</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">boolean</span> <span class="built_in">match</span>(<span class="keyword">String</span> src, <span class="built_in">int</span> off, <span class="keyword">String</span> dest) &#123;</span><br><span class="line">		<span class="built_in">int</span> len = dest.length();</span><br><span class="line">		<span class="built_in">int</span> srcLen = src.length();</span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (srcLen &lt;= off + i) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (dest.charAt(i) != src.charAt(off + i)) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">boolean</span> isBlank(<span class="keyword">String</span> <span class="built_in">str</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span> == <span class="built_in">str</span> || <span class="built_in">str</span>.isEmpty() || <span class="built_in">str</span>.<span class="built_in">trim</span>().isEmpty();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Tree-java">Tree.java</h2><p>语法树</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.common;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Tree&lt;T&gt;</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Node&lt;T&gt;</span> &#123;</span></span><br><span class="line"></span><br><span class="line">	public <span class="type">Tree</span>(<span class="type">T</span> value) &#123;</span><br><span class="line">		<span class="keyword">super</span>(value);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="dic">dic</h1><p>里边包含CnDictionary类</p>
+<p><img src="http://img.blog.csdn.net/20161009174328240" alt="这里写图片描述"></p>
+<h2 id="CnDictionary-java">CnDictionary.java</h2><p>词典处理<br><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.<span class="built_in">text</span>.dic;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.common.CountMap;</span><br><span class="line"><span class="keyword">import</span> grid.common.TextDatReader;</span><br><span class="line"><span class="keyword">import</span> grid.common.TextUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.HashSet;</span><br><span class="line"><span class="keyword">import</span> java.util.Set;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class CnDictionary &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">String</span> COMMON_WORD_DIC_PATH = <span class="string">"common.dic"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * This text data is for character statistic. Change to your own if you</span><br><span class="line">	 * like.</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">String</span> COMMON_LETTER_RESOURCE_PATH = <span class="string">"text.dat"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> Set&lt;<span class="keyword">String</span>&gt; dictionary = <span class="keyword">new</span> HashSet&lt;<span class="keyword">String</span>&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> CountMap&lt;Character&gt; letterCountMap = <span class="keyword">new</span> CountMap&lt;Character&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="built_in">int</span> totalLetterCount;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> CnDictionary instance;</span><br><span class="line"><span class="comment">//单例模式</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> CnDictionary Instance() &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">null</span> == instance) &#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				instance = <span class="keyword">new</span> CnDictionary();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> instance;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> CnDictionary() <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">		initWordDic();</span><br><span class="line">		initLetterCountMap();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> initLetterCountMap() <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">		<span class="keyword">String</span> letterResource = TextDatReader.read(COMMON_LETTER_RESOURCE_PATH);<span class="comment">//读取语料数据 text.dat</span></span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> len = letterResource.length();</span><br><span class="line">		<span class="built_in">char</span> c;</span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">			c = letterResource.charAt(i);</span><br><span class="line">			<span class="keyword">if</span> (TextUtils.isCnLetter(c)) &#123;</span><br><span class="line">				letterCountMap.increase(c);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		totalLetterCount = letterCountMap.count();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> initWordDic() <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">String</span> bytes = TextDatReader.read(COMMON_WORD_DIC_PATH);<span class="comment">//读取词典commondic</span></span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> len = bytes.length();</span><br><span class="line">		<span class="keyword">String</span> s = <span class="string">""</span>;</span><br><span class="line">		<span class="built_in">char</span> c;</span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">			c = bytes.charAt(i);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (<span class="string">'\n'</span> == c || <span class="string">'\r'</span> == c || <span class="number">0</span> == c) &#123;</span><br><span class="line">				<span class="keyword">if</span> (!TextUtils.isBlank(s)) &#123;</span><br><span class="line">					dictionary.<span class="built_in">add</span>(s.<span class="built_in">trim</span>());</span><br><span class="line">				&#125;</span><br><span class="line">				s = <span class="string">""</span>;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				s += c;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (<span class="number">0</span> == c) &#123;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="built_in">boolean</span> contains(<span class="keyword">String</span> word) &#123;</span><br><span class="line">		<span class="keyword">return</span> dictionary.contains(word);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">double</span> rate(<span class="built_in">char</span> c) &#123;</span><br><span class="line">		<span class="keyword">return</span> (<span class="keyword">double</span>) letterCountMap.<span class="built_in">get</span>(c) / totalLetterCount;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="built_in">int</span> <span class="built_in">size</span>() &#123;</span><br><span class="line">		<span class="keyword">return</span> dictionary.<span class="built_in">size</span>();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="evolution">evolution</h1><p><img src="http://img.blog.csdn.net/20161009174432108" alt="这里写图片描述"></p>
+<h2 id="EntropyJudger-java">EntropyJudger.java</h2><p>计算熵值<br><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.<span class="built_in">text</span>.evolution;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.common.CountMap;</span><br><span class="line"><span class="keyword">import</span> grid.common.TextUtils;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.index.Pos;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.index.TextIndexer;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class EntropyJudger &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TextIndexer indexer;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * A word least appeared count</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">int</span> LEAST_COUNT_THRESHOLD = <span class="number">5</span>;   <span class="comment">//阈值</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * Threshold for solid rate calculated by word appeared count and every</span><br><span class="line">	 * single letter.</span><br><span class="line">	 * </span><br><span class="line">	 * The smaller this values is, more new words you will get, but with less</span><br><span class="line">	 * accuracy. The greater this value is, less new words you will get, but</span><br><span class="line">	 * with high accuracy.</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">double</span> SOLID_RATE_THRESHOLD = <span class="number">0.018</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * Threshold for entropy value calculated by candidate word prefix character</span><br><span class="line">	 * count and suffix character count</span><br><span class="line">	 * </span><br><span class="line">	 * The smaller this values is, more new words you will get, but with less</span><br><span class="line">	 * accuracy. The greater this value is, less new words you will get, but</span><br><span class="line">	 * with high accuracy.</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">double</span> ENTROPY_THRESHOL = <span class="number">1.92</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> EntropyJudger(TextIndexer indexer) &#123;</span><br><span class="line">		<span class="keyword">this</span>.indexer = indexer;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="built_in">boolean</span> judge(<span class="keyword">String</span> candidate) &#123;</span><br><span class="line">		<span class="keyword">double</span> solidRate = getSolidRate(candidate);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (solidRate &lt; SOLID_RATE_THRESHOLD) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">double</span> entropy = getEntropy(candidate);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (entropy &lt; ENTROPY_THRESHOL) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">double</span> getEntropy(<span class="keyword">String</span> candidate) &#123;</span><br><span class="line">		Pos pos = <span class="keyword">new</span> Pos(candidate);</span><br><span class="line">		CountMap&lt;Character&gt; frontCountMap = <span class="keyword">new</span> CountMap&lt;Character&gt;();</span><br><span class="line">		CountMap&lt;Character&gt; backCountMap = <span class="keyword">new</span> CountMap&lt;Character&gt;();</span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> candidateLen = candidate.length();</span><br><span class="line">		<span class="built_in">int</span> off = <span class="number">0</span>;</span><br><span class="line">		<span class="built_in">char</span> c;</span><br><span class="line">		<span class="keyword">double</span> rate, frontEntropy = <span class="number">0</span>, backEntropy = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (indexer.find(pos).isFound()) &#123;</span><br><span class="line">			off = pos.getPos();</span><br><span class="line"></span><br><span class="line">			c = indexer.charAt(off - <span class="number">1</span>);</span><br><span class="line">			<span class="keyword">if</span> (TextUtils.isCnLetter(c)) &#123;</span><br><span class="line">				frontCountMap.increase(c);</span><br><span class="line">			&#125;</span><br><span class="line">			c = indexer.charAt(off + candidateLen);</span><br><span class="line">			<span class="keyword">if</span> (TextUtils.isCnLetter(c)) &#123;</span><br><span class="line">				backCountMap.increase(c);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">char</span> <span class="variable">key</span> : frontCountMap.keySet()) &#123;</span><br><span class="line">			rate = (<span class="keyword">double</span>) frontCountMap.<span class="built_in">get</span>(<span class="variable">key</span>) / frontCountMap.count();</span><br><span class="line">			frontEntropy -= rate * Math.<span class="built_in">log</span>(rate);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">char</span> <span class="variable">key</span> : backCountMap.keySet()) &#123;</span><br><span class="line">			rate = (<span class="keyword">double</span>) backCountMap.<span class="built_in">get</span>(<span class="variable">key</span>) / backCountMap.count();</span><br><span class="line">			backEntropy -= rate * Math.<span class="built_in">log</span>(rate);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> frontEntropy &gt; backEntropy ? backEntropy : frontEntropy;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * @param candidate</span><br><span class="line">	 * @return</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">double</span> getSolidRate(<span class="keyword">String</span> candidate) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> candidateLen = candidate.length();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (candidateLen &lt; <span class="number">2</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> count = indexer.count(candidate);</span><br><span class="line">		<span class="keyword">double</span> rate = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (count &lt; LEAST_COUNT_THRESHOLD) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; candidateLen; i++) &#123;</span><br><span class="line">			rate *= (<span class="keyword">double</span>) count / indexer.count(<span class="string">""</span> + candidate.charAt(i));</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> Math.<span class="built_in">pow</span>(rate, <span class="number">1</span>D / candidateLen) * Math.<span class="built_in">sqrt</span>(candidateLen);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> setIndexer(TextIndexer indexer) &#123;</span><br><span class="line">		<span class="keyword">this</span>.indexer = indexer;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="NewWordDiscover-java">NewWordDiscover.java</h2><p>抽词程序</p>
+<figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.<span class="built_in">text</span>.evolution;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.common.TextUtils;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.dic.CnDictionary;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.index.CnPreviewTextIndexer;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.index.TextIndexer;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.selector.CnTextSelector;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.selector.TextSelector;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashSet;</span><br><span class="line"><span class="keyword">import</span> java.util.Set;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class NewWordDiscover &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> CnDictionary dictionary;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * Minimum word length</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="built_in">int</span> MIN_CANDIDATE_LEN = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * Maximum word length</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="built_in">int</span> MAX_CANDIDATE_LEN = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Set&lt;Character&gt; structuralLetterSet = <span class="keyword">new</span> HashSet&lt;Character&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">char</span>[] structuralLetters = &#123; <span class="string">'我'</span>, <span class="string">'你'</span>, <span class="string">'您'</span>, <span class="string">'他'</span>, <span class="string">'她'</span>, <span class="string">'谁'</span>,</span><br><span class="line">			<span class="string">'哪'</span>, <span class="string">'那'</span>, <span class="string">'这'</span>, <span class="string">'的'</span>, <span class="string">'了'</span>, <span class="string">'着'</span>, <span class="string">'也'</span>, <span class="string">'是'</span>, <span class="string">'有'</span>, <span class="string">'不'</span>, <span class="string">'在'</span>, <span class="string">'与'</span>, <span class="string">'呢'</span>,</span><br><span class="line">			<span class="string">'啊'</span>, <span class="string">'呀'</span>, <span class="string">'吧'</span>, <span class="string">'嗯'</span>, <span class="string">'哦'</span>, <span class="string">'哈'</span>, <span class="string">'呐'</span> &#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> &#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">char</span> c : structuralLetters) &#123;</span><br><span class="line">			structuralLetterSet.<span class="built_in">add</span>(c);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> NewWordDiscover() &#123;</span><br><span class="line">		dictionary = CnDictionary.Instance();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * New word discover is based on statistic and entropy, better to sure</span><br><span class="line">	 * document size is in 100kb level, or you may get a unsatisfied result.</span><br><span class="line">	 * </span><br><span class="line">	 * @param document</span><br><span class="line">	 * @return</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">public</span> Set&lt;<span class="keyword">String</span>&gt; discover(<span class="keyword">String</span> document) &#123;</span><br><span class="line"></span><br><span class="line">		Set&lt;<span class="keyword">String</span>&gt; <span class="built_in">set</span> = <span class="keyword">new</span> HashSet&lt;<span class="keyword">String</span>&gt;();</span><br><span class="line">		TextIndexer indexer = <span class="keyword">new</span> CnPreviewTextIndexer(document);</span><br><span class="line">		TextSelector selector = <span class="keyword">new</span> CnTextSelector(document, MIN_CANDIDATE_LEN,</span><br><span class="line">				MAX_CANDIDATE_LEN);</span><br><span class="line">		EntropyJudger judger = <span class="keyword">new</span> EntropyJudger(indexer);</span><br><span class="line">		<span class="keyword">String</span> candidate;</span><br><span class="line">		<span class="keyword">while</span> (!selector.end()) &#123;</span><br><span class="line">			candidate = selector.next();</span><br><span class="line">			<span class="keyword">if</span> (TextUtils.isBlank(candidate)) &#123;</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (structuralLetterSet.contains(candidate.charAt(<span class="number">0</span>))</span><br><span class="line">					|| structuralLetterSet.contains(candidate.charAt(candidate</span><br><span class="line">							.length() - <span class="number">1</span>))) &#123;</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// Replace IF clause with "set.contains(candidate)" if you want to</span></span><br><span class="line">			<span class="comment">// find new word without any dictionary</span></span><br><span class="line">			<span class="keyword">if</span> (dictionary.contains(candidate) || <span class="built_in">set</span>.contains(candidate)) &#123;</span><br><span class="line">				selector.select();</span><br><span class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (judger.judge(candidate)) &#123;</span><br><span class="line">				<span class="built_in">set</span>.<span class="built_in">add</span>(candidate);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">set</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="index">index</h1><p><img src="http://img.blog.csdn.net/20161009174600288" alt="这里写图片描述"></p>
+<p>这几个类用于给词创建索引，方便从词典中找出</p>
+<h2 id="CnPreviewTextIndexer-java">CnPreviewTextIndexer.java</h2><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.<span class="built_in">text</span>.index;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.common.TextUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.<span class="keyword">HashMap</span>;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Vector;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class CnPreviewTextIndexer implements TextIndexer &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="built_in">int</span> CN_LETTER_COUNT = <span class="number">5021</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">String</span> document;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> Map&lt;Character, Vector&lt;Integer&gt;&gt; posMap;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> CnPreviewTextIndexer(<span class="keyword">String</span> document) &#123;</span><br><span class="line">		<span class="keyword">this</span>.document = document;</span><br><span class="line">		init();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> init() &#123;</span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> len = document.length();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> supposedMinCount = <span class="number">1</span> + (<span class="built_in">int</span>) Math.<span class="built_in">log</span>(len / CN_LETTER_COUNT</span><br><span class="line">				+ <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">		<span class="built_in">char</span> c;</span><br><span class="line"></span><br><span class="line">		Vector&lt;Integer&gt; posVector;</span><br><span class="line"></span><br><span class="line">		posMap = <span class="keyword">new</span> <span class="keyword">HashMap</span>&lt;Character, Vector&lt;Integer&gt;&gt;(CN_LETTER_COUNT);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">			c = document.charAt(i);</span><br><span class="line">			<span class="keyword">if</span> (!TextUtils.isCnLetter(c)) &#123;</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			posVector = posMap.<span class="built_in">get</span>(c);</span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">null</span> == posVector) &#123;</span><br><span class="line">				posVector = <span class="keyword">new</span> Vector&lt;Integer&gt;(supposedMinCount);</span><br><span class="line">				posMap.put(c, posVector);</span><br><span class="line">			&#125;</span><br><span class="line">			posVector.<span class="built_in">add</span>(i);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	<span class="keyword">public</span> <span class="built_in">int</span> count(<span class="keyword">String</span> <span class="built_in">text</span>) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (TextUtils.isBlank(<span class="built_in">text</span>)) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Vector&lt;Integer&gt; vector = posMap.<span class="built_in">get</span>(<span class="built_in">text</span>.charAt(<span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">null</span> == vector) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (<span class="number">1</span> == <span class="built_in">text</span>.length()) &#123;</span><br><span class="line">			<span class="keyword">return</span> vector.<span class="built_in">size</span>();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> <span class="built_in">size</span> = vector.<span class="built_in">size</span>();</span><br><span class="line">		<span class="built_in">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">size</span>; i++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (TextUtils.<span class="built_in">match</span>(document, vector.<span class="built_in">get</span>(i), <span class="built_in">text</span>)) &#123;</span><br><span class="line">				count++;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> count;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	<span class="keyword">public</span> Pos find(Pos pos) &#123;</span><br><span class="line">		<span class="keyword">String</span> <span class="built_in">text</span> = pos.getTarget();</span><br><span class="line"></span><br><span class="line">		pos.setFound(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (TextUtils.isBlank(<span class="built_in">text</span>)) &#123;</span><br><span class="line">			<span class="keyword">return</span> pos;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Vector&lt;Integer&gt; vector = posMap.<span class="built_in">get</span>(<span class="built_in">text</span>.charAt(<span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">null</span> == vector) &#123;</span><br><span class="line">			<span class="keyword">return</span> pos;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> arraySize = vector.<span class="built_in">size</span>();</span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> arrayIndex = pos.arrayIndex + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = arrayIndex; i &lt; arraySize; i++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (TextUtils.<span class="built_in">match</span>(document, vector.<span class="built_in">get</span>(i), <span class="built_in">text</span>)) &#123;</span><br><span class="line">				pos.setFound(<span class="keyword">true</span>);</span><br><span class="line">				pos.setPos(vector.<span class="built_in">get</span>(i));</span><br><span class="line">				pos.arrayIndex = i;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> pos;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	<span class="keyword">public</span> <span class="built_in">int</span> len() &#123;</span><br><span class="line">		<span class="keyword">return</span> document.length();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">String</span> sub(<span class="built_in">int</span> off, <span class="built_in">int</span> len) &#123;</span><br><span class="line">		<span class="keyword">if</span> (off &lt; <span class="number">0</span> || off + len &gt;= document.length()) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> document.substring(off, off + len);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	<span class="keyword">public</span> <span class="built_in">char</span> charAt(<span class="built_in">int</span> index) &#123;</span><br><span class="line">		<span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt;= document.length()) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> document.charAt(index);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Pos-java">Pos.java</h2><figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.text.index;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Pos</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String <span class="keyword">target</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * Pos for current matched full target text</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> pos = -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * Index in position array for current matched full target text</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">int</span> arrayIndex = -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">boolean</span> found = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Pos</span><span class="params">(String <span class="keyword">target</span>)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.<span class="keyword">target</span> = <span class="keyword">target</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function">String <span class="title">getTarget</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">target</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getPos</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> pos;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isFound</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> found;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">setPos</span><span class="params">(<span class="keyword">int</span> pos)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.pos = pos;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">setFound</span><span class="params">(<span class="keyword">boolean</span> found)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.found = found;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="SimpleTextIndexer-java">SimpleTextIndexer.java</h2><figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.text.index;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleTextIndexer</span> <span class="keyword">implements</span> <span class="title">TextIndexer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String document;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">SimpleTextIndexer</span><span class="params">(String document)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.document = document;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">count</span><span class="params">(String text)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> off = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">final</span> <span class="keyword">int</span> len = text.length();</span><br><span class="line">		<span class="keyword">while</span> ((off = document.indexOf(text, off)) &gt; -<span class="number">1</span>) &#123;</span><br><span class="line">			count++;</span><br><span class="line">			off += len;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> count;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function">Pos <span class="title">find</span><span class="params">(Pos pos)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">final</span> String text = pos.getTarget();</span><br><span class="line">		<span class="keyword">final</span> <span class="keyword">int</span> len = text.length();</span><br><span class="line">		<span class="keyword">int</span> off = pos.getPos() + len;</span><br><span class="line">		<span class="keyword">if</span> (pos.getPos() &lt; <span class="number">0</span>)</span><br><span class="line">			off = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		pos.setFound(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> ((off = document.indexOf(text, off)) &gt; -<span class="number">1</span>) &#123;</span><br><span class="line">			pos.setFound(<span class="keyword">true</span>);</span><br><span class="line">			pos.setPos(off);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> pos;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">len</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">return</span> document.<span class="title">length</span><span class="params">()</span></span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function">String <span class="title">sub</span><span class="params">(<span class="keyword">int</span> off, <span class="keyword">int</span> len)</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">return</span> document.<span class="title">substring</span><span class="params">(off, off + len)</span></span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">char</span> <span class="title">charAt</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt;= document.length()) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">return</span> document.<span class="title">charAt</span><span class="params">(index)</span></span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="TextIndexer-java">TextIndexer.java</h2><figure class="highlight gherkin"><table><tr><td class="code"><pre><span class="line">package grid.text.index;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public interface TextIndexer &#123;</span><br><span class="line"></span><br><span class="line">	/<span class="keyword">*</span><span class="keyword">*</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@param text</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@return count for specific text</span></span><br><span class="line">	 <span class="keyword">*</span>/</span><br><span class="line">	public int count(String text);</span><br><span class="line"></span><br><span class="line">	/<span class="keyword">*</span><span class="keyword">*</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@param pos</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@return next position for current pos</span></span><br><span class="line">	 <span class="keyword">*</span>/</span><br><span class="line">	public Pos find(Pos pos);</span><br><span class="line"></span><br><span class="line">	/<span class="keyword">*</span><span class="keyword">*</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@return original document length</span></span><br><span class="line">	 <span class="keyword">*</span>/</span><br><span class="line">	public int len();</span><br><span class="line"></span><br><span class="line">	/<span class="keyword">*</span><span class="keyword">*</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@param off</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@param len</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@return the sub string start from &lt;b&gt;off&lt;/b&gt; and with a length with</span></span><br><span class="line">	 <span class="keyword">*</span>         <span class="variable">&lt;b&gt;</span>len<span class="variable">&lt;/b&gt;</span></span><br><span class="line">	 <span class="keyword">*</span>/</span><br><span class="line">	public String sub(int off, int len);</span><br><span class="line"></span><br><span class="line">	/<span class="keyword">*</span><span class="keyword">*</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@param index</span></span><br><span class="line">	 <span class="keyword">*</span> <span class="comment">@return return the character in the specified index</span></span><br><span class="line">	 <span class="keyword">*</span>/</span><br><span class="line">	public char charAt(int index);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="participle">participle</h1><p><img src="http://img.blog.csdn.net/20161009174827503" alt="这里写图片描述"></p>
+<p>分词处理，具体看实现</p>
+<h2 id="Chunk-java">Chunk.java</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">package grid.text.participle;</span><br><span class="line"></span><br><span class="line">import grid.text.dic.CnDictionary;</span><br><span class="line"></span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> Chunk implements Comparable&lt;Chunk&gt; &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> List&lt;String&gt; <span class="built_in">list</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">double</span> avg = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">double</span> variance = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Chunk</span><span class="params">(List&lt;String&gt; <span class="built_in">list</span>)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.<span class="built_in">list</span> = <span class="built_in">list</span>;</span><br><span class="line">		init();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (String s : <span class="built_in">list</span>) &#123;</span><br><span class="line">			len += s.length();</span><br><span class="line">		&#125;</span><br><span class="line">		avg = (<span class="keyword">double</span>) len / <span class="built_in">list</span>.size();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (String s : <span class="built_in">list</span>) &#123;</span><br><span class="line">			variance += Math.<span class="built_in">pow</span>(avg - s.length(), <span class="number">2</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		variance = Math.<span class="built_in">sqrt</span>(variance);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getLen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> len;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getAvg</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> avg;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getVariance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> variance;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getHead</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (null == <span class="built_in">list</span> || <span class="built_in">list</span>.isEmpty()) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">list</span>.get(<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">compareDouble</span><span class="params">(<span class="keyword">double</span> d1, <span class="keyword">double</span> d2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (d1 - d2 &lt; -<span class="number">0.0000001</span>D) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (d1 - d2 &gt; <span class="number">0.0000001</span>D) &#123;</span><br><span class="line">			<span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@<span class="function">Override</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Chunk o)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (len != o.len) &#123;</span><br><span class="line">			<span class="keyword">return</span> o.len - len;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">int</span> d = compareDouble(avg, o.avg);</span><br><span class="line">		<span class="keyword">if</span> (<span class="number">0</span> != d) &#123;</span><br><span class="line">			<span class="keyword">return</span> d;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		d = compareDouble(variance, o.variance);</span><br><span class="line">		<span class="keyword">if</span> (<span class="number">0</span> != d) &#123;</span><br><span class="line">			<span class="keyword">return</span> d;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		CnDictionary dictionary = CnDictionary.Instance();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">double</span> rateSrc = <span class="number">0</span>, rateDest = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (String s : <span class="built_in">list</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span> (<span class="number">1</span> == s.length()) &#123;</span><br><span class="line">				rateSrc += dictionary.rate(s.charAt(<span class="number">0</span>));</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (String s : o.<span class="built_in">list</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span> (<span class="number">1</span> == s.length()) &#123;</span><br><span class="line">				rateDest += dictionary.rate(s.charAt(<span class="number">0</span>));</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> compareDouble(rateSrc, rateDest);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">list</span>.toString();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ChunkStream-java">ChunkStream.java</h2><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.<span class="built_in">text</span>.participle;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.common.Node;</span><br><span class="line"><span class="keyword">import</span> grid.common.TextUtils;</span><br><span class="line"><span class="keyword">import</span> grid.common.Tree;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.dic.CnDictionary;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class ChunkStream &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * Define the max supposed word length</span><br><span class="line">	 * </span><br><span class="line">	 * You could shorten the value if you don't need too long participle result</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="built_in">int</span> MAX_WORD_LEN = <span class="number">7</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * Define the predict level while execute participle.</span><br><span class="line">	 * </span><br><span class="line">	 * Negligible accuracy will be promoted if you increase this value</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="built_in">int</span> PREDICT_LEVEL = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> CnDictionary dictionary = CnDictionary.Instance();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">String</span> next(<span class="keyword">String</span> <span class="built_in">text</span>, <span class="built_in">int</span> off) &#123;</span><br><span class="line">		Tree&lt;<span class="keyword">String</span>&gt; root = <span class="keyword">new</span> Tree&lt;<span class="keyword">String</span>&gt;(<span class="string">"ROOT"</span>);</span><br><span class="line">		recurse(root, off, <span class="built_in">text</span>, <span class="number">0</span>);</span><br><span class="line">		List&lt;Node&lt;<span class="keyword">String</span>&gt;&gt; list = root.getLeaves();</span><br><span class="line">		List&lt;Chunk&gt; chunkList = <span class="keyword">new</span> ArrayList&lt;Chunk&gt;();</span><br><span class="line">		<span class="keyword">for</span> (Node&lt;<span class="keyword">String</span>&gt; node : list) &#123;</span><br><span class="line">			chunkList.<span class="built_in">add</span>(<span class="keyword">new</span> Chunk(node.getBranchPath()));</span><br><span class="line">		&#125;</span><br><span class="line">		Collections.<span class="built_in">sort</span>(chunkList);</span><br><span class="line">		<span class="keyword">return</span> chunkList.<span class="built_in">get</span>(<span class="number">0</span>).getHead();</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> recurse(Node&lt;<span class="keyword">String</span>&gt; node, <span class="built_in">int</span> off, <span class="keyword">String</span> <span class="built_in">text</span>,</span><br><span class="line">			<span class="built_in">int</span> predictDeep) &#123;</span><br><span class="line">		<span class="built_in">int</span> len = MAX_WORD_LEN + off &gt; <span class="built_in">text</span>.length() ? <span class="built_in">text</span>.length() - off</span><br><span class="line">				: MAX_WORD_LEN;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (predictDeep &lt; PREDICT_LEVEL) &#123;</span><br><span class="line">			<span class="keyword">if</span> (len &lt; <span class="number">1</span>) &#123;</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">String</span> s = <span class="built_in">text</span>.substring(off, off + len);</span><br><span class="line">			<span class="keyword">if</span> (len &lt; <span class="number">2</span>) &#123;</span><br><span class="line">				<span class="keyword">if</span> (!TextUtils.isCnLetter(<span class="built_in">text</span>.charAt(off))) &#123;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line">				recurse(node.<span class="built_in">add</span>(s), off + <span class="number">1</span>, <span class="built_in">text</span>, predictDeep + <span class="number">1</span>);</span><br><span class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (dictionary.contains(s)) &#123;</span><br><span class="line">				recurse(node.<span class="built_in">add</span>(s), off + s.length(), <span class="built_in">text</span>, predictDeep + <span class="number">1</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			len--;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="MechanicalParticiple-java">MechanicalParticiple.java</h2><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.<span class="built_in">text</span>.participle;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.common.TextUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Vector;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class MechanicalParticiple &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> Vector&lt;<span class="keyword">String</span>&gt; partition(<span class="keyword">String</span> document) &#123;</span><br><span class="line">		Vector&lt;<span class="keyword">String</span>&gt; vector = <span class="keyword">new</span> Vector&lt;<span class="keyword">String</span>&gt;();</span><br><span class="line">		<span class="keyword">final</span> <span class="built_in">int</span> docLen = document.length();</span><br><span class="line">		<span class="built_in">int</span> off = <span class="number">0</span>;</span><br><span class="line">		<span class="built_in">char</span> c;</span><br><span class="line">		<span class="keyword">String</span> seg = <span class="string">""</span>;</span><br><span class="line">		ChunkStream stream = <span class="keyword">new</span> ChunkStream();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (off &lt; docLen) &#123;</span><br><span class="line">			c = document.charAt(off);</span><br><span class="line">			<span class="keyword">if</span> (TextUtils.isEnLetter(c) || TextUtils.isNumeric(c)) &#123;</span><br><span class="line">				seg += c;</span><br><span class="line">				off++;</span><br><span class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (TextUtils.isCnLetter(c)) &#123;</span><br><span class="line">				<span class="keyword">if</span> (!TextUtils.isBlank(seg)) &#123;</span><br><span class="line">					vector.<span class="built_in">add</span>(seg);</span><br><span class="line">					seg = <span class="string">""</span>;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">String</span> word = stream.next(document, off);</span><br><span class="line">				<span class="keyword">if</span> (!TextUtils.isBlank(word)) &#123;</span><br><span class="line">					vector.<span class="built_in">add</span>(word);</span><br><span class="line">					off += word.length();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="keyword">if</span> (!TextUtils.isBlank(seg)) &#123;</span><br><span class="line">					vector.<span class="built_in">add</span>(seg);</span><br><span class="line">					seg = <span class="string">""</span>;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="comment">/**</span><br><span class="line">				 * <span class="doctag">TODO:</span> Uncomment the "ELSE IF" clause if you would like to</span><br><span class="line">				 * reserve punctuations</span><br><span class="line">				 */</span></span><br><span class="line"></span><br><span class="line">				<span class="comment">// else if (!TextUtils.isBlank("" + c)) &#123; vector.add("" + c); &#125;</span></span><br><span class="line"></span><br><span class="line">				off++;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (!TextUtils.isBlank(seg)) &#123;</span><br><span class="line">			vector.<span class="built_in">add</span>(seg);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> vector;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="selector">selector</h1><p><img src="http://img.blog.csdn.net/20161009175014052" alt="这里写图片描述"></p>
+<p>文本选择器，筛选出可能为新词的词汇</p>
+<h2 id="CnTextSelector-java">CnTextSelector.java</h2><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.text.selector;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.common.<span class="type">TextUtils</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">CnTextSelector</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">CommonTextSelector</span> &#123;</span></span><br><span class="line"></span><br><span class="line">	public <span class="type">CnTextSelector</span>(<span class="type">String</span> document, int minSelectLen, int maxSelectLen) &#123;</span><br><span class="line">		<span class="keyword">super</span>(document, minSelectLen, maxSelectLen);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> void adjustCurLen() &#123;</span><br><span class="line">		<span class="keyword">while</span> (pos &lt; docLen &amp;&amp; !<span class="type">TextUtils</span>.isCnLetter(document.charAt(pos))) &#123;</span><br><span class="line">			pos++;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; maxSelectLen &amp;&amp; pos + i &lt; docLen; i++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (!<span class="type">TextUtils</span>.isCnLetter(document.charAt(pos + i))) &#123;</span><br><span class="line">				curLen = i;</span><br><span class="line">				<span class="keyword">if</span> (curLen &lt; minSelectLen) &#123;</span><br><span class="line">					pos++;</span><br><span class="line">					adjustCurLen();</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		curLen = pos + maxSelectLen &gt; docLen ? docLen - pos : maxSelectLen;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="CommonTextSelector-java">CommonTextSelector.java</h2><figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.text.selector;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommonTextSelector</span> <span class="keyword">implements</span> <span class="title">TextSelector</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> String document;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">int</span> pos = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">int</span> maxSelectLen = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">int</span> minSelectLen = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">int</span> curLen;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> docLen;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">CommonTextSelector</span><span class="params">(String document, <span class="keyword">int</span> minSelectLen,</span><br><span class="line">			<span class="keyword">int</span> maxSelectLen)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.document = document;</span><br><span class="line">		<span class="keyword">this</span>.minSelectLen = minSelectLen;</span><br><span class="line">		<span class="keyword">this</span>.maxSelectLen = maxSelectLen;</span><br><span class="line">		docLen = document.length();</span><br><span class="line">		adjustCurLen();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">select</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		pos += ++curLen;</span><br><span class="line">		adjustCurLen();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">adjustCurLen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		curLen = pos + maxSelectLen &gt; docLen ? docLen - pos : maxSelectLen;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function">String <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (curLen &lt; minSelectLen) &#123;</span><br><span class="line">			pos++;</span><br><span class="line">			adjustCurLen();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (pos + curLen &lt;= docLen &amp;&amp; curLen &gt;= minSelectLen) &#123;</span><br><span class="line">			<span class="function"><span class="keyword">return</span> document.<span class="title">substring</span><span class="params">(pos, pos + curLen--)</span></span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curLen--;</span><br><span class="line">			<span class="comment">// return document.substring(pos, docLen);</span></span><br><span class="line">			<span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">end</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> curLen &lt; minSelectLen &amp;&amp; curLen + pos &gt;= docLen - <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getCurPos</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> pos;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="TextSelector-java">TextSelector.java</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.text.selector;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TextSelector</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">end</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">select</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">next</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCurPos</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="测试代码">测试代码</h1><p><img src="http://img.blog.csdn.net/20161009175214712" alt="这里写图片描述"></p>
+<h2 id="NewWordDiscoverTest-java">NewWordDiscoverTest.java</h2><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.common.TextDatReader;</span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.evolution.NewWordDiscover;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Set;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class NewWordDiscoverTest &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">String</span> path = <span class="string">"text.dat"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="keyword">String</span> args[]) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">		<span class="comment">// Replace your document here</span></span><br><span class="line">		<span class="keyword">String</span> document = TextDatReader.read(path);</span><br><span class="line"></span><br><span class="line">		NewWordDiscover discover = <span class="keyword">new</span> NewWordDiscover();</span><br><span class="line">		<span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">		Set&lt;<span class="keyword">String</span>&gt; words = discover.discover(document);</span><br><span class="line">		System.out.<span class="built_in">println</span>(<span class="string">"Speed: "</span> + (<span class="keyword">double</span>) document.length()</span><br><span class="line">				/ (System.currentTimeMillis() - start) * <span class="number">1000</span>);</span><br><span class="line">		System.out.<span class="built_in">println</span>(<span class="string">"New words size: "</span> + words.<span class="built_in">size</span>());</span><br><span class="line">		System.out.<span class="built_in">println</span>(<span class="string">"New word is: "</span>+<span class="string">"\n"</span>);</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">String</span> <span class="built_in">str</span> : words) &#123;  </span><br><span class="line">			System.out.<span class="built_in">println</span>(<span class="built_in">str</span>+<span class="string">"\n"</span>);</span><br><span class="line">		&#125;  </span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>抽词测试，结果如下</p>
+<p><img src="http://img.blog.csdn.net/20161009182047968" alt="这里写图片描述"></p>
+<h2 id="ParticipleTest-java">ParticipleTest.java</h2><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> grid.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> grid.<span class="built_in">text</span>.participle.MechanicalParticiple;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Vector;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class ParticipleTest &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">String</span> document = <span class="string">"我是中国人"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="keyword">String</span> args[]) &#123;</span><br><span class="line">		MechanicalParticiple participle = <span class="keyword">new</span> MechanicalParticiple();</span><br><span class="line">		Vector&lt;<span class="keyword">String</span>&gt; vec = participle.partition(document);</span><br><span class="line">		System.out.<span class="built_in">println</span>(vec);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分词测试，结果如下</p>
+<p><img src="http://img.blog.csdn.net/20161009180450491" alt="这里写图片描述"></p>
+<p>怎么样，很酷吧，你还可以试着用《天龙八部》数据集玩下，看看主角是不是乔帮主。如果发现了什么新鲜词，请告诉博主，咱也不落后哈！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/NLP/">NLP</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/10/07/c-跨平台技术学习-二-使用跨平台的Make系统/"  title="c++跨平台技术学习(二)--使用跨平台的Make系统">
+ <strong>下一篇：</strong><br/> 
+ <span>c++跨平台技术学习(二)--使用跨平台的Make系统
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/10/09/利用文本挖掘技术来找出网络中的小鲜词/" data-title="利用文本挖掘技术来找出网络中的小鲜词" data-url="http://pangjiuzala.github.io/2016/10/09/利用文本挖掘技术来找出网络中的小鲜词/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目结构"><span class="toc-number">1.</span> <span class="toc-text">项目结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#common"><span class="toc-number">2.</span> <span class="toc-text">common</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CountMap-java"><span class="toc-number">2.1.</span> <span class="toc-text">CountMap.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-java"><span class="toc-number">2.2.</span> <span class="toc-text">Node.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextDatReader-java"><span class="toc-number">2.3.</span> <span class="toc-text">TextDatReader.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextUtils-java"><span class="toc-number">2.4.</span> <span class="toc-text">TextUtils.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tree-java"><span class="toc-number">2.5.</span> <span class="toc-text">Tree.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#dic"><span class="toc-number">3.</span> <span class="toc-text">dic</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CnDictionary-java"><span class="toc-number">3.1.</span> <span class="toc-text">CnDictionary.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#evolution"><span class="toc-number">4.</span> <span class="toc-text">evolution</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#EntropyJudger-java"><span class="toc-number">4.1.</span> <span class="toc-text">EntropyJudger.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NewWordDiscover-java"><span class="toc-number">4.2.</span> <span class="toc-text">NewWordDiscover.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#index"><span class="toc-number">5.</span> <span class="toc-text">index</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CnPreviewTextIndexer-java"><span class="toc-number">5.1.</span> <span class="toc-text">CnPreviewTextIndexer.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pos-java"><span class="toc-number">5.2.</span> <span class="toc-text">Pos.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SimpleTextIndexer-java"><span class="toc-number">5.3.</span> <span class="toc-text">SimpleTextIndexer.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextIndexer-java"><span class="toc-number">5.4.</span> <span class="toc-text">TextIndexer.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#participle"><span class="toc-number">6.</span> <span class="toc-text">participle</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk-java"><span class="toc-number">6.1.</span> <span class="toc-text">Chunk.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ChunkStream-java"><span class="toc-number">6.2.</span> <span class="toc-text">ChunkStream.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MechanicalParticiple-java"><span class="toc-number">6.3.</span> <span class="toc-text">MechanicalParticiple.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#selector"><span class="toc-number">7.</span> <span class="toc-text">selector</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CnTextSelector-java"><span class="toc-number">7.1.</span> <span class="toc-text">CnTextSelector.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CommonTextSelector-java"><span class="toc-number">7.2.</span> <span class="toc-text">CommonTextSelector.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextSelector-java"><span class="toc-number">7.3.</span> <span class="toc-text">TextSelector.java</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#测试代码"><span class="toc-number">8.</span> <span class="toc-text">测试代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NewWordDiscoverTest-java"><span class="toc-number">8.1.</span> <span class="toc-text">NewWordDiscoverTest.java</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ParticipleTest-java"><span class="toc-number">8.2.</span> <span class="toc-text">ParticipleTest.java</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=2129798793&verifier=c0951e84&dpc=1"></iframe>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>31</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/性能优化/" title="性能优化">性能优化<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络爬虫/" title="网络爬虫">网络爬虫<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/移动互联网/" title="移动互联网">移动互联网<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/c/" title="c++">c++<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云计算/" title="云计算">云计算<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.changhuiyuan.com/" target="_blank" title="常惠源的博客">常惠源的博客</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="https://github.com/search?q=pangjiuzala&amp;type=Users" target="_blank" title="关注刘兴的github">关注</a>
+</div>
+
+  
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello,I&#39;m from ZjuCs! <br/>
+			The more you diligent, the more you lucky!</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Copyright@ 2015 Liuxing All rights reserved.
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"pangjiuzala"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ffeafc504b70a541dd3845d467335f367' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_null'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3Dnull' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
