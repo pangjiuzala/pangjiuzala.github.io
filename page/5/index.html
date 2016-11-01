@@ -78,6 +78,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/09/26/深入HBase架构解析-1/" title="深入HBase架构解析(1)" itemprop="url">深入HBase架构解析(1)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-09-26T14:26:05.000Z" itemprop="datePublished"> 发表于 2015-09-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="HBase架构组成">HBase架构组成</h1><p>HBase采用Master/Slave架构搭建集群，它隶属于Hadoop生态系统，由一下类型节点组成：HMaster节点、HRegionServer节点、ZooKeeper集群，而在底层，它将数据存储于HDFS中，因而涉及到HDFS的NameNode、DataNode等，总体结构如下：<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/09/26/深入HBase架构解析-1/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/HBase/">HBase</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/09/26/深入HBase架构解析-1/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/26/深入HBase架构解析-1/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/09/23/防止sql注入/" title="防止sql注入" itemprop="url">防止sql注入</a>
   </h1>
   <p class="article-author">By
@@ -604,68 +663,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/09/05/Java性能优化-10-谨慎改写clone/" title="Java性能优化(10):谨慎改写clone" itemprop="url">Java性能优化(10):谨慎改写clone</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-09-05T14:01:04.000Z" itemprop="datePublished"> 发表于 2015-09-05</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>Cloneable接口的目的是作为对象的一个mixin接口，表明这样的对象允许克隆。不幸的是，它并没有成功达到这个目的。其主要的缺陷在于它缺少一个clone方法，Object的clone方法是被保护的，如果不借助于反射机制，则不能仅仅因为一个对象实现了Cloneable，就可以调用clone方法。即使在反射调用也可能会失败，因为并不保证该对象一定具有可访问性的clone方法。尽管存在这样那样的不足，这项设施仍然被广泛地使用着，值得我们进一步了解它。接下来，将告诉你如何实现一个行为良好的clone方法，并讨论何时这样做是恰当的，同时也简单地讨论了其他可替换做法。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/09/05/Java性能优化-10-谨慎改写clone/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Java/">Java</a><a href="/tags/性能优化/">性能优化</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/09/05/Java性能优化-10-谨慎改写clone/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/05/Java性能优化-10-谨慎改写clone/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/page/4/"><span></span>上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/">下一页<span></span></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><span></span>上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/6/">下一页<span></span></a>
   </nav>
 
 </div>
@@ -719,11 +719,11 @@
 			
 		
 			
-				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>6</sup></a></li>
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
 			
 		
 			
@@ -743,14 +743,6 @@
 			
 		
 			
-				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/c/" title="c++">c++<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
 			
 		
@@ -759,11 +751,19 @@
 			
 		
 			
-				<li><a href="/tags/云计算/" title="云计算">云计算<sup>1</sup></a></li>
+				<li><a href="/tags/c/" title="c++">c++<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>1</sup></a></li>
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/智慧医疗/" title="智慧医疗">智慧医疗<sup>1</sup></a></li>
 			
 		
 		</ul>
@@ -773,7 +773,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
   </div>
 
 

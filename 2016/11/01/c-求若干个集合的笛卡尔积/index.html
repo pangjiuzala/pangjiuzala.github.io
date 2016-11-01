@@ -1,0 +1,597 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>c++求若干个集合的笛卡尔积 | XingLiu&#39;s  Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="XingLiu">
+    
+
+    
+    <meta name="description" content="大家都知道求任意两个集合的笛卡尔积一般是如下这种方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="c++求若干个集合的笛卡尔积">
+<meta property="og:url" content="http://pangjiuzala.github.io/2016/11/01/c-求若干个集合的笛卡尔积/index.html">
+<meta property="og:site_name" content="XingLiu's  Blog">
+<meta property="og:description" content="大家都知道求任意两个集合的笛卡尔积一般是如下这种方式">
+<meta property="og:image" content="http://img.blog.csdn.net/20161031144626335">
+<meta property="og:image" content="http://img.blog.csdn.net/20161031145801863">
+<meta property="og:image" content="http://img.blog.csdn.net/20161031150015942">
+<meta property="og:updated_time" content="2016-11-01T15:12:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="c++求若干个集合的笛卡尔积">
+<meta name="twitter:description" content="大家都知道求任意两个集合的笛卡尔积一般是如下这种方式">
+
+    
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/01/c-求若干个集合的笛卡尔积/" title="c++求若干个集合的笛卡尔积" itemprop="url">c++求若干个集合的笛卡尔积</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-01T15:12:00.000Z" itemprop="datePublished"> 发表于 2016-11-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>大家都知道求任意两个集合的笛卡尔积一般是如下这种方式</p>
+<a id="more"></a>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="preprocessor">#<span class="keyword">define</span> m <span class="number">3</span></span></span><br><span class="line"></span><br><span class="line"><span class="preprocessor">#<span class="keyword">define</span> n <span class="number">2</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> i,j;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> a[m],b[n];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;m;i++) <span class="built_in">scanf</span>(<span class="string">"%c"</span>,&amp;a[i]);</span><br><span class="line"></span><br><span class="line">    getchar();<span class="comment">//吃掉\n</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (j=<span class="number">0</span>;j&lt;n;j++) <span class="built_in">scanf</span>(<span class="string">"%c"</span>,&amp;b[j]);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"集合a：\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;m;i++) <span class="built_in">printf</span>(<span class="string">"%c\t"</span>,a[i]);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\n集合b：\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (j=<span class="number">0</span>;j&lt;n;j++) <span class="built_in">printf</span>(<span class="string">"%c\t"</span>,b[j]);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\n&#123;"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;m;i++)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (j=<span class="number">0</span>;j&lt;n;j++)</span><br><span class="line"></span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"&lt;%c,%c&gt; "</span>,a[i],b[j]);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"&#125;\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如输入两个集合“ABC”和“12”，结果如下</p>
+<p><img src="http://img.blog.csdn.net/20161031144626335" alt="这里写图片描述"></p>
+<p>但是对于一个复杂字符串来说，例如<code>&quot;[A|B|C] D [E|F|G] [M|N]&quot;</code>(“[A|B|C]”代表一个集合，其他类是，集合中的元素用“|”隔开）这种形式的该怎么处理呢？</p>
+<p>第一步，熟悉python的同学第一反应当然是利用split方法来处理喽，但是c++中没有split方法，但是提供了<strong>strtok</strong>函数来处理，方法如下</p>
+<figure class="highlight nimrod"><table><tr><td class="code"><pre><span class="line">//分割字符串,spl代表分割规则</span><br><span class="line"><span class="type">int</span> <span class="type">StrSplit</span>(<span class="type">char</span> dst[][<span class="number">80</span>], <span class="type">char</span>* str, <span class="keyword">const</span> <span class="type">char</span>* spl)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> n = <span class="number">0</span>;</span><br><span class="line">	<span class="type">char</span> *<span class="literal">result</span> = <span class="type">NULL</span>;</span><br><span class="line">	<span class="literal">result</span> = strtok(str, spl);</span><br><span class="line">	<span class="keyword">while</span> (<span class="literal">result</span> != <span class="type">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		strcpy(dst[n++], <span class="literal">result</span>);</span><br><span class="line">		<span class="literal">result</span> = strtok(<span class="type">NULL</span>, spl);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> n; //返回分割集合的个数</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体调用如下</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">StrSplit</span><span class="params">(dst, StrToChArr(m)</span></span>, <span class="string">" "</span>)；<span class="comment">//以空格分割</span></span><br></pre></td></tr></table></figure>
+<p>接下来，最关键的方法就是求笛卡尔积了，我们使用STL中的vector来处理，方法如下</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//求若干集合的笛卡尔积</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">decare</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; &amp;sets, <span class="built_in">string</span> add)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; rs;</span><br><span class="line">	<span class="keyword">int</span> n = sets.size();</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; tmp;</span><br><span class="line">	<span class="built_in">string</span> word, result;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)</span><br><span class="line">	&#123;</span><br><span class="line">		tmp.push_back(sets[i][<span class="number">0</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">	rs.push_back(tmp);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = n - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i)</span><br><span class="line">	&#123;</span><br><span class="line">		 <span class="keyword">int</span> nRsSize = rs.size();</span><br><span class="line">		<span class="keyword">for</span> ( <span class="keyword">int</span> k = <span class="number">1</span>; k &lt; sets[i].size(); ++k)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">for</span> ( <span class="keyword">int</span> j = <span class="number">0</span>; j &lt; nRsSize; ++j)</span><br><span class="line">			&#123;</span><br><span class="line">				tmp = rs[j];</span><br><span class="line">				tmp[i] = sets[i][k];</span><br><span class="line">				rs.push_back(tmp);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; &gt;::iterator iter = rs.begin(); iter != rs.end(); iter++)</span><br><span class="line">	&#123;</span><br><span class="line">		word += add;</span><br><span class="line">		<span class="keyword">for</span> ( <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; (*iter).size(); i++)</span><br><span class="line">		&#123;</span><br><span class="line">			word += (*iter)[i] + <span class="string">" "</span>;<span class="comment">//词之间添加空格</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (iter != rs.end() - <span class="number">1</span>) &#123;</span><br><span class="line">			word += <span class="string">"\n"</span>;<span class="comment">//末尾不需要换行</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			word += <span class="string">""</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> word;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完整程序如下</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">include</span><span class="string">"stdafx.h"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"fstream"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"vector"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"string"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"algorithm"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"regex"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"iterator"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"iostream"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"windows.h"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"wchar.h"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"io.h"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"stdlib.h"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"vector"</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">"set"</span></span></span><br><span class="line"><span class="comment">//#define TXT_NAME "word.xml"//保存合并后的xml结果</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="comment">//utf8转string</span></span><br><span class="line"><span class="built_in">std</span>::<span class="function"><span class="built_in">string</span> <span class="title">UTF8_To_string</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp; str)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> nwLen = MultiByteToWideChar(CP_UTF8, <span class="number">0</span>, str.c_str(), -<span class="number">1</span>, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">wchar_t</span> * pwBuf = <span class="keyword">new</span> <span class="keyword">wchar_t</span>[nwLen + <span class="number">1</span>];</span><br><span class="line">	<span class="built_in">memset</span>(pwBuf, <span class="number">0</span>, nwLen * <span class="number">2</span> + <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">	MultiByteToWideChar(CP_UTF8, <span class="number">0</span>, str.c_str(), str.length(), pwBuf, nwLen);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> nLen = WideCharToMultiByte(CP_ACP, <span class="number">0</span>, pwBuf, -<span class="number">1</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> * pBuf = <span class="keyword">new</span> <span class="keyword">char</span>[nLen + <span class="number">1</span>];</span><br><span class="line">	<span class="built_in">memset</span>(pBuf, <span class="number">0</span>, nLen + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	WideCharToMultiByte(CP_ACP, <span class="number">0</span>, pwBuf, nwLen, pBuf, nLen, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">string</span> retStr = pBuf;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">delete</span>[]pBuf;</span><br><span class="line">	<span class="keyword">delete</span>[]pwBuf;</span><br><span class="line"></span><br><span class="line">	pBuf = <span class="literal">NULL</span>;</span><br><span class="line">	pwBuf = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> retStr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//分隔字符串</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">StrSplit</span><span class="params">(<span class="keyword">char</span> dst[][<span class="number">80</span>], <span class="keyword">char</span>* str, <span class="keyword">const</span> <span class="keyword">char</span>* spl)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">char</span> *result = <span class="literal">NULL</span>;</span><br><span class="line">	result = strtok(str, spl);</span><br><span class="line">	<span class="keyword">while</span> (result != <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">strcpy</span>(dst[n++], result);</span><br><span class="line">		result = strtok(<span class="literal">NULL</span>, spl);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//判断是否需要做分隔处理</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">IncludeCh</span><span class="params">(<span class="keyword">char</span> str[], <span class="keyword">char</span> ch)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	<span class="keyword">bool</span> has = <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; str[i]; ++i) &#123;</span><br><span class="line">		<span class="keyword">if</span> (str[i] == ch)</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//string转化成char数组</span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">StrToChArr</span><span class="params">(<span class="built_in">string</span> src)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> *dst = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">255</span>];</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; src.length(); i++)</span><br><span class="line">		dst[i] = src[i];</span><br><span class="line">	dst[i] = <span class="string">'\0'</span>;</span><br><span class="line">	<span class="keyword">return</span> dst;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//求若干集合的笛卡尔积</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">decare</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; &amp;sets, <span class="built_in">string</span> add)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; rs;</span><br><span class="line">	<span class="keyword">int</span> n = sets.size();</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; tmp;</span><br><span class="line">	<span class="built_in">string</span> word, result;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)</span><br><span class="line">	&#123;</span><br><span class="line">		tmp.push_back(sets[i][<span class="number">0</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">	rs.push_back(tmp);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = n - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> nRsSize = rs.size();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">1</span>; k &lt; sets[i].size(); ++k)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; nRsSize; ++j)</span><br><span class="line">			&#123;</span><br><span class="line">				tmp = rs[j];</span><br><span class="line">				tmp[i] = sets[i][k];</span><br><span class="line">				rs.push_back(tmp);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; &gt;::iterator iter = rs.begin(); iter != rs.end(); iter++)</span><br><span class="line">	&#123;</span><br><span class="line">		word += add;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; (*iter).size(); i++)</span><br><span class="line">		&#123;</span><br><span class="line">			word += (*iter)[i] + <span class="string">" "</span>;<span class="comment">//词之间添加空格</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (iter != rs.end() - <span class="number">1</span>) &#123;</span><br><span class="line">			word += <span class="string">"\n"</span>;<span class="comment">//末尾不需要换行</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			word += <span class="string">""</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> word;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//输出笛卡尔积结果保存到文件, add为扩充词</span></span><br><span class="line"><span class="function"><span class="built_in">string</span>  <span class="title">Descarte</span><span class="params">(<span class="built_in">string</span> m, <span class="built_in">string</span> add)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; charSet;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; tmp[<span class="number">100</span>];</span><br><span class="line">	<span class="keyword">char</span> dst[<span class="number">10</span>][<span class="number">80</span>];</span><br><span class="line">	<span class="keyword">int</span> k = StrSplit(dst, StrToChArr(m), <span class="string">" "</span>);<span class="comment">//第一次分隔，得到 "[A|B|C]"、"D" 、"[E|F|G]""[M|N]"4组数据</span></span><br><span class="line">	<span class="keyword">char</span> dsts[<span class="number">10</span>][<span class="number">80</span>];</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> m = <span class="number">0</span>; m &lt; k; m++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> u = StrSplit(dsts, dst[m], <span class="string">"|[]"</span>);<span class="comment">//第二次分隔，得到每组数据中的具体值，例如"[A|B|C]"中的"A"、"B"、"C"</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> f = <span class="number">0</span>; f &lt; u; f++) &#123;</span><br><span class="line">			tmp[m].push_back(dsts[f]);</span><br><span class="line">		&#125;</span><br><span class="line">		charSet.push_back(tmp[m]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> decare(charSet, add);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="built_in">string</span> m = <span class="string">"[A|B|C] D [E|F|G] [M|N]"</span>;</span><br><span class="line">	<span class="keyword">if</span> (IncludeCh(StrToChArr(m), <span class="string">'['</span>) &amp;&amp; IncludeCh(StrToChArr(m), <span class="string">']'</span>)) &#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; Descarte(m, <span class="string">""</span>) &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果您使用VS,在编译时往往会出现以下错误</p>
+<figure class="highlight vhdl"><table><tr><td class="code"><pre><span class="line">This <span class="keyword">function</span> <span class="keyword">or</span> <span class="keyword">variable</span> may be unsafe. Consider using strcpy_s instead. <span class="keyword">To</span> disable deprecation, <span class="keyword">use</span> _CRT_SECURE_NO_WARNINGS. See online help <span class="keyword">for</span> details.</span><br></pre></td></tr></table></figure>
+<p><strong>原因是Visual C++ 2012 以上版本使用了更加安全的 run-time library routines 。新的Security CRT functions（就是那些带有“_s”后缀的函数）</strong></p>
+<p>解决办法是即在预编译头文件 stdafx.h 里加入下面两句：</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="hexcolor">#def</span>ine _CRT_SECURE_NO_DEPRECATE</span><br><span class="line"></span><br><span class="line"><span class="hexcolor">#def</span>ine _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>注意这两句话的位置要在没有include任何头文件之前</p>
+<p>修改后的完整stdafx.h如下</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="comment">// stdafx.h : 标准系统包含文件的包含文件，</span></span><br><span class="line"><span class="comment">// 或是经常使用但不常更改的</span></span><br><span class="line"><span class="comment">// 特定于项目的包含文件</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="id">#pragma</span> once</span><br><span class="line"><span class="comment">//消除his function or variable may be unsafe警告</span></span><br><span class="line"><span class="hexcolor">#def</span>ine _CRT_SECURE_NO_DEPRECATE</span><br><span class="line"></span><br><span class="line"><span class="hexcolor">#def</span>ine _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES <span class="number">1</span></span><br><span class="line"><span class="id">#include</span> <span class="string">"targetver.h"</span></span><br><span class="line"></span><br><span class="line"><span class="id">#include</span> &lt;stdio.h&gt;</span><br><span class="line"><span class="id">#include</span> &lt;tchar.h&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// <span class="doctag">TODO:</span>  在此处引用程序需要的其他头文件</span></span><br></pre></td></tr></table></figure>
+<p>接下来看下运行结果</p>
+<p><img src="http://img.blog.csdn.net/20161031145801863" alt=""></p>
+<p>换一个简单一点的字符串，比如“[A|B] [C|D]”（注意集合直接要有空格）</p>
+<p>结果如下，ok</p>
+<p><img src="http://img.blog.csdn.net/20161031150015942" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/C/">C++</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/10/09/利用文本挖掘技术来找出《天龙八部》中的小鲜词/"  title="利用文本挖掘技术来找出《天龙八部》中的&quot;小鲜词&quot;">
+ <strong>下一篇：</strong><br/> 
+ <span>利用文本挖掘技术来找出《天龙八部》中的&quot;小鲜词&quot;
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/11/01/c-求若干个集合的笛卡尔积/" data-title="c++求若干个集合的笛卡尔积" data-url="http://pangjiuzala.github.io/2016/11/01/c-求若干个集合的笛卡尔积/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=2129798793&verifier=c0951e84&dpc=1"></iframe>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>31</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/性能优化/" title="性能优化">性能优化<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络爬虫/" title="网络爬虫">网络爬虫<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/移动互联网/" title="移动互联网">移动互联网<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/c/" title="c++">c++<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/智慧医疗/" title="智慧医疗">智慧医疗<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.changhuiyuan.com/" target="_blank" title="常惠源的博客">常惠源的博客</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="https://github.com/search?q=pangjiuzala&amp;type=Users" target="_blank" title="关注刘兴的github">关注</a>
+</div>
+
+  
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello,I&#39;m from ZjuCs! <br/>
+			The more you diligent, the more you lucky!</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Copyright@ 2015 Liuxing All rights reserved.
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"pangjiuzala"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ffeafc504b70a541dd3845d467335f367' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_null'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3Dnull' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
