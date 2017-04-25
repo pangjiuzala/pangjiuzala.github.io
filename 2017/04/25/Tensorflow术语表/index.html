@@ -11,25 +11,16 @@
     
 
     
-    <meta name="description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。
-Devices一块可以用来运算并且拥有自己的地址空间的硬件，比如GPU和CPU。
-evalTensor 的一个方法，返回 Tensor 的值。触发任意一个图计算都需要计算出这个值。只能在一个已经启动的会话的图中才能调用该 Tensor 值。
-Fee">
+    <meta name="description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tensorflow术语表">
 <meta property="og:url" content="http://pangjiuzala.github.io/2017/04/25/Tensorflow术语表/index.html">
 <meta property="og:site_name" content="XingLiu's  Blog">
-<meta property="og:description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。
-Devices一块可以用来运算并且拥有自己的地址空间的硬件，比如GPU和CPU。
-evalTensor 的一个方法，返回 Tensor 的值。触发任意一个图计算都需要计算出这个值。只能在一个已经启动的会话的图中才能调用该 Tensor 值。
-Fee">
-<meta property="og:updated_time" content="2017-04-25T09:12:30.000Z">
+<meta property="og:description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。">
+<meta property="og:updated_time" content="2017-04-25T09:15:35.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Tensorflow术语表">
-<meta name="twitter:description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。
-Devices一块可以用来运算并且拥有自己的地址空间的硬件，比如GPU和CPU。
-evalTensor 的一个方法，返回 Tensor 的值。触发任意一个图计算都需要计算出这个值。只能在一个已经启动的会话的图中才能调用该 Tensor 值。
-Fee">
+<meta name="twitter:description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。">
 
     
     <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
@@ -106,8 +97,8 @@ Fee">
 		
 		</div>
 		
-		<a id="more"></a>
-<h1 id="广播操作(Broadcasting_operation)">广播操作(Broadcasting operation)</h1><p>一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。</p>
+		<h1 id="广播操作(Broadcasting_operation)">广播操作(Broadcasting operation)</h1><p>一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。</p>
+<a id="more"></a>
 <h1 id="Devices">Devices</h1><p>一块可以用来运算并且拥有自己的地址空间的硬件，比如GPU和CPU。</p>
 <h1 id="eval">eval</h1><p>Tensor 的一个方法，返回 Tensor 的值。触发任意一个图计算都需要计算出这个值。只能在一个已经启动的会话<br>的图中才能调用该 Tensor 值。</p>
 <h1 id="Feed">Feed</h1><p>TensorFlow 的一个概念：把一个 Tensor 直接连接到一个会话图表中的任意节点。feed 不是在构建图(graph)的<br>时候创建，而是在触发图的执行操作时去申请。一个 feed 临时替代一个带有 Tensor 值的节点。把feed数据作<br>为run( )方法和eval( )方法的参数来初始化运算。方法运行结束后，替换的 feed 就会消失，而最初的节点定义<br>仍然还在。可以通过tf.placeholder( )把特定的节点指定为 feed 节点来创建它们。详见[[Basic Usagehref](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/get_started/basic_usage.md" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/get_started/basic_usage.md</a>)).</p>
