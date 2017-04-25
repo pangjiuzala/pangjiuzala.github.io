@@ -1,0 +1,586 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Tensorflow术语表 | XingLiu&#39;s  Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="XingLiu">
+    
+
+    
+    <meta name="description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。
+Devices一块可以用来运算并且拥有自己的地址空间的硬件，比如GPU和CPU。
+evalTensor 的一个方法，返回 Tensor 的值。触发任意一个图计算都需要计算出这个值。只能在一个已经启动的会话的图中才能调用该 Tensor 值。
+Fee">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tensorflow术语表">
+<meta property="og:url" content="http://pangjiuzala.github.io/2017/04/25/Tensorflow术语表/index.html">
+<meta property="og:site_name" content="XingLiu's  Blog">
+<meta property="og:description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。
+Devices一块可以用来运算并且拥有自己的地址空间的硬件，比如GPU和CPU。
+evalTensor 的一个方法，返回 Tensor 的值。触发任意一个图计算都需要计算出这个值。只能在一个已经启动的会话的图中才能调用该 Tensor 值。
+Fee">
+<meta property="og:updated_time" content="2017-04-25T09:08:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Tensorflow术语表">
+<meta name="twitter:description" content="广播操作(Broadcasting operation)一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。
+Devices一块可以用来运算并且拥有自己的地址空间的硬件，比如GPU和CPU。
+evalTensor 的一个方法，返回 Tensor 的值。触发任意一个图计算都需要计算出这个值。只能在一个已经启动的会话的图中才能调用该 Tensor 值。
+Fee">
+
+    
+    <link rel="alternative" href="https://github.com/search?q=pangjiuzala&type=Users" title="XingLiu&#39;s  Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="XingLiu&#39;s  Blog" title="XingLiu&#39;s  Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="XingLiu&#39;s  Blog">XingLiu&#39;s  Blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/25/Tensorflow术语表/" title="Tensorflow术语表" itemprop="url">Tensorflow术语表</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="XingLiu" target="_blank" itemprop="author">XingLiu</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-25T09:08:24.000Z" itemprop="datePublished"> 发表于 2017-04-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#广播操作(Broadcasting_operation)"><span class="toc-number">1.</span> <span class="toc-text">广播操作(Broadcasting operation)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Devices"><span class="toc-number">2.</span> <span class="toc-text">Devices</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#eval"><span class="toc-number">3.</span> <span class="toc-text">eval</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Feed"><span class="toc-number">4.</span> <span class="toc-text">Feed</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Fetch"><span class="toc-number">5.</span> <span class="toc-text">Fetch</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Graph(图)"><span class="toc-number">6.</span> <span class="toc-text">Graph(图)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IndexedSlices（索引化切片）"><span class="toc-number">7.</span> <span class="toc-text">IndexedSlices（索引化切片）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Node（节点）"><span class="toc-number">8.</span> <span class="toc-text">Node（节点）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#操作（Op/operation）"><span class="toc-number">9.</span> <span class="toc-text">操作（Op/operation）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Session(会话)"><span class="toc-number">10.</span> <span class="toc-text">Session(会话)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Shape"><span class="toc-number">11.</span> <span class="toc-text">Shape</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SparseTensor"><span class="toc-number">12.</span> <span class="toc-text">SparseTensor</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tensor"><span class="toc-number">13.</span> <span class="toc-text">Tensor</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="广播操作(Broadcasting_operation)">广播操作(Broadcasting operation)</h1><p>一种用numpy-style broadcasting来保证tensor参数的形态兼容的操作。</p>
+<h1 id="Devices">Devices</h1><p>一块可以用来运算并且拥有自己的地址空间的硬件，比如GPU和CPU。</p>
+<h1 id="eval">eval</h1><p>Tensor 的一个方法，返回 Tensor 的值。触发任意一个图计算都需要计算出这个值。只能在一个已经启动的会话<br>的图中才能调用该 Tensor 值。</p>
+<h1 id="Feed">Feed</h1><p>TensorFlow 的一个概念：把一个 Tensor 直接连接到一个会话图表中的任意节点。feed 不是在构建图(graph)的<br>时候创建，而是在触发图的执行操作时去申请。一个 feed 临时替代一个带有 Tensor 值的节点。把feed数据作<br>为run( )方法和eval( )方法的参数来初始化运算。方法运行结束后，替换的 feed 就会消失，而最初的节点定义<br>仍然还在。可以通过tf.placeholder( )把特定的节点指定为 feed 节点来创建它们。详见[[Basic Usagehref](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/get_started/basic_usage.md" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/get_started/basic_usage.md</a>)).</p>
+<h1 id="Fetch">Fetch</h1><p>TensorFlow中的一个概念：为了取回运算操作的输出结果。取回的申请发生在触发执行图操作的时候，而不是发<br>生在建立图的时候。如果要取回一个或多个节点（node）的 Tensor 值，可以通过在 Session 对象上调用run(<br>)方法并将待取回节点（node）的列表作为参数来执行图表(graph)。详见[[Basic Usagehref](<a href="https://github.co%20m/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/get_started/basic_usage.md))。" target="_blank" rel="external">https://github.co%20m/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/get_started/basic_usage.md))。</a></p>
+<h1 id="Graph(图)">Graph(图)</h1><p>把运算任务描述成一个直接的无环图形（DAG），图表中的节点（node）代表必须要实现的一些操作。图中的边代<br>表数据或者可控的依赖。GratheDef 是系统中描述一个图表的协议(api)，它由一个 NodeDefs 集合组成。一个Gr<br>aphDef可以转化成一个更容易操作的图表对象。</p>
+<h1 id="IndexedSlices（索引化切片）">IndexedSlices（索引化切片）</h1><p>在 Python API 中，TensorFlow 仅仅在第一维上对 Tensor 有所体现。如果一个 Tensor 有k维，那么一个 Inde<br>xedSlices 实例在逻辑上代表一个沿着这个 Tensor 第一维的(k-1)维切片的集合。切片的索引被连续储存在一个<br>单独的一维向量中，而对应的切片则被拼接成一个单独的k维 Tensor。如果 sparsity 不是受限于第一维空<br>间，请用 SparseTensor。</p>
+<h1 id="Node（节点）">Node（节点）</h1><p>图中的一个元素。 把启动一个特定操作的方式称为特定运算图表的一个节点，包括任何用来配置这个操作的属性<br>的值。对于那些多形态的操作，这些属性包括能完全决定这个节点（Node）签名的充分信息。详见graph.proto。</p>
+<h1 id="操作（Op/operation）">操作（Op/operation）</h1><p>在 TensorFlow 的运行时中，它是一种类似 add 或 matmul 或 concat的运算。可以用[[how to add an ophre<br>f](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/how_tos/adding_an_op/index.md))中的方法来向运行时添加新的操作。" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/how_tos/adding_an_op/index.md))中的方法来向运行时添加新的操作。</a></p>
+<p>在 Python 的API中，它是图中的一个节点。在[[tf.Operationhref](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/api_docs/python/framework.md))类中列举出了这些操作。一个操作(Operatio" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/SOURCE/api_docs/python/framework.md))类中列举出了这些操作。一个操作(Operatio</a><br>n)的 type 属性决定这个节点（node）的操作类型，比如add和matmul。<br>Run<br>在一个运行的图中执行某种操作的行为。要求图必须运行在会话中。<br>在 Python 的 API 中，它是 Session 类的一个方法[[tf.Session.runhref](<a href="https://github.com/jikexueyuanwi%20ki/tensorflow-zh/blob/master/SOURCE/api_docs/python/client.md))。可以通过" target="_blank" rel="external">https://github.com/jikexueyuanwi%20ki/tensorflow-zh/blob/master/SOURCE/api_docs/python/client.md))。可以通过</a> Tensors 来订阅或获取run(<br>)操作。</p>
+<p>在C++的API中，它是[[tensorflow::Sessionhre](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/m%20aster/SOURCE/api_docs/python/client.md))类" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/m%20aster/SOURCE/api_docs/python/client.md))类</a> 的一个方法。</p>
+<h1 id="Session(会话)">Session(会话)</h1><p>启动图的第一步是创建一个 Session 对象。Session 提供在图中执行操作的一些方法。<br>在 Python API中，使用[[tf.Sessionhref](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/%20SOURCE/api_docs/python/client.md))。" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/master/%20SOURCE/api_docs/python/client.md))。</a><br>在 C++ 的API中，[[tensorflow::Sessionhref](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/mas%20ter/SOURCE/api_docs/cc/ClassSession.md))是用来创建一个图并运行操作的类：" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/mas%20ter/SOURCE/api_docs/cc/ClassSession.md))是用来创建一个图并运行操作的类：</a></p>
+<h1 id="Shape">Shape</h1><p>Tensor 的维度和它们的大小。<br>在一个已经启动的图中，它表示流动在节点（node）之间的 Tensor 的属性。一些操作对 shape 有比较强的要<br>求，如果没有 Shape 属性则会报告错误。<br>在 Python API中，用创建图的 API 来说明 Tensor 的 Shape 属性。Tensor 的Shape 属性要么只有部分已<br>知，要么全部未知。详见[[tf.TensroShapehref](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/ma%20ster/SOURCE/api_docs/python/framework.md" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/ma%20ster/SOURCE/api_docs/python/framework.md</a>))<br>在C++中，Shape 类用来表示 Tensor 的维度。[[tensorflow::TensorShapehref](<a href="https://github.com/jikexueyu%20anwiki/tensorflow-zh/blob/master/SOURCE/api_docs/cc/ClassTensorShape.md))。" target="_blank" rel="external">https://github.com/jikexueyu%20anwiki/tensorflow-zh/blob/master/SOURCE/api_docs/cc/ClassTensorShape.md))。</a></p>
+<h1 id="SparseTensor">SparseTensor</h1><p>在 Python API 中，它用来表示在 TensorFlow 中稀疏散落在任意地方的 Tensor 。SparseTensor 以字典-值格<br>式来储存那些沿着索引的非空值。换言之，m个非空值，就包含一个长度为m的值向量和一个由m列索引(indice<br>s)组成的矩阵。为了提升效率，SparseTensor 需要将 indice（索引）按维度的增加来按序存储，比如行主<br>序。如果稀疏值仅沿着第一维度，就用 IndexedSlices。</p>
+<h1 id="Tensor">Tensor</h1><p>Tensor是一种特定的多维数组。比如，一个浮点型的四维数组表示一小批由[batch,height，width，channel]组<br>成的图片。</p>
+<p>在一个运行的图(graph)中，它是一种流动在节点（node）之间的数据。 在 Python 中，Tensor 类表示添加到图<br>的操作中的输入和输出，见[[tf.Tensorhref](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/maste%20r/SOURCE/api_docs/python/framework.md))，这样的类不持有数据。" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/maste%20r/SOURCE/api_docs/python/framework.md))，这样的类不持有数据。</a><br>在C++中，Tensor是方法[[Session::Run( )](<a href="https://github.com/jikexueyuanwiki/tensorflow-zh/blob/ma%20ster/SOURCE/api_docs/cc/ClassSession.md))的返回值，见tensorflow::Tensor，这样的" target="_blank" rel="external">https://github.com/jikexueyuanwiki/tensorflow-zh/blob/ma%20ster/SOURCE/api_docs/cc/ClassSession.md))的返回值，见tensorflow::Tensor，这样的</a> Tensor 持有数据。<br>原文：[[Glossaryhref](<a href="https://github.com/tensorflow/tensorflow/blob/master/tensorflow/g3doc/resource%20s/glossary.md" target="_blank" rel="external">https://github.com/tensorflow/tensorflow/blob/master/tensorflow/g3doc/resource%20s/glossary.md</a>))</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/AI/">AI</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/02/16/Fiddler-JSoup爬取现代汉语语料库数据/"  title="Fiddler+JSoup爬取现代汉语语料库数据">
+ <strong>下一篇：</strong><br/> 
+ <span>Fiddler+JSoup爬取现代汉语语料库数据
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/04/25/Tensorflow术语表/" data-title="Tensorflow术语表" data-url="http://pangjiuzala.github.io/2017/04/25/Tensorflow术语表/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#广播操作(Broadcasting_operation)"><span class="toc-number">1.</span> <span class="toc-text">广播操作(Broadcasting operation)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Devices"><span class="toc-number">2.</span> <span class="toc-text">Devices</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#eval"><span class="toc-number">3.</span> <span class="toc-text">eval</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Feed"><span class="toc-number">4.</span> <span class="toc-text">Feed</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Fetch"><span class="toc-number">5.</span> <span class="toc-text">Fetch</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Graph(图)"><span class="toc-number">6.</span> <span class="toc-text">Graph(图)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IndexedSlices（索引化切片）"><span class="toc-number">7.</span> <span class="toc-text">IndexedSlices（索引化切片）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Node（节点）"><span class="toc-number">8.</span> <span class="toc-text">Node（节点）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#操作（Op/operation）"><span class="toc-number">9.</span> <span class="toc-text">操作（Op/operation）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Session(会话)"><span class="toc-number">10.</span> <span class="toc-text">Session(会话)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Shape"><span class="toc-number">11.</span> <span class="toc-text">Shape</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SparseTensor"><span class="toc-number">12.</span> <span class="toc-text">SparseTensor</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tensor"><span class="toc-number">13.</span> <span class="toc-text">Tensor</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/大数据/" title="大数据">大数据<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/性能优化/" title="性能优化">性能优化<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HBase/" title="HBase">HBase<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spark/" title="Spark">Spark<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BlockChain/" title="BlockChain">BlockChain<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据库/" title="数据库">数据库<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络爬虫/" title="网络爬虫">网络爬虫<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/移动互联网/" title="移动互联网">移动互联网<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/云平台/" title="云平台">云平台<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/物联网/" title="物联网">物联网<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/c/" title="c++">c++<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Taobao-File-System/" title="Taobao File System">Taobao File System<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/智慧医疗/" title="智慧医疗">智慧医疗<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">25</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/pangjiuzala" target="_blank" title="My Blog in  CSDN">CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://saliormoon.github.io/" target="_blank" title="王宇峰的博客">王宇峰的博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.changhuiyuan.com/" target="_blank" title="常惠源的博客">常惠源的博客</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="https://github.com/search?q=pangjiuzala&amp;type=Users" target="_blank" title="关注刘兴的github">关注</a>
+</div>
+
+  
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello,I&#39;m from ZjuCs! <br/>
+			The more you diligent, the more you lucky!</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Copyright@ 2015 Liuxing All rights reserved.
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"pangjiuzala"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ffeafc504b70a541dd3845d467335f367' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_null'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3Dnull' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
